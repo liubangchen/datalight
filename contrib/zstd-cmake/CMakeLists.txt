@@ -12,7 +12,7 @@ if(NOT zstd_POPULATED)
   message(STATUS "Fetching zstd")
   fetchcontent_populate(zstd)
   message(STATUS "Fetching zstd - done")
-  set(ZSTD_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/zstd)
+  set(ZSTD_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/zstd/lib)
 endif()
 
 option(ZSTD_LEGACY_SUPPORT "LEGACY SUPPORT" OFF)

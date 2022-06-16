@@ -11,7 +11,7 @@ if(NOT doubleconversion_POPULATED)
   message(STATUS "Fetching double-conversion")
   fetchcontent_populate(doubleconversion)
   message(STATUS "Fetching double-conversion - done")
-  set(DOUBLE_CONVERSION_SOURCE_DIR ${${PROJECT_SOURCE_DIR}/contrib/double-conversion})
+  set(DOUBLE_CONVERSION_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/double-conversion)
 endif()
 
 set(
