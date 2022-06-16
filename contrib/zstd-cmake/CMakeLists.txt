@@ -2,6 +2,7 @@ fetchcontent_declare(
   zstd
   GIT_REPOSITORY https://github.com/facebook/zstd.git
   GIT_TAG v1.5.2
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/zstd
 )
 

@@ -2,6 +2,7 @@ fetchcontent_declare(
   doubleconversion
   GIT_REPOSITORY https://github.com/google/double-conversion.git
   GIT_TAG v3.1.5
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/double-conversion
 )
 

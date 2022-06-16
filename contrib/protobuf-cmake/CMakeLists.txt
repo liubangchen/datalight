@@ -2,6 +2,7 @@ fetchcontent_declare(
   protobuf
   GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
   GIT_TAG v3.16.1
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/protobuf
 )
 

@@ -2,6 +2,7 @@ fetchcontent_declare(
   lz4
   GIT_REPOSITORY https://github.com/lz4/lz4.git
   GIT_TAG v1.9.3
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/lz4
 )
 

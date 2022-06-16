@@ -2,6 +2,7 @@ fetchcontent_declare(
   zlib
   GIT_REPOSITORY https://github.com/madler/zlib.git
   GIT_TAG v1.2.12
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/zlib
 )
 

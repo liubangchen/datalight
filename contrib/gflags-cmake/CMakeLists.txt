@@ -2,6 +2,7 @@ fetchcontent_declare(
   gflags
   GIT_REPOSITORY https://github.com/gflags/gflags.git
   GIT_TAG v2.2.2
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/gflags
 )
 

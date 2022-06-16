@@ -29,6 +29,7 @@ fetchcontent_declare(
   libevent
   GIT_REPOSITORY https://github.com/libevent/libevent.git
   GIT_TAG release-2.1.12-stable
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/libevent
 )
 fetchcontent_getproperties(libevent)
@@ -64,6 +65,7 @@ fetchcontent_declare(
   snappy
   GIT_REPOSITORY https://github.com/google/snappy.git
   GIT_TAG 1.1.9
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/snappy
 )
 
@@ -87,6 +89,7 @@ fetchcontent_declare(
   bzip2
   GIT_REPOSITORY https://github.com/libarchive/bzip2.git
   #GIT_TAG master
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/bzip2
 )
 
@@ -113,6 +116,7 @@ fetchcontent_declare(
   re2
   GIT_REPOSITORY https://github.com/google/re2.git
   GIT_TAG 2021-11-01
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/re2
 )
 

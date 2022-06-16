@@ -2,6 +2,7 @@ fetchcontent_declare(
   folly
   GIT_REPOSITORY https://github.com/facebook/folly.git
   GIT_TAG v2022.06.06.00
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/folly
 )
 

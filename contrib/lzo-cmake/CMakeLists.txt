@@ -2,6 +2,7 @@ fetchcontent_declare(
   lzo
   GIT_REPOSITORY https://github.com/nemequ/lzo.git
   #GIT_TAG master
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/lzo
 )
 

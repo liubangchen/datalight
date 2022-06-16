@@ -2,6 +2,7 @@ fetchcontent_declare(
   openssl
   GIT_REPOSITORY https://github.com/openssl/openssl.git
   GIT_TAG OpenSSL_1_1_1o
+  GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/openssl
 )
 
