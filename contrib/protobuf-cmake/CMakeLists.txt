@@ -22,7 +22,7 @@ set(protobuf_BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
 set(protobuf_BUILD_TESTS OFF)
 set(BUILD_SHARED_LIBS OFF)
 
-add_subdirectory("${protobuf_SOURCE_DIR}/cmake")
+add_subdirectory("${protobuf_SOURCE_DIR}/cmake" "${CMAKE_BINARY_DIR}/protobuf/")
 
 # We don't want to stop compilation on warnings in protobuf's headers.
 # The following line overrides the value assigned by the command target_include_directories() in libprotobuf.cmake
@@ -33,4 +33,4 @@ set(Protobuf_LIBRARY libprotobuf)
 set(Protobuf_PROTOC_EXECUTABLE "$<TARGET_FILE:protoc>")
 set(Protobuf_PROTOC_LIBRARY libprotoc)
 
-include("protobuf_generate.cmake")
+include("${PROJECT_SOURCE_DIR}/contrib/protobuf-cmake/protobuf_generate.cmake")
