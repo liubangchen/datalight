@@ -58,6 +58,7 @@ set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "Generate debug library name with a pos
 #static libraries path
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/thirdparty/lib)
 #shared libraries path
+set(CMAKE_INSTALL_CMAKEDIR ${CMAKE_BINARY_DIR}/cmake)
 set(CMAKE_THIRDPARTY_HEADER_DIR ${CMAKE_BINARY_DIR}/thirdparty/include)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/thirdparty/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

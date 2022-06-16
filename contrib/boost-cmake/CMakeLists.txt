@@ -17,7 +17,7 @@ if(NOT Boost_POPULATED)
   message(STATUS "Fetching Boost")
   fetchcontent_populate(Boost)
   message(STATUS "Fetching Boost - done")
-  set(BOOST_SOURCE_DIR ${${PROJECT_SOURCE_DIR}/contrib/boost})
+  set(BOOST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/boost)
 endif()
 
 #message(STATUS "Boost found: ${BOOST_VERSION} ${BOOST_SOURCE}")

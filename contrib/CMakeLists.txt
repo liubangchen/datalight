@@ -135,29 +135,14 @@ add_subdirectory(re2)
 ##add_subdirectory(icu-cmake)
 ##add_library(icu ALIAS _icu)
 
-#####################################################################start pb
-fetchcontent_declare(
-  protobuf
-  GIT_REPOSITORY https://github.com/protocolbuffers/protobuf.git
-  GIT_TAG v3.16.1
-  SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/protobuf
-)
-
-fetchcontent_getproperties(protobuf)
-
-if(NOT protobuf_POPULATED)
-  message(STATUS "Fetching protobuf")
-  fetchcontent_populate(protobuf)
-  message(STATUS "Fetching protobuf - done")
-  set(PROTOBUF_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/protobuf)
-endif()
-
-set(protobuf_BUILD_TESTS OFF)
-set(BUILD_SHARED_LIBS OFF)
-set(protobuf_BUILD_SHARED_LIBS OFF)
-add_subdirectory(protobuf/cmake)
+#####################################################################start protobuf
+add_subdirectory(protobuf-cmake)
 add_library(protobuf::libprotobuf ALIAS libprotobuf)
 add_dependencies(libprotobuf protoc)
+#include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-config.cmake)
+#include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-config-version.cmake)
+#include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-module.cmake)
+#include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-options.cmake)
 #####################################################################end
 
 #####################################################################start folly
