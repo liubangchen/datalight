@@ -104,6 +104,7 @@ set(
 
 add_library(_boost_regex ${SRCS_REGEX})
 add_library(boost::regex ALIAS _boost_regex)
+add_library(Boost::regex ALIAS _boost_regex)
 target_include_directories(_boost_regex PRIVATE ${BOOST_SOURCE_DIR})
 
 #thread

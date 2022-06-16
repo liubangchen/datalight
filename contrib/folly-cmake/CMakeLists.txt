@@ -337,3 +337,5 @@ target_include_directories(
   folly
   PUBLIC ${FOLLY_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
 )
+
+add_library(Folly::folly ALIAS folly)

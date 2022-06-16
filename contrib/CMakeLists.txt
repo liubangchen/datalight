@@ -141,8 +141,8 @@ add_subdirectory(re2)
 
 #####################################################################start protobuf
 add_subdirectory(protobuf-cmake)
-add_library(protobuf::libprotobuf ALIAS libprotobuf)
-add_dependencies(libprotobuf protoc)
+#add_library(protobuf::libprotobuf ALIAS libprotobuf)
+#add_dependencies(libprotobuf protoc)
 #include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-config.cmake)
 #include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-config-version.cmake)
 #include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-module.cmake)
