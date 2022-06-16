@@ -2,8 +2,8 @@ set(BOOST_VERSION "1_76_0")
 
 option(BOOST_DISABLE_TESTS "Do not build test targets, even if building standalone" OFF)
 
-set(BOOST_URL "https://boostorg.jfrog.io/artifactory/main/release/1.71.0/source/boost_1_71_0.tar.bz2" CACHE STRING "Boost download URL")
-set(BOOST_URL_SHA256 "d73a8da01e8bf8c7eda40b4c84915071a8c8a0df4a6734537ddde4a8580524ee" CACHE STRING "Boost download URL SHA256 checksum")
+set(BOOST_URL "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz" CACHE STRING "Boost download URL")
+set(BOOST_URL_SHA256 "7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca" CACHE STRING "Boost download URL SHA256 checksum")
 fetchcontent_declare(
   Boost
   URL ${BOOST_URL}
@@ -17,7 +17,7 @@ if(NOT Boost_POPULATED)
   message(STATUS "Fetching Boost")
   fetchcontent_populate(Boost)
   message(STATUS "Fetching Boost - done")
-  set(BOOST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/boost)
+  set(BOOST_SOURCE_DIR "${PROJECT_SOURCE_DIR}/contrib/boost")
 endif()
 
 #message(STATUS "Boost found: ${BOOST_VERSION} ${BOOST_SOURCE}")
