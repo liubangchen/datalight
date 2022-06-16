@@ -27,8 +27,6 @@ include(CheckCSourceCompiles)
 check_include_file(sys/types.h HAVE_SYS_TYPES_H)
 check_include_file(stdint.h HAVE_STDINT_H)
 check_include_file(stddef.h HAVE_STDDEF_H)
-
-
 #
 # Check to see if we have large file support
 #
@@ -71,17 +69,18 @@ if(MSVC)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
-if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
+if(NOT ZLIB_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
   # If we're doing an out of source build and the user has a zconf.h
   # in their source tree...
-  if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h)
+  if(EXISTS ${ZLIB_SOURCE_DIR}/zconf.h)
     message(STATUS "Renaming")
-    message(STATUS "    ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h")
+    message(STATUS "    ${ZLIB_SOURCE_DIR}/zconf.h")
     message(STATUS "to 'zconf.h.included' because this file is included with zlib")
     message(STATUS "but CMake generates it automatically in the build directory.")
-    file(RENAME ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h ${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.included)
+    file(RENAME ${ZLIB_SOURCE_DIR}/zconf.h ${ZLIB_SOURCE_DIR}/zconf.h.included)
   endif()
 endif()
+
 
 configure_file(
   ${ZLIB_SOURCE_DIR}/zconf.h.cmakein
