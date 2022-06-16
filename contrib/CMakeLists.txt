@@ -158,5 +158,5 @@ add_subdirectory(folly-cmake)
 
 #velox
 add_subdirectory(velox-cmake)
-add_subdirectory(velox/third_party)
-add_subdirectory(velox/velox)
+#add_subdirectory(velox/third_party)
+#add_subdirectory(velox/velox)

@@ -228,5 +228,5 @@ endif()
 find_package(BISON 3.0.4 REQUIRED)
 find_package(FLEX 2.5.13 REQUIRED)
 
-#add_subdirectory(${VELOX_SOURCE_DIR}/third_party)
-#add_subdirectory(${VELOX_SOURCE_DIR}/velox)
+add_subdirectory(${VELOX_SOURCE_DIR}/third_party "${CMAKE_BINARY_DIR}/third_party/")
+add_subdirectory(${VELOX_SOURCE_DIR}/velox "${CMAKE_BINARY_DIR}/velox/")
