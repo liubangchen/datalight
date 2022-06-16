@@ -1,7 +1,7 @@
 fetchcontent_declare(
   velox
   GIT_REPOSITORY https://github.com/facebookincubator/velox.git
-  #GIT_TAG master
+  GIT_TAG main
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/velox
 )
 
