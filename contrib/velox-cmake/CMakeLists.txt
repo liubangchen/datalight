@@ -228,5 +228,17 @@ endif()
 find_package(BISON 3.0.4 REQUIRED)
 find_package(FLEX 2.5.13 REQUIRED)
 
+include_directories(SYSTEM ${VELOX_SOURCE_DIR})
+include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox)
+include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external)
+include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external/duckdb)
+include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external/duckdb/tpch/dbgen/include)
+
+
 add_subdirectory(${VELOX_SOURCE_DIR}/third_party "${CMAKE_BINARY_DIR}/third_party/")
 add_subdirectory(${VELOX_SOURCE_DIR}/velox "${CMAKE_BINARY_DIR}/velox/")
+
+target_link_libraries(
+  velox_core
+  fmt
+)
