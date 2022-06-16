@@ -1,6 +1,7 @@
 #include(ExternalProject)
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
 #####################################################################start fmt
 add_subdirectory(fmtlib-cmake)
