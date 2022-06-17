@@ -234,11 +234,20 @@ include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external)
 include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external/duckdb)
 include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external/duckdb/tpch/dbgen/include)
 
-
 add_subdirectory(${VELOX_SOURCE_DIR}/third_party "${CMAKE_BINARY_DIR}/third_party/")
 add_subdirectory(${VELOX_SOURCE_DIR}/velox "${CMAKE_BINARY_DIR}/velox/")
 
 target_link_libraries(
-  velox_core
+  velox_type_calculation
   fmt
+  glog
+  folly
+)
+
+
+target_link_libraries(
+  velox_process
+  fmt
+  glog
+  folly
 )
