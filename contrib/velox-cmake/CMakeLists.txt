@@ -104,13 +104,6 @@ if(
   set(ON_APPLE_M1 True)
 endif()
 
-
-# Required so velox code can be used in a dynamic library
-set(POSITION_INDEPENDENT_CODE True)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
 execute_process(
   COMMAND
   bash -c

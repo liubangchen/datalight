@@ -98,6 +98,17 @@ target_include_directories(
 )
 
 add_library(fmt::fmt ALIAS fmt)
+
+file(GLOB FMT_HEADERS ${FMT_SOURCE_DIR}/include/fmt "*.h")
+foreach(headfile ${FMT_HEADERS})
+  file(
+    COPY
+    ${headfile}
+    DESTINATION ${CMAKE_THIRDPARTY_HEADER_DIR}/fmt
+  )
+endforeach()
+
+
 file(COPY ${FMT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_THIRDPARTY_HEADER_DIR}/fmt)
 target_include_directories(fmt SYSTEM PUBLIC ${CMAKE_THIRDPARTY_HEADER_DIR}/fmt)
 
