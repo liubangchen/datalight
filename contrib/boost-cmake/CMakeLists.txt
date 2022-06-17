@@ -40,6 +40,7 @@ set(
 
 add_library(_boost_filesystem ${SRCS_FILESYSTEM})
 add_library(boost::filesystem ALIAS _boost_filesystem)
+add_library(Boost::filesystem ALIAS _boost_filesystem)
 target_include_directories(_boost_filesystem SYSTEM BEFORE PUBLIC ${BOOST_SOURCE_DIR})
 
 # headers-only
@@ -67,6 +68,7 @@ set(
 
 add_library(_boost_iostreams ${SRCS_IOSTREAMS})
 add_library(boost::iostreams ALIAS _boost_iostreams)
+add_library(Boost::iostreams ALIAS _boost_iostreams)
 target_include_directories(_boost_iostreams PRIVATE ${BOOST_SOURCE_DIR})
 #target_link_libraries(_boost_iostreams PRIVATE ch_contrib::zlib)
 
@@ -89,6 +91,7 @@ set(
 
 add_library(_boost_program_options ${SRCS_PROGRAM_OPTIONS})
 add_library(boost::program_options ALIAS _boost_program_options)
+add_library(Boost::program_options ALIAS _boost_program_options)
 target_include_directories(_boost_program_options SYSTEM BEFORE PUBLIC ${BOOST_SOURCE_DIR} ${BOOST_SOURCE_DIR}/libs/program_options/include)
 
 # regex
@@ -119,6 +122,7 @@ set(
 
 add_library(_boost_thread ${SRCS_THREAD})
 add_library(boost::thread ALIAS _boost_thread)
+add_library(Boost::thread ALIAS _boost_thread)
 target_include_directories(_boost_thread PRIVATE ${BOOST_SOURCE_DIR})
 
 
@@ -135,6 +139,7 @@ set(
 
 add_library(_boost_date_time ${SRCS_DATETIME})
 add_library(boost::date_time ALIAS _boost_date_time)
+add_library(Boost::date_time ALIAS _boost_date_time)
 target_include_directories(_boost_date_time PRIVATE ${BOOST_SOURCE_DIR})
 
 #atomic
@@ -154,6 +159,7 @@ set(
 
 add_library(_boost_atomic ${SRCS_ATOMIC})
 add_library(boost::atomic ALIAS _boost_atomic)
+add_library(Boost::atomic ALIAS _boost_atomic)
 target_include_directories(_boost_atomic PRIVATE ${BOOST_SOURCE_DIR})
 target_include_directories(_boost_atomic PRIVATE ${BOOST_SOURCE_DIR}/libs/atomic/src)
 
@@ -165,6 +171,7 @@ set(
 
 add_library(_boost_system ${SRCS_SYSTEM})
 add_library(boost::system ALIAS _boost_system)
+add_library(Boost::system ALIAS _boost_system)
 target_include_directories(_boost_system PRIVATE ${BOOST_SOURCE_DIR})
 
 # context
@@ -242,6 +249,7 @@ endif()
 
 add_library(_boost_context ${SRCS_CONTEXT})
 add_library(boost::context ALIAS _boost_context)
+add_library(Boost::context ALIAS _boost_context)
 target_include_directories(_boost_context PRIVATE ${BOOST_SOURCE_DIR})
 
 
@@ -256,15 +264,18 @@ set(
 
 add_library(_boost_graph ${SRCS_GRAPH})
 add_library(boost::graph ALIAS _boost_graph)
+add_library(Boost::graph ALIAS _boost_graph)
 target_include_directories(_boost_graph PRIVATE ${BOOST_SOURCE_DIR})
 target_link_libraries(_boost_graph PRIVATE _boost_regex)
 
 # circular buffer
 add_library(_boost_circular_buffer INTERFACE)
 add_library(boost::circular_buffer ALIAS _boost_circular_buffer)
+add_library(Boost::circular_buffer ALIAS _boost_circular_buffer)
 target_include_directories(_boost_circular_buffer SYSTEM BEFORE INTERFACE ${BOOST_SOURCE_DIR})
 
 # heap
 add_library(_boost_heap INTERFACE)
 add_library(boost::heap ALIAS _boost_heap)
+add_library(Boost::heap ALIAS _boost_heap)
 target_include_directories(_boost_heap SYSTEM BEFORE INTERFACE ${BOOST_SOURCE_DIR})
