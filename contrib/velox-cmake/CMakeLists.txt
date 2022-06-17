@@ -234,6 +234,10 @@ include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external)
 include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external/duckdb)
 include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external/duckdb/tpch/dbgen/include)
 
+set(FOLLY_WITH_DEPENDENCIES)
+set(FMT)
+set(GFLAGS_LIBRARIES)
+
 add_subdirectory(${VELOX_SOURCE_DIR}/third_party "${CMAKE_BINARY_DIR}/third_party/")
 add_subdirectory(${VELOX_SOURCE_DIR}/velox "${CMAKE_BINARY_DIR}/velox/")
 
