@@ -36,6 +36,10 @@ target_link_libraries(follybin folly)
 add_executable(veloxdemo VeloxDemo.cpp)
 target_link_libraries(
   veloxdemo
-  velox_core
-  velox_expression
+  velox_type
+  velox_vector
+  velox_exec
+  velox_exec_test_util
+  velox_hive_connector
+  velox_memory
 )

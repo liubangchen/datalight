@@ -234,6 +234,17 @@ set(GFLAGS_LIBRARIES "gflags")
 add_subdirectory(${VELOX_SOURCE_DIR}/third_party "${CMAKE_BINARY_DIR}/third_party/")
 add_subdirectory(${VELOX_SOURCE_DIR}/velox "${CMAKE_BINARY_DIR}/velox/")
 
+target_include_directories(
+  velox_core
+  SYSTEM
+  PUBLIC
+  ${VELOX_SOURCE_DIR}
+  ${VELOX_SOURCE_DIR}/velox
+  ${VELOX_SOURCE_DIR}/velox/external
+  ${VELOX_SOURCE_DIR}/velox/external/duckdb
+  ${VELOX_SOURCE_DIR}/velox/external/duckdb/tpch/dbgen/include
+)
+
 target_link_libraries(
   velox_type_calculation
   fmt
@@ -253,4 +264,9 @@ target_link_libraries(
 target_link_libraries(
   velox_encode
   folly
+)
+
+target_link_libraries(
+  velox_dwio_common
+  libprotobuf
 )
