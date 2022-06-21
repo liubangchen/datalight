@@ -43,3 +43,9 @@ target_link_libraries(
   velox_hive_connector
   velox_memory
 )
+
+add_executable(echo-server EchoServer.cpp)
+target_link_libraries(
+  echo-server
+  wangle
+)

@@ -170,3 +170,7 @@ website/package-lock.json
 /contrib/zlib
 /contrib/zstd
 /contrib/velox
+/contrib/wangle
+/contrib/fizz
+/contrib/proxygen
+/contrib/libsodium

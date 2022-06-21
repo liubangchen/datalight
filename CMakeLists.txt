@@ -142,4 +142,4 @@ add_subdirectory(contrib EXCLUDE_FROM_ALL)
 
 #find_library(DOUBLE_CONVERSION double-conversion)
 
-add_subdirectory(src/demo)
+add_subdirectory(src)
