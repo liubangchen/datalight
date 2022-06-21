@@ -49,3 +49,5 @@ target_link_libraries(
   echo-server
   wangle
 )
+
+add_subdirectory(proxygen)

@@ -156,6 +156,8 @@ add_library(
   ${ZLIB_ASMS}
 )
 
+add_library(z ALIAS zlib)
+
 target_include_directories(
   zlib
   PRIVATE

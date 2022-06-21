@@ -14,3 +14,10 @@ if(NOT proxygen_POPULATED)
   message(STATUS "Fetching proxygen - done")
   set(PROXYGEN_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/proxygen)
 endif()
+
+function(proxygen_add_test)
+  return()
+endfunction()
+
+set(PROXYGEN_GENERATED_ROOT "${CMAKE_BINARY_DIR}/proxygen")
+add_subdirectory(${PROXYGEN_SOURCE_DIR}/proxygen "${CMAKE_BINARY_DIR}/proxygen/")

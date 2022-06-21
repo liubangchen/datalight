@@ -96,6 +96,8 @@ add_library(
   ${FIZZ_SOURCES}
 )
 
+add_library(fizz::fizz ALIAS fizz)
+
 target_link_libraries(
   fizz
   ssl

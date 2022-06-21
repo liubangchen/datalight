@@ -85,6 +85,8 @@ add_library(
   ${WANGLE_SOURCES}
 )
 
+add_library(wangle::wangle ALIAS wangle)
+
 target_link_libraries(
   wangle
   ssl

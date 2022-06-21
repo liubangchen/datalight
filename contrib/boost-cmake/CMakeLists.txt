@@ -279,3 +279,14 @@ add_library(_boost_heap INTERFACE)
 add_library(boost::heap ALIAS _boost_heap)
 add_library(Boost::heap ALIAS _boost_heap)
 target_include_directories(_boost_heap SYSTEM BEFORE INTERFACE ${BOOST_SOURCE_DIR})
+
+#add_library(
+#  Boost::boost
+#  STATIC
+#  Boost::context
+#  Boost::filesystem
+#  Boost::program_options
+#  Boost::regex
+#  Boost::system
+#  Boost::thread
+#)
