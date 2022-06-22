@@ -53,19 +53,28 @@ add_subdirectory(libevent)
 
 #####################################################################start double-conversion
 add_subdirectory(double-conversion-cmake)
+set(DOUBLE_CONVERSION "double-conversion")
 #####################################################################end
 
 ##################################################################### compress libraries
 #lz4
 add_subdirectory(lz4-cmake)
+set(LZ4 "lz4")
+
 #lzo2
 add_subdirectory(lzo-cmake)
 add_library(lzo ALIAS lzo_static_lib)
 add_library(lzo2 ALIAS lzo_static_lib)
+set(LZO "lzo")
+
 #zstd
 add_subdirectory(zstd-cmake)
+set(ZSTD "zstd")
+set(ZSTD "zstd")
 ##zlib
 add_subdirectory(zlib-cmake)
+set(ZLIB "zlib")
+
 #snappy
 fetchcontent_declare(
   snappy
@@ -114,6 +123,7 @@ set(ENABLE_DEBUG OFF)
 set(ENABLE_LIB_ONLY ON)
 add_subdirectory(bzip2)
 add_library(bzip2 ALIAS bz2_static)
+set(BZIP "bz2_static")
 #####################################################################
 
 #####################################################################start re2
@@ -137,6 +147,7 @@ endif()
 
 set(RE2_BUILD_TESTING OFF)
 add_subdirectory(re2)
+set(RE2 "re2")
 #####################################################################end
 
 

@@ -98,6 +98,7 @@ target_include_directories(
 )
 
 add_library(fmt::fmt ALIAS fmt)
+add_library(FMT ALIAS fmt)
 
 file(GLOB FMT_HEADERS ${FMT_SOURCE_DIR}/include/fmt "*.h")
 foreach(headfile ${FMT_HEADERS})

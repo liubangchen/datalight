@@ -319,6 +319,9 @@ target_include_directories(
   ${CMAKE_THIRDPARTY_HEADER_DIR}/gflags
 )
 
+set(GFLAGS_LIBRARIES "gflags")
+set(gflags_LIBRARIES ${GFLAGS_LIBRARIES})
+
 target_include_directories(
   gflags
   SYSTEM
