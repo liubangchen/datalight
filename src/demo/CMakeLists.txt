@@ -50,4 +50,10 @@ target_link_libraries(
   wangle
 )
 
+add_executable(range-demo Rangev3Demo.cpp)
+target_link_libraries(
+  range-demo
+  range-v3
+)
+
 add_subdirectory(proxygen)
