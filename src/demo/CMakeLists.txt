@@ -56,4 +56,12 @@ target_link_libraries(
   range-v3
 )
 
+add_executable(icu-demo IcuDemo.cpp)
+target_link_libraries(
+  icu-demo
+  PRIVATE
+  _icuc
+  _icui18n
+)
+
 add_subdirectory(proxygen)

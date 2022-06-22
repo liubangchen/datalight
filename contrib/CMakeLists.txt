@@ -3,6 +3,10 @@ include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 
+#####################################################################start icu4c
+add_subdirectory(icu-cmake)
+#####################################################################end fmt
+
 #####################################################################start fmt
 add_subdirectory(fmtlib-cmake)
 #####################################################################end fmt
@@ -134,19 +138,8 @@ set(RE2 "re2")
 #####################################################################end
 
 
-###icu4c
-##set(ENABLE_ICU ON)
-##add_subdirectory(icu-cmake)
-##add_library(icu ALIAS _icu)
-
 #####################################################################start protobuf
 add_subdirectory(protobuf-cmake)
-#add_library(protobuf::libprotobuf ALIAS libprotobuf)
-#add_dependencies(libprotobuf protoc)
-#include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-config.cmake)
-#include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-config-version.cmake)
-#include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-module.cmake)
-#include(${CMAKE_INSTALL_CMAKEDIR}/protobuf-options.cmake)
 #####################################################################end
 
 #####################################################################start folly
