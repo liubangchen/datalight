@@ -76,28 +76,7 @@ add_subdirectory(zlib-cmake)
 set(ZLIB "zlib")
 
 #snappy
-fetchcontent_declare(
-  snappy
-  GIT_REPOSITORY https://github.com/google/snappy.git
-  GIT_TAG 1.1.9
-  GIT_PROGRESS TRUE
-  SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/snappy
-)
-
-fetchcontent_getproperties(snappy)
-
-if(NOT snappy_POPULATED)
-  message(STATUS "Fetching snappy")
-  fetchcontent_populate(snappy)
-  message(STATUS "Fetching snappy - done")
-  set(SNAPPY_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/snappy)
-endif()
-
-set(BUILD_SHARED_LIBS OFF)
-set(SNAPPY_BUILD_TESTS OFF)
-set(SNAPPY_BUILD_BENCHMARKS OFF)
-set(SNAPPY_INSTALL OFF)
-add_subdirectory(snappy)
+add_subdirectory(snappy-cmake)
 
 ##bzip2
 fetchcontent_declare(

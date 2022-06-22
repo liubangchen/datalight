@@ -1,6 +1,12 @@
-add_executable(proxygen-echo-server EchoServer.cpp)
+add_executable(
+  proxygen-echo-server
+  EchoHandler.cpp
+  EchoServer.cpp
+)
 target_link_libraries(
   proxygen-echo-server
   wangle
   proxygen
+  proxygenhttpserver
+  #proxygen_http_parser
 )

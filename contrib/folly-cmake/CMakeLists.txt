@@ -164,7 +164,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     )
   endif()
 endif()
-
+set(LIBSODIUM_FOUND TRUE)
 if(${LIBSODIUM_FOUND})
   string(FIND "${CMAKE_LIBRARY_ARCHITECTURE}" "x86_64" IS_X86_64_ARCH)
   if(${IS_X86_64_ARCH} STREQUAL "-1")
@@ -322,6 +322,7 @@ target_link_libraries(
   zlib
   snappy
   bzip2
+  sodium
   double-conversion
   ssl
   # crypto
