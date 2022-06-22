@@ -19,5 +19,9 @@ function(proxygen_add_test)
   return()
 endfunction()
 
+#mac os
+#/bin/env --> /usr/bin/env
+#
 set(PROXYGEN_GENERATED_ROOT "${CMAKE_BINARY_DIR}/proxygen")
+set(PROXYGEN_FBCODE_ROOT ${PROXYGEN_SOURCE_DIR})
 add_subdirectory(${PROXYGEN_SOURCE_DIR}/proxygen "${CMAKE_BINARY_DIR}/proxygen/")
