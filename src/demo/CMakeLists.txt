@@ -62,6 +62,7 @@ target_link_libraries(
   PRIVATE
   _icuc
   _icui18n
+  _icudata
 )
 
 add_subdirectory(proxygen)

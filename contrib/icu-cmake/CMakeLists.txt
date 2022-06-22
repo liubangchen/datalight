@@ -22,6 +22,18 @@ file(GLOB ICU_COMMON_SRCS ${ICU_SOURCE_DIR}/common/*.cpp)
 
 file(GLOB ICU_I18N_SRCS ${ICU_SOURCE_DIR}/i18n/*.cpp)
 
+enable_language(ASM)
+file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/icu4c/empty.cpp" CONTENT " ")
+set(
+  ICUDATA_SOURCES
+  "${PROJECT_SOURCE_DIR}/contrib/icu-cmake/icudt71l_dat.S"
+  "${CMAKE_CURRENT_BINARY_DIR}/icu4c/empty.cpp" # Without this cmake can incorrectly detects library type (OBJECT) instead of SHARED/STATIC
+)
+
+add_library(_icudata ${ICUDATA_SOURCES})
+
+add_definitions(-D_REENTRANT -DU_HAVE_ELF_H=1 -DU_HAVE_STRTOD_L=1 -DU_HAVE_XLOCALE_H=0 -DDEFAULT_ICU_PLUGINS="/dev/null")
+
 
 add_library(_icuc STATIC ${ICU_COMMON_SRCS})
 target_compile_definitions(
