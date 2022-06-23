@@ -1,5 +1,3 @@
-
-#include <iostream>
 #include <folly/init/Init.h>
 #include <algorithm>
 
@@ -15,8 +13,13 @@
 
 using namespace facebook::velox;
 
+// This file contains a step-by-step minimal example of a workflow that:
+//
+// #1. generates a simple dataset in-memory using Vectors;
+// #2. writes it to a local dwrf-encoded file using TableWrite operator;
+// #3. executes a TableScan + OrderBy plan, printing the results to stdout.
 
-int main(int argc, char *argv[]){
+int main(int argc, char** argv) {
     // Velox Tasks/Operators are based on folly's async framework, so we need to
     // make sure we initialize it first.
     folly::init(&argc, &argv);
@@ -145,7 +148,7 @@ int main(int argc, char *argv[]){
         readPlanFragment,
         /*destination=*/0,
         core::QueryCtx::createForTest(),
-        [](RowVectorPtr vector, exec::ContinueFuture*) {
+        [](RowVectorPtr vector, facebook::velox::ContinueFuture*) {
             if (vector) {
                 LOG(INFO) << "Vector available after processing (scan + sort):";
                 for (size_t i = 0; i < vector->size(); ++i) {
