@@ -14,23 +14,9 @@ if(NOT antlr4_POPULATED)
   set(ANTLR4_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/antlr4/runtime/Cpp)
 endif()
 
-if(
-  CMAKE_VERSION VERSION_EQUAL "3.0.0" OR
-  CMAKE_VERSION VERSION_GREATER "3.0.0"
-)
-  cmake_policy(SET CMP0026 NEW)
-  cmake_policy(SET CMP0054 OLD)
-  cmake_policy(SET CMP0045 OLD)
-  cmake_policy(SET CMP0042 OLD)
-endif()
 
-if(
-  CMAKE_VERSION VERSION_EQUAL "3.3.0" OR
-  CMAKE_VERSION VERSION_GREATER "3.3.0"
-)
-  cmake_policy(SET CMP0059 OLD)
-  cmake_policy(SET CMP0054 OLD)
-endif()
+
+
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   find_package(PkgConfig REQUIRED)
