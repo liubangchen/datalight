@@ -65,4 +65,11 @@ target_link_libraries(
   _icudata
 )
 
+add_executable(antlr-demo AntlrDemo.cpp)
+target_link_libraries(
+  antlr-demo
+  PRIVATE
+  antlr4
+)
+
 add_subdirectory(proxygen)
