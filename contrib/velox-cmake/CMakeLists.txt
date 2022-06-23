@@ -221,6 +221,10 @@ endif()
 find_package(BISON 3.0.4 REQUIRED)
 find_package(FLEX 2.5.13 REQUIRED)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D USE_VELOX_COMMON_BASE")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D HAS_UNCAUGHT_EXCEPTIONS")
+add_definitions(-DVELOX_DISABLE_GOOGLETEST)
+
 include_directories(SYSTEM ${VELOX_SOURCE_DIR})
 include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox)
 include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external)
