@@ -1,4 +1,6 @@
-add_executable(trino-server TrinoServer.cpp)
+add_subdirectory(http)
+add_subdirectory(server)
+add_executable(trino-server TrinoMain.cpp)
 
 include_directories(SYSTEM ${VELOX_SOURCE_DIR})
 include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox)
@@ -12,4 +14,5 @@ target_link_libraries(
   folly
   gflags
   velox_common_base
+  datalight_server
 )

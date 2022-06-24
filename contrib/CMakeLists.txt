@@ -127,25 +127,7 @@ set(BZIP "bz2_static")
 
 #####################################################################start re2
 #re2
-fetchcontent_declare(
-  re2
-  GIT_REPOSITORY https://github.com/google/re2.git
-  GIT_TAG 2021-11-01
-  GIT_PROGRESS TRUE
-  SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/re2
-)
-
-fetchcontent_getproperties(re2)
-
-if(NOT re2_POPULATED)
-  message(STATUS "Fetching re2")
-  fetchcontent_populate(re2)
-  message(STATUS "Fetching re2 - done")
-  set(RE2_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/re2)
-endif()
-
-set(RE2_BUILD_TESTING OFF)
-add_subdirectory(re2)
+add_subdirectory(re2-cmake)
 set(RE2 "re2")
 #####################################################################end
 

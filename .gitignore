@@ -175,3 +175,6 @@ website/package-lock.json
 /contrib/proxygen
 /contrib/libsodium
 /contrib/range-v3
+/contrib/antlr4
+/contrib/rapidjson
+/contrib/utfcpp
