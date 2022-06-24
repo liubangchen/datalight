@@ -1,6 +1,6 @@
 #pragma once
 #include<string>
-//#include <proxygen/httpserver/HTTPServer.h>
+#include <http/HttpServer.h>
 
 namespace datalight
 {
@@ -14,7 +14,7 @@ namespace datalight
 
     protected:
     std::string nodeId_;
-    //std::unique_ptr<http::HttpServer> httpServer_;
+    std::unique_ptr<http::HttpServer> httpServer_;
     };
 
 }

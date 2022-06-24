@@ -5,6 +5,7 @@
 #include <proxygen/httpserver/RequestHandlerFactory.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include <re2/re2.h>
+#include "HttpConstants.h"
 
 namespace datalight::http
 {
