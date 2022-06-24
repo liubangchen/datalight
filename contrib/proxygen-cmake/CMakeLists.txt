@@ -24,4 +24,8 @@ endfunction()
 #
 set(PROXYGEN_GENERATED_ROOT "${CMAKE_BINARY_DIR}/proxygen")
 set(PROXYGEN_FBCODE_ROOT ${PROXYGEN_SOURCE_DIR})
+
+
 add_subdirectory(${PROXYGEN_SOURCE_DIR}/proxygen "${CMAKE_BINARY_DIR}/proxygen/")
+#disbale null waring message
+target_compile_options(proxygen PRIVATE "-Wno-nullability-completeness")
