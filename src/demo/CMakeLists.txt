@@ -72,4 +72,12 @@ target_link_libraries(
   antlr4
 )
 
+add_executable(json-demo RapidjsonDemo.cpp)
+target_link_libraries(
+  json-demo
+  PRIVATE
+  rapidjson
+  fmt
+)
+
 add_subdirectory(proxygen)
