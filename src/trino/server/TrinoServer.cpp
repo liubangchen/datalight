@@ -1,13 +1,17 @@
 #include "TrinoServer.h"
 
-namespace datalight {
+namespace datalight
+{
 
-TrinoServer::TrinoServer(){
+    TrinoServer::TrinoServer(){
 
-};
+    };
 
-void TrinoServer::run() {
+    TrinoServer::~TrinoServer()
+    {
+    }
+    void TrinoServer::run()
+    {
+    }
 
-}
-
-}
+} // namespace datalight
