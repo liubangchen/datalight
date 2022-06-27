@@ -1,21 +1,23 @@
 #pragma once
 
+#include <string>
 #include <folly/SocketAddress.h>
 #include <http/HttpServer.h>
-#include <string>
 
-namespace datalight {
+namespace datalight::server
+{
+    class SignalHandler;
+    class TrinoServer
+    {
+    public:
+    explicit TrinoServer();
+        void run();
+        void stop();
+        virtual ~TrinoServer();
 
-class TrinoServer {
- public:
-  TrinoServer();
-  void run();
-  void stop();
-  virtual ~TrinoServer();
-
- protected:
-  std::string nodeId_;
-  std::unique_ptr<http::HttpServer> httpServer_;
+    protected:
+        std::string nodeId_;
+        std::unique_ptr<http::HttpServer> httpServer_;
+        std::unique_ptr<SignalHandler> signalHandler_;
 };
-
-}  // namespace datalight
+}

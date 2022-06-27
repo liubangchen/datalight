@@ -9,6 +9,6 @@
 int main(int argc, char * argv[])
 {
     folly::init(&argc, &argv);
-    datalight::TrinoServer server;
+    datalight::server::TrinoServer server;
     server.run();
 }
