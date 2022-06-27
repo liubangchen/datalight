@@ -3,8 +3,18 @@
 
 namespace datalight::server
 {
+    void sendOkResponse(proxygen::ResponseHandler* downstream) {
+        std::string s("hello");
+        auto buf = folly::IOBuf::copyBuffer(s.data(), s.size(), 1, 2);
+        proxygen::ResponseBuilder(downstream)
+            .status(http::kHttpOk, "OK")
+            .header(
+                proxygen::HTTP_HEADER_CONTENT_TYPE, http::kMimeTypeApplicationJson)
+            .body(std::move(buf))
+            .sendWithEOM();
+    }
     TrinoServer::TrinoServer()
-    : signalHandler_(std::make_unique<SignalHandler>(this)){
+        : signalHandler_(std::make_unique<SignalHandler>(this)){
 
     };
     TrinoServer::~TrinoServer()
@@ -26,7 +36,7 @@ namespace datalight::server
                 proxygen::HTTPMessage * /*message*/,
                 const std::vector<std::unique_ptr<folly::IOBuf>> & /*body*/,
                 proxygen::ResponseHandler * downstream) {
-
+                sendOkResponse(downstream);
             });
 
         httpServer_->start();
