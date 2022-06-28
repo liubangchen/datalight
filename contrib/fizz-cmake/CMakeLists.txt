@@ -100,8 +100,8 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     fizz
     PUBLIC
     -DFIZZ_PLATFORM_CAPABLE_KTLS=0
-    -DSOL_TLS=SOL_TCP #5.4内核没有
-    -DTCP_ULP=0
+    -DSOL_TLS=282 #5.4内核没有,从高版本引入
+    -DTCP_ULP=31
   )
 endif()
 
