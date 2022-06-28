@@ -67,7 +67,11 @@ set(FOLLY_HAVE_LIBZSTD 1)
 set(FOLLY_HAVE_LIBBZ2 1)
 set(FOLLY_LIBRARY_SANITIZE_ADDRESS 0)
 set(FOLLY_HAVE_LIBRT 0)
-
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  set(FOLLY_HAVE_SENDMMSG 1)
+  set(FOLLY_HAVE_RECVMMSG 1)
+  set(FOLLY_HAVE_LIBRT 1)
+endif()
 
 configure_file(
   ${FOLLY_SOURCE_DIR}/CMake/folly-config.h.cmake
@@ -332,6 +336,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   target_link_libraries(
     folly
     uring
+    iberty
   )
 endif()
 

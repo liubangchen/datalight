@@ -21,6 +21,7 @@ if(NOT Boost_POPULATED)
   set(BOOST_SOURCE ${BOOST_SOURCE_DIR})
 endif()
 
+add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 include(CheckBoostVersion)
 

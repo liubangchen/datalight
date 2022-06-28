@@ -1,22 +1,16 @@
-find_path(
-  LIBRT_INCLUDE_DIRS
-  NAMES time.h
-  PATHS ${LIBRT_ROOT}/include/
-)
-find_library(LIBRT_LIBRARIES rt)
+find_path(LIBIBERTY_INCLUDE_DIR NAMES libiberty.h PATH_SUFFIXES libiberty)
+mark_as_advanced(LIBIBERTY_INCLUDE_DIR)
+
+find_library(LIBIBERTY_LIBRARY NAMES iberty)
+mark_as_advanced(LIBIBERTY_LIBRARY)
+
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Librt DEFAULT_MSG LIBRT_LIBRARIES LIBRT_INCLUDE_DIRS)
-mark_as_advanced(LIBRT_INCLUDE_DIRS LIBRT_LIBRARIES)
+find_package_handle_standard_args(
+  Librt
+  REQUIRED_VARS LIBIBERTY_LIBRARY LIBIBERTY_INCLUDE_DIR
+)
 
-if(LIBRT_FOUND)
-  if(NOT TARGET LIBRT::LIBRT)
-    add_library(LIBRT::LIBRT UNKNOWN IMPORTED)
-    set_target_properties(
-      LIBRT::LIBRT PROPERTIES
-      IMPORTED_LOCATION "${LIBRT_LIBRARIES}"
-      INTERFACE_INCLUDE_DIRECTORIES "${LIBRT_INCLUDE_DIRS}"
-    )
-  endif()
+if(LIBIBERTY_FOUND)
+  set(LIBIBERTY_LIBRARIES ${LIBIBERTY_LIBRARY})
+  set(LIBIBERTY_INCLUDE_DIRS ${LIBIBERTY_INCLUDE_DIR})
 endif()
-
-set(LIBRT_LIBRARIES ${LIBRT_LIBRARY})
