@@ -65,6 +65,13 @@ target_link_libraries(
   _icudata
 )
 
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_libraries(
+    icu-demo
+    PRIVATE dl
+  )
+endif()
+
 add_executable(antlr-demo AntlrDemo.cpp)
 target_link_libraries(
   antlr-demo

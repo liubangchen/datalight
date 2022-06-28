@@ -53,7 +53,9 @@ target_include_directories(
   PUBLIC
   ${ICU_SOURCE_DIR}/common/
 )
-
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_options(_icuc BEFORE PRIVATE "-ldl")
+endif()
 
 add_library(_icui18n STATIC ${ICU_I18N_SRCS})
 target_compile_definitions(
@@ -77,3 +79,6 @@ target_include_directories(
   ${ICU_SOURCE_DIR}/common/
   ${ICU_SOURCE_DIR}/i18n/
 )
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_options(_icui18n BEFORE PRIVATE "-ldl")
+endif()
