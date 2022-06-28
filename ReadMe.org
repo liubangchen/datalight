@@ -47,3 +47,9 @@
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/llvm/bin/clang++ -DCMAKE_C_COMPILER=/opt/homebrew/opt/llvm/bin/clang  ../
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/opt/homebrew/opt/gcc/bin/c++-11 -DCMAKE_C_COMPILER=/opt/homebrew/opt/gcc/bin/gcc-11  ..
   #+END_SRC
+- centos
+
+  #+BEGIN_SRC shell
+    yum install centos-release-scl-rh
+    yum install devtoolset-11-toolchain
+  #+END_SRC
