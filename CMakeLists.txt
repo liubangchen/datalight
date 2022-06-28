@@ -25,8 +25,6 @@ endforeach()
 
 project(datalight LANGUAGES C CXX ASM)
 set(CMAKE_MACOSX_RPATH 1)
-#set(CMAKE_POSITION_INDEPENDENT_CODE OFF)
-#set(CMAKE_LINK_LIBRARIES_ONLY_TARGETS ON)
 
 option(UNBUNDLED "Use system libraries instead of ones in contrib/" OFF)
 
@@ -120,26 +118,5 @@ elseif(ENABLE_THINLTO)
 endif()
 
 add_subdirectory(contrib EXCLUDE_FROM_ALL)
-
-#find_package(
-#  Boost
-#  1.66.0
-#  REQUIRED
-#  program_options
-#  context
-#  filesystem
-#  regex
-#  thread
-#  system
-#  date_time
-#  atomic
-#)
-
-#find_package(gflags)
-#find_package(glog)
-#find_library(FMT fmt)
-#find_library(EVENT event)
-
-#find_library(DOUBLE_CONVERSION double-conversion)
 
 add_subdirectory(src)

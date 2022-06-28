@@ -319,6 +319,10 @@ target_include_directories(
   ${CMAKE_THIRDPARTY_HEADER_DIR}/gflags
 )
 
+if(Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+  target_link_libraries(gflags PRIVATE pthread)
+endif()
+
 set(GFLAGS_LIBRARIES "gflags")
 set(gflags_LIBRARIES ${GFLAGS_LIBRARIES})
 

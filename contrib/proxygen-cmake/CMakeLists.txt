@@ -1,7 +1,7 @@
 fetchcontent_declare(
   proxygen
   GIT_REPOSITORY https://github.com/facebook/proxygen.git
-  GIT_TAG v2022.05.30.00
+  GIT_TAG ${FB_LIB_VERSION}
   GIT_PROGRESS TRUE
   SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/proxygen
 )
