@@ -9,7 +9,7 @@
 using namespace folly;
 using namespace wangle;
 
-DEFINE_int32(port, 8080, "echo server port");
+DEFINE_int32(port, 818, "echo server port");
 
 typedef Pipeline<IOBufQueue&, std::string> EchoPipeline;
 

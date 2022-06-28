@@ -47,8 +47,17 @@ target_link_libraries(
 add_executable(echo-server EchoServer.cpp)
 target_link_libraries(
   echo-server
+  PRIVATE
   wangle
 )
+
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_libraries(
+    echo-server
+    PRIVATE
+    rt
+  )
+endif()
 
 add_executable(range-demo Rangev3Demo.cpp)
 target_link_libraries(

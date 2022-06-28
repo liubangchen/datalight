@@ -99,7 +99,9 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   target_compile_definitions(
     fizz
     PUBLIC
-    -DFIZZ_PLATFORM_CAPABLE_KTLS
+    -DFIZZ_PLATFORM_CAPABLE_KTLS=0
+    -DSOL_TLS=SOL_TCP #5.4内核没有
+    -DTCP_ULP=0
   )
 endif()
 
