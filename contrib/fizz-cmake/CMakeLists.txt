@@ -95,6 +95,13 @@ add_library(
   STATIC
   ${FIZZ_SOURCES}
 )
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_compile_definitions(
+    fizz
+    PUBLIC
+    -DFIZZ_PLATFORM_CAPABLE_KTLS
+  )
+endif()
 
 add_library(fizz::fizz ALIAS fizz)
 
