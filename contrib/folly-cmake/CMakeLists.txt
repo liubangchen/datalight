@@ -15,7 +15,7 @@ if(NOT folly_POPULATED)
   set(FOLLY_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/folly)
 endif()
 
-
+include(${FOLLY_SOURCE_DIR}/CMake/FollyConfigChecks.cmake)
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
