@@ -35,6 +35,7 @@ option(VELOX_ENABLE_PRESTO_FUNCTIONS "Build Presto SQL functions." ON)
 option(VELOX_ENABLE_SPARK_FUNCTIONS "Build Spark SQL functions." ON)
 option(VELOX_ENABLE_EXPRESSION "Build expression." ON)
 option(VELOX_ENABLE_PARSE "Build parser used for unit tests." ON)
+option(VELOX_CODEGEN_SUPPORT "" OFF)
 option(
   VELOX_ENABLE_EXAMPLES
   "Build examples. This will enable VELOX_ENABLE_EXPRESSION automatically."
@@ -45,7 +46,7 @@ option(VELOX_ENABLE_BENCHMARKS "Build velox top level benchmarks." OFF)
 option(VELOX_ENABLE_BENCHMARKS_BASIC "Build velox basic benchmarks." OFF)
 option(VELOX_ENABLE_S3 "Build S3 Connector" OFF)
 option(VELOX_ENABLE_HDFS "Build Hdfs Connector" OFF)
-option(VELOX_ENABLE_PARQUET "Enable Parquet support" OFF)
+option(VELOX_ENABLE_PARQUET "Enable Parquet support" ON)
 option(VELOX_BUILD_TEST_UTILS "Enable Velox test utilities" OFF)
 
 
@@ -120,7 +121,13 @@ message("Setting CMAKE_CXX_FLAGS=${SCRIPT_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SCRIPT_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D USE_VELOX_COMMON_BASE")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D HAS_UNCAUGHT_EXCEPTIONS")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -D HAS_UNCAUGHT_EXCEPTIONS")
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mtune=native")
+  add_definitions(-D__SSE4_2__)
+  add_definitions(-D__AVX__)
+endif()
 
 if("${MAX_HIGH_MEM_JOBS}")
   set_property(
@@ -143,16 +150,15 @@ if("${TREAT_WARNINGS_AS_ERRORS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 endif()
 
-if("${ENABLE_ALL_WARNINGS}")
-  if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    set(
-      KNOWN_COMPILER_SPECIFIC_WARNINGS
-      "-Wno-range-loop-analysis -Wno-mismatched-tags"
-    )
-  elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    set(
-      KNOWN_COMPILER_SPECIFIC_WARNINGS
-      "-Wno-implicit-fallthrough \
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(
+    KNOWN_COMPILER_SPECIFIC_WARNINGS
+    "-Wno-range-loop-analysis -Wno-mismatched-tags -Wno-deprecated-register -Wno-error=register"
+  )
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(
+    KNOWN_COMPILER_SPECIFIC_WARNINGS
+    "-Wno-implicit-fallthrough \
          -Wno-empty-body \
          -Wno-class-memaccess \
          -Wno-comment \
@@ -164,20 +170,19 @@ if("${ENABLE_ALL_WARNINGS}")
          -Wno-format-overflow \
          -Wno-strict-aliasing \
          -Wno-type-limits"
-    )
-  endif()
+  )
+endif()
 
-  set(
-    KNOWN_WARNINGS
-    "-Wno-unused \
+set(
+  KNOWN_WARNINGS
+  "-Wno-unused \
        -Wno-unused-parameter \
        -Wno-sign-compare \
        -Wno-ignored-qualifiers \
        ${KNOWN_COMPILER_SPECIFIC_WARNINGS}"
-  )
+)
 
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra ${KNOWN_WARNINGS}")
-endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra ${KNOWN_WARNINGS}")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(Boost_USE_MULTITHREADED TRUE)
@@ -223,6 +228,7 @@ find_package(FLEX 2.5.13 REQUIRED)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D USE_VELOX_COMMON_BASE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D HAS_UNCAUGHT_EXCEPTIONS")
+set(VELOX_DISABLE_GOOGLETEST TRUE)
 add_definitions(-DVELOX_DISABLE_GOOGLETEST)
 
 include_directories(SYSTEM ${VELOX_SOURCE_DIR})
@@ -273,3 +279,11 @@ target_link_libraries(
   velox_dwio_common
   libprotobuf
 )
+
+if((${CMAKE_SYSTEM_NAME} STREQUAL "Linux") AND VELOX_CODEGEN_SUPPORT)
+  target_link_libraries(
+    velox_codegen_udf_manager
+    libprotobuf
+    range-v3
+  )
+endif()

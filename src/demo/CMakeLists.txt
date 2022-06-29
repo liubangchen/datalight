@@ -36,6 +36,7 @@ target_link_libraries(follybin folly)
 add_executable(veloxdemo VeloxDemo.cpp)
 target_link_libraries(
   veloxdemo
+  PRIVATE
   velox_type
   velox_vector
   velox_exec
@@ -43,6 +44,24 @@ target_link_libraries(
   velox_hive_connector
   velox_memory
 )
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  target_compile_options(
+    veloxdemo
+    PRIVATE
+    -O3
+    -mavx2
+    -mfma
+    -mavx
+    -mf16c
+    -mlzcnt
+  )
+  target_link_libraries(
+    veloxdemo
+    PRIVATE
+    rt
+    folly
+  )
+endif()
 
 add_executable(echo-server EchoServer.cpp)
 target_link_libraries(
