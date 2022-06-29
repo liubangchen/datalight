@@ -109,6 +109,7 @@ add_library(fizz::fizz ALIAS fizz)
 
 target_link_libraries(
   fizz
+  PUBLIC
   ssl
   folly
   Threads::Threads
@@ -116,6 +117,14 @@ target_link_libraries(
   zstd
   sodium
 )
+
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_libraries(
+    fizz
+    PRIVATE
+    rt
+  )
+endif()
 
 target_include_directories(
   fizz
