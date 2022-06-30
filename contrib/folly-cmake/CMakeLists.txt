@@ -285,23 +285,27 @@ add_library(
   ${folly_base_files}
   ${CMAKE_CURRENT_BINARY_DIR}/folly/folly-config.h
 )
-#target_compile_options(
-#  folly
-#  PRIVATE
-#  -g
-#  -std=c++17
-#  -finput-charset=UTF-8
-#  -fsigned-char
-#  -Wall
-#  -Wno-deprecated
-#  -Wno-deprecated-declarations
-#  -Wno-sign-compare
-#  -Wno-unused
-#  -Wuninitialized
-#  -Wunused-label
-#  -Wunused-result
-#  ${FOLLY_CXX_FLAGS}
-#)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  target_compile_options(
+    folly
+    PUBLIC
+    -mavx2
+    -mfma
+    -msse4
+    -msse4.2
+    -mavx
+    -mf16c
+    -mlzcnt
+  )
+  target_compile_definitions(
+    folly
+    PUBLIC
+    -DFOLLY_SSE=4
+    -DFOLLY_SSE_MINOR=2
+    #-D=A1
+  )
+endif()
 
 target_compile_definitions(
   folly

@@ -43,6 +43,7 @@ target_link_libraries(
   velox_exec_test_util
   velox_hive_connector
   velox_memory
+  folly
 )
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   target_compile_options(
@@ -55,6 +56,12 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     -mf16c
     -mlzcnt
   )
+  # target_compile_definitions(
+  #   veloxdemo
+  #   PRIVATE
+  #   -DFOLLY_F14_VECTOR_INTRINSICS_AVAILABLE=1
+  #   -DFOLLY_F14_CRC_INTRINSIC_AVAILABLE=1
+  # )
   target_link_libraries(
     veloxdemo
     PRIVATE
