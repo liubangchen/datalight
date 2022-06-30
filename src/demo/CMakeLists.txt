@@ -56,12 +56,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     -mf16c
     -mlzcnt
   )
-  # target_compile_definitions(
-  #   veloxdemo
-  #   PRIVATE
-  #   -DFOLLY_F14_VECTOR_INTRINSICS_AVAILABLE=1
-  #   -DFOLLY_F14_CRC_INTRINSIC_AVAILABLE=1
-  # )
   target_link_libraries(
     veloxdemo
     PRIVATE
@@ -114,11 +108,11 @@ target_link_libraries(
   antlr4
 )
 
-add_executable(json-demo RapidjsonDemo.cpp)
+add_executable(json-demo JsonDemo.cpp)
 target_link_libraries(
   json-demo
   PRIVATE
-  rapidjson
+  nlohmann_json
   fmt
 )
 

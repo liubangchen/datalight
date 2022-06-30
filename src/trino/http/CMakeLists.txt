@@ -9,4 +9,5 @@ target_link_libraries(
   wangle
   proxygen
   proxygenhttpserver
+  nlohmann_json
 )

@@ -178,3 +178,4 @@ website/package-lock.json
 /contrib/antlr4
 /contrib/rapidjson
 /contrib/utfcpp
+/contrib/nlohmannjson

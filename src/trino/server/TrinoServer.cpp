@@ -1,5 +1,6 @@
 #include "TrinoServer.h"
 #include "SignalHandler.h"
+#include "HeartbeatService.h"
 
 namespace datalight::server
 {
@@ -22,8 +23,11 @@ namespace datalight::server
     }
     void TrinoServer::run()
     {
+        HeartbeatService hbService;
+        hbService.start();
+
         int httpExecThreads = 4;
-        auto servicePort = 9000;
+        auto servicePort = 9100;
         folly::SocketAddress socketAddress;
         socketAddress.setFromLocalPort(servicePort);
         LOG(INFO) << fmt::format("STARTUP: Starting server at {}:{} ({})", socketAddress.getIPAddress().str(), servicePort, "0.0.0.0");
