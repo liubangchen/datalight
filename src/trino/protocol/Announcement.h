@@ -10,14 +10,16 @@ namespace datalight::protocol
         nlohmann::json body
             = {{"environment", "production"},
                {"pool", "general"},
-               {"location", "e4901aae-a5c9-9ff7-97a9-5687835ad54c"},
+               {"nodeId", "e4901aae-a5c9-9ff7-97a9-5687835ad54c"},
+               {"location", "/e4901aae-a5c9-9ff7-97a9-5687835ad54c"},
                {"services",
-                {{{"id", ""},
+                {{{"id", "66b459fd-9262-4236-867d-5b0958570e2d"},
                   {"type", "trino"},
                   {"properties",
                    {{"node_version", "381"},
-                    {"coordinator", false},
+                    {"coordinator", "false"},
                     {"connectorIds", "hive"},
+                    {"http-external", "http://172.19.254.10:9100"},
                     {"http", fmt::format("http://{}:{}", "172.19.254.10", "9100")}}}}}}};
         return body.dump();
     }
