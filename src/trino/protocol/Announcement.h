@@ -13,7 +13,7 @@ namespace datalight::protocol
                {"location", "e4901aae-a5c9-9ff7-97a9-5687835ad54c"},
                {"services",
                 {{{"id", ""},
-                  {"type", "presto"},
+                  {"type", "trino"},
                   {"properties",
                    {{"node_version", "381"},
                     {"coordinator", false},
@@ -21,7 +21,7 @@ namespace datalight::protocol
                     {"http", fmt::format("http://{}:{}", "172.19.254.10", "9100")}}}}}}};
         return body.dump();
     }
-    proxygen::HTTPMessage announcementRequest(std::string & body)
+    proxygen::HTTPMessage announcementRequest(const std::string & body)
     {
         proxygen::HTTPMessage request;
         request.setMethod(proxygen::HTTPMethod::PUT);

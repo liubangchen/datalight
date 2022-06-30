@@ -41,7 +41,7 @@ namespace datalight::server
             return;
         }
         auto body = protocol::createAnnouncementBody();
-        auto request=protocol::createAnnouncementBody(body);
+        auto request=protocol::announcementRequest(body);
         client_->sendRequest(request, body)
             .via(eventBaseThread_.getEventBase())
             .thenValue(
