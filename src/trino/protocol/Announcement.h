@@ -40,7 +40,6 @@ namespace datalight::protocol
             .set_subject(uuid)
             .set_expires_at(time + min{5})
             .sign(jwt::algorithm::hs256{"production"});
-        ////std::cout <<token << " = ================"  << std::endl;
         auto decoded1 = jwt::decode(token);
         for(auto& e : decoded1.get_payload_claims())
                 std::cout << e.first << " * " << e.second << std::endl;
