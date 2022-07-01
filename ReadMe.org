@@ -16,3 +16,11 @@
     yum install centos-release-scl-rh
     yum install devtoolset-11-toolchain
   #+END_SRC
+
+- 重新生成cmake文件
+
+  #+BEGIN_SRC shell
+    cd build
+    find . -name CMakeCache.txt -exec rm {} \;
+    cmake ../
+  #+END_SRC
