@@ -4,4 +4,6 @@ target_link_libraries(
   datalight_server
   datalight_http
   nlohmann_json
+  ssl
+  crypto
 )
