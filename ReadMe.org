@@ -1,45 +1,7 @@
 #+startup: showall
 
 * 依赖管理
-#+BEGIN_SRC shell
-  git submodule add -b master --name contrib/fmtlib https://github.com/fmtlib/fmt.git contrib/fmtlib
-  #git submodule add -b master --name contrib/boost https://github.com/boostorg/boost.git contrib/boost
-
-  git submodule add -b master --name contrib/gflags https://github.com/gflags/gflags.git contrib/gflags
-
-  git submodule add -b master --name contrib/glog https://github.com/google/glog.git contrib/glog
-
-  git submodule add --name contrib/openssl https://github.com/openssl/openssl.git contrib/openssl
-  
-  git submodule add -b master --name contrib/libevent https://github.com/libevent/libevent.git contrib/libevent
-
-  git submodule add -b master --name contrib/double-conversion https://github.com/google/double-conversion.git contrib/double-conversion
-
-  git submodule  --name contrib/lz4 https://github.com/lz4/lz4.git contrib/lz4
-  git submodule add -b master --name contrib/lzo2 https://github.com/nemequ/lzo.git contrib/lzo2
-  git submodule add -b master --name contrib/zstd https://github.com/facebook/zstd.git contrib/zstd
-  git submodule add -b master --name contrib/zlib https://github.com/madler/zlib.git contrib/zlib
-  git submodule add --name contrib/snappy https://github.com/google/snappy.git contrib/snappy
-  git submodule add --name contrib/bzip2 https://github.com/libarchive/bzip2.git contrib/bzip2
-
-  git submodule add --name contrib/re2 https://github.com/google/re2.git contrib/re2
-  git submodule add --name contrib/icu4c https://github.com/unicode-org/icu.git contrib/icu4c
-
-  git submodule add --name contrib/protobuf https://github.com/protocolbuffers/protobuf.git contrib/protobuf  
-
-  git submodule add --name contrib/folly https://github.com/facebook/folly.git contrib/folly
-  
-  git submodule add --name contrib/velox https://github.com/facebookincubator/velox.git contrib/velox
-
-#+END_SRC
-- 更新依赖
-
-  #+BEGIN_SRC shell
-    git submodule foreach  --recursive 'tag="$(git config -f $toplevel/.gitmodules submodule.$name.tag)";[[ -n $tag ]] && git reset --hard  $tag || echo "this module has no tag"'
-    git submodule foreach  --recursive 'url="$(git config -f $toplevel/.gitmodules submodule.$name.url)";[[ -n $url ]] && git clone $url'
-  #+END_SRC
-
-  #+RESULTS:
+所有依赖均通过源码进行依赖，不通过静态库或者动态库进行依赖
 
 - 编译
 
