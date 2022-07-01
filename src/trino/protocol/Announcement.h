@@ -48,7 +48,7 @@ namespace datalight::protocol
         request.setMethod(proxygen::HTTPMethod::PUT);
         request.setHTTPVersion(1 , 1);
         request.setURL(fmt::format("/v1/announcement/{}", uuid));
-        request.getHeaders().set("User-Agent", uuid);
+        request.getHeaders().rawSet("User-Agent", uuid);
         request.getHeaders().set(proxygen::HTTP_HEADER_HOST, fmt::format("{}:{}", "172.19.254.10", "9000"));
         request.getHeaders().set(proxygen::HTTP_HEADER_CONTENT_TYPE, "application/json");
         request.getHeaders().rawSet("X-Trino-User", "hadoop");
