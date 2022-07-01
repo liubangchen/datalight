@@ -36,7 +36,7 @@ namespace datalight::protocol
 
         const auto time = jwt::date::clock::now();
         auto token = jwt::create()
-            //.set_type("JWS")
+            .set_type("JWS")
             .set_subject(uuid)
             .set_expires_at(time + min{5})
             .sign(jwt::algorithm::hs256{"production"});
