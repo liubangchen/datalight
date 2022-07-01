@@ -30,6 +30,7 @@ namespace datalight::protocol
         request.setURL(fmt::format("/v1/announcement/{}", "e4901aae-a5c9-9ff7-97a9-5687835ad54c"));
         request.getHeaders().set(proxygen::HTTP_HEADER_HOST, fmt::format("{}:{}", "172.19.254.10", "9100"));
         request.getHeaders().set(proxygen::HTTP_HEADER_CONTENT_TYPE, "application/json");
+        request.getHeaders().set("X-Trino-User", "hadoop");
         request.getHeaders().set(proxygen::HTTP_HEADER_CONTENT_LENGTH, std::to_string(body.size()));
         return request;
     }
