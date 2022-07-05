@@ -1,0 +1,2 @@
+#+startup: showall
+- fork from https://github.com/stbrumme/hash-library.git

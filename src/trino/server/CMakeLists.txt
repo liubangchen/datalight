@@ -6,4 +6,5 @@ target_link_libraries(
   nlohmann_json
   ssl
   crypto
+  hashlibrary
 )
