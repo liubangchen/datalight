@@ -1,6 +1,7 @@
 #include "TrinoServer.h"
 #include "SignalHandler.h"
 #include "HeartbeatService.h"
+#include <protocol/TrinoProtocol.h>
 
 namespace datalight::server
 {
@@ -43,6 +44,26 @@ namespace datalight::server
                 sendOkResponse(downstream);
             });
 
+        httpServer_->registerGet(
+            "/v1/memory",
+            [server = this](
+                proxygen::HTTPMessage* /*message*/,
+                const std::vector<std::unique_ptr<folly::IOBuf>>& /*body*/,
+                proxygen::ResponseHandler* downstream) {
+                //server->reportMemoryInfo(downstream);
+                sendOkResponse(downstream);
+            });
+
+        httpServer_->registerGet(
+            "/v1/info/state",
+            [server = this](
+                proxygen::HTTPMessage* /*message*/,
+                const std::vector<std::unique_ptr<folly::IOBuf>>& /*body*/,
+                proxygen::ResponseHandler* downstream) {
+                //json infoStateJson = convertNodeState(server->nodeState());
+                //sendOkResponse(downstream, infoStateJson);
+                sendOkResponse(downstream);
+            });
         httpServer_->start();
     }
     void TrinoServer::stop()

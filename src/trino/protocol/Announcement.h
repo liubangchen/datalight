@@ -40,12 +40,9 @@ namespace datalight::protocol
         string hash_key(sbuf, sbuf + sizeof sbuf / sizeof sbuf[0]);
         const auto time = jwt::date::clock::now();
         auto token = jwt::create()
-            //.set_type("JWT")
-            //.set_algorithm("HmacSHA256")
             .set_subject(uuid)
             .set_expires_at(time + min{5})
             .sign(jwt::algorithm::hs256(hash_key));
-        LOG(INFO) << "token is:\t" << token << " and key is:\t" << hash_key;
 
         proxygen::HTTPMessage request;
         request.setMethod(proxygen::HTTPMethod::PUT);
