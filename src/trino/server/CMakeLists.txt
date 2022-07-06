@@ -7,4 +7,5 @@ target_link_libraries(
   ssl
   crypto
   hashlibrary
+  trino_protocol
 )

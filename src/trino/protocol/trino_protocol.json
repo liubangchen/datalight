@@ -1,0 +1,4094 @@
+[
+  {
+    "comment": "// This file is generated DO NOT EDIT @generated"
+  },
+  {
+    "class_name": "Block",
+    "cinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\nnamespace datalight::protocol {\n\nvoid to_json(json& j, const Block& p) {\n  j = p.data;\n}\n\nvoid from_json(const json& j, Block& p) {\n  p.data = std::string(j);\n}\n}",
+    "hinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\nnamespace datalight::protocol {\n\nstruct Block {\n  std::string data;\n};\n\nvoid to_json(json& j, const Block& p);\n\nvoid from_json(const json& j, Block& p);\n\n} // namespace facebook::trino::protocol"
+  },
+  {
+    "class_name": "ValueEntry",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Type",
+        "field_name": "type",
+        "field_text": "Type",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Block",
+        "field_name": "block",
+        "field_text": "Block",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "FileSystemExchangeSinkHandle",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "int",
+        "field_name": "partitionId",
+        "field_text": "int",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<byte[]>",
+        "field_name": "secretKey",
+        "field_text": "String",
+        "optional": true,
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "Duration",
+    "cinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n\nnamespace datalight::protocol {\n\nvoid to_json(json& j, const Duration& p) {\n  j = p.toString();\n}\n\nvoid from_json(const json& j, Duration& p) {\n  p = Duration(std::string(j));\n}\n\nstd::ostream& operator<<(std::ostream& os, const Duration& d) {\n  return os << d.toString();\n}\n\n} // namespace facebook::trino::protocol",
+    "hinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n\n\nnamespace datalight::protocol {\n\nstd::ostream& operator<<(std::ostream& os, const Duration& d);\n\nvoid to_json(json& j, const Duration& p);\nvoid from_json(const json& j, Duration& p);\n\n} // namespace facebook::trino::protocol"
+  },
+  {
+    "class_name": "ResourceEstimates",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Optional<Duration>",
+        "field_name": "executionTime",
+        "field_text": "Duration",
+        "optional": true,
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<Duration>",
+        "field_name": "cpuTime",
+        "field_text": "Duration",
+        "optional": true,
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<Long>",
+        "field_name": "peakMemoryBytes",
+        "field_text": "Long",
+        "optional": true,
+        "_N": 3,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ConnectorTransactionHandle",
+    "field_name": "connectorTransactionHandle",
+    "abstract": true,
+    "super_class": "JsonEncodedSubclass",
+    "subclasses": [
+      {
+        "type": "HiveTransactionHandle",
+        "name": "hiveTransactionHandle",
+        "key": "hive",
+        "_N": 1,
+        "_last": true
+      }
+    ],
+    "fields": [],
+    "cinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\nnamespace datalight::protocol {\nvoid to_json(json& j, const std::shared_ptr<ConnectorTransactionHandle>& p) {\n  if (p == nullptr) {\n    return;\n  }\n  String type = p->_type;\n\n  if (getConnectorKey(type) == \"hive\") {\n    j = *std::static_pointer_cast<HiveTransactionHandle>(p);\n    return;\n  }\n\n  throw TypeError(type + \" no abstract type ConnectorTransactionHandle\");\n}\n\nvoid from_json(const json& j, std::shared_ptr<ConnectorTransactionHandle>& p) {\n  String type;\n  try {\n    type = p->getSubclassKey(j);\n  } catch (json::parse_error& e) {\n    throw ParseError(\n        std::string(e.what()) +\n        \" ConnectorTransactionHandle  ConnectorTransactionHandle\");\n  }\n\n  if (getConnectorKey(type) == \"hive\") {\n    auto k = std::make_shared<HiveTransactionHandle>();\n    j.get_to(*k);\n    p = k;\n    return;\n  }\n\n  throw TypeError(type + \" no abstract type ConnectorTransactionHandle\");\n}\n} // namespace facebook::trino::protocol"
+  },
+  {
+    "class_name": "ConnectorPartitioningHandle",
+    "field_name": "connectorPartitioningHandle",
+    "abstract": true,
+    "super_class": "JsonEncodedSubclass",
+    "subclasses": [
+      {
+        "type": "SystemPartitioningHandle",
+        "name": "systemPartitioningHandle",
+        "key": "$remote",
+        "_N": 1
+      },
+      {
+        "type": "HivePartitioningHandle",
+        "name": "hivePartitioningHandle",
+        "key": "hive",
+        "_N": 2,
+        "_last": true
+      }
+    ],
+    "fields": [],
+    "cinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\nnamespace datalight::protocol {\nvoid to_json(json& j, const std::shared_ptr<ConnectorPartitioningHandle>& p) {\n  if (p == nullptr) {\n    return;\n  }\n  String type = p->_type;\n\n  if (type == \"$remote\") {\n    j = *std::static_pointer_cast<SystemPartitioningHandle>(p);\n    return;\n  }\n  if (getConnectorKey(type) == \"hive\") {\n    j = *std::static_pointer_cast<HivePartitioningHandle>(p);\n    return;\n  }\n\n  throw TypeError(type + \" no abstract type ConnectorPartitioningHandle\");\n}\n\nvoid from_json(const json& j, std::shared_ptr<ConnectorPartitioningHandle>& p) {\n  String type;\n  try {\n    type = p->getSubclassKey(j);\n  } catch (json::parse_error& e) {\n    throw ParseError(std::string(e.what()) + \" ConnectorPartitioningHandle\");\n  }\n\n  if (type == \"$remote\") {\n    auto k = std::make_shared<SystemPartitioningHandle>();\n    j.get_to(*k);\n    p = k;\n    return;\n  }\n  if (getConnectorKey(type) == \"hive\") {\n    auto k = std::make_shared<HivePartitioningHandle>();\n    j.get_to(*k);\n    p = k;\n    return;\n  }\n\n  throw TypeError(type + \" no abstract type ConnectorPartitioningHandle\");\n}\n} // namespace facebook::trino::protocol"
+  },
+  {
+    "class_name": "PartitioningHandle",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Optional<CatalogName>",
+        "field_name": "connectorId",
+        "field_text": "CatalogName",
+        "optional": true,
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<ConnectorTransactionHandle>",
+        "field_name": "transactionHandle",
+        "field_text": "ConnectorTransactionHandle",
+        "optional": true,
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "ConnectorPartitioningHandle",
+        "field_name": "connectorHandle",
+        "field_text": "ConnectorPartitioningHandle",
+        "_N": 3,
+        "field_local": true,
+        "optional": true
+      }
+    ]
+  },
+  {
+    "class_name": "PlanNode",
+    "field_name": "planNode",
+    "abstract": true,
+    "super_class": "JsonEncodedSubclass",
+    "subclasses": [
+      {
+        "type": "ProjectNode",
+        "name": "projectNode",
+        "key": ".ProjectNode",
+        "_N": 1
+      },
+      {
+        "type": "LimitNode",
+        "name": "limitNode",
+        "key": ".LimitNode",
+        "_N": 2,
+        "_last": true
+      }
+    ],
+    "fields": [
+      {
+        "field_type": "PlanNodeId",
+        "field_name": "id",
+        "field_text": "PlanNodeId",
+        "_N": 1,
+        "field_local": true,
+        "last": true
+      }
+    ]
+  },
+  {
+    "class_name": "SystemPartitioning",
+    "enum": true,
+    "elements": [
+      {
+        "element": "SINGLE",
+        "_N": 1
+      },
+      {
+        "element": "FIXED",
+        "_N": 2
+      },
+      {
+        "element": "SOURCE",
+        "_N": 3
+      },
+      {
+        "element": "SCALED",
+        "_N": 4
+      },
+      {
+        "element": "COORDINATOR_ONLY",
+        "_N": 5
+      },
+      {
+        "element": "ARBITRARY",
+        "_N": 6,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "SystemPartitionFunction",
+    "enum": true,
+    "elements": [
+      {
+        "element": "SINGLE",
+        "_N": 1
+      },
+      {
+        "element": "HASH",
+        "_N": 2
+      },
+      {
+        "element": "ROUND_ROBIN",
+        "_N": 3
+      },
+      {
+        "element": "BROADCAST",
+        "_N": 4
+      },
+      {
+        "element": "UNKNOWN",
+        "_N": 5,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "SystemPartitioningHandle",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "SystemPartitioning",
+        "field_name": "partitioning",
+        "field_text": "SystemPartitioning",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "SystemPartitionFunction",
+        "field_name": "function",
+        "field_text": "SystemPartitionFunction",
+        "_N": 2,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ConnectorPartitioningHandle",
+    "json_key": "$remote"
+  },
+  {
+    "class_name": "Assignments",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Map<Symbol, Expression>",
+        "field_name": "assignments",
+        "field_text": "Map<Symbol, Expression>",
+        "_N": 1,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ProjectNode",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "PlanNodeId",
+        "field_name": "id",
+        "field_text": "PlanNodeId",
+        "_N": 1,
+        "field_local": false
+      },
+      {
+        "field_type": "PlanNode",
+        "field_name": "source",
+        "field_text": "PlanNode",
+        "_N": 2,
+        "field_local": true,
+        "optional": true
+      },
+      {
+        "field_type": "Assignments",
+        "field_name": "assignments",
+        "field_text": "Assignments",
+        "_N": 3,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "PlanNode",
+    "json_key": ".ProjectNode"
+  },
+  {
+    "class_name": "ErrorType",
+    "enum": true,
+    "elements": [
+      {
+        "element": "USER_ERROR",
+        "_N": 1
+      },
+      {
+        "element": "INTERNAL_ERROR",
+        "_N": 2
+      },
+      {
+        "element": "INSUFFICIENT_RESOURCES",
+        "_N": 3
+      },
+      {
+        "element": "EXTERNAL",
+        "_N": 4,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "ErrorCode",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "int",
+        "field_name": "code",
+        "field_text": "int",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "name",
+        "field_text": "String",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "ErrorType",
+        "field_name": "type",
+        "field_text": "ErrorType",
+        "_N": 3,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "HostAddress",
+    "hinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n\nnamespace datalight::protocol {\n\nusing HostAddress = std::string;\n\n} //"
+  },
+  {
+    "class_name": "ErrorLocation",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "int",
+        "field_name": "lineNumber",
+        "field_text": "int",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "columnNumber",
+        "field_text": "int",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ExecutionFailureInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "type",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "message",
+        "field_text": "String",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "ExecutionFailureInfo",
+        "field_name": "cause",
+        "field_text": "ExecutionFailureInfo",
+        "_N": 3,
+        "optional": true,
+        "field_local": true
+      },
+      {
+        "field_type": "List<ExecutionFailureInfo>",
+        "field_name": "suppressed",
+        "field_text": "List<ExecutionFailureInfo>",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "List<String>",
+        "field_name": "stack",
+        "field_text": "List<String>",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "ErrorLocation",
+        "field_name": "errorLocation",
+        "field_text": "ErrorLocation",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "ErrorCode",
+        "field_name": "errorCode",
+        "field_text": "ErrorCode",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "HostAddress",
+        "field_name": "remoteHost",
+        "field_text": "HostAddress",
+        "_N": 8,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "DataSize",
+    "cinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n\nnamespace datalight::protocol {\n\nvoid to_json(nlohmann::json& j, const DataSize& p) {\n  j = p.toString();\n}\n\nvoid from_json(const nlohmann::json& j, DataSize& p) {\n  p = DataSize(std::string(j));\n}\n\nstd::ostream& operator<<(std::ostream& os, const DataSize& d) {\n  return os << d.toString();\n}\n\n} // namespace facebook::trino::protocol",
+    "hinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\nnamespace datalight::protocol {\n\nstd::ostream& operator<<(std::ostream& os, const DataSize& d);\n\nvoid to_json(nlohmann::json& j, const DataSize& p);\nvoid from_json(const nlohmann::json& j, DataSize& p);\n\n} // namespace facebook::trino::protocol"
+  },
+  {
+    "class_name": "TaskState",
+    "enum": true,
+    "elements": [
+      {
+        "element": "PLANNED",
+        "_N": 1
+      },
+      {
+        "element": "RUNNING",
+        "_N": 2
+      },
+      {
+        "element": "FLUSHING",
+        "_N": 3
+      },
+      {
+        "element": "FINISHED",
+        "_N": 4
+      },
+      {
+        "element": "CANCELED",
+        "_N": 5
+      },
+      {
+        "element": "ABORTED",
+        "_N": 6
+      },
+      {
+        "element": "FAILED",
+        "_N": 7,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "TaskStatus",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "TaskId",
+        "field_name": "taskId",
+        "field_text": "TaskId",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "taskInstanceId",
+        "field_text": "String",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "version",
+        "field_text": "int64_t",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "TaskState",
+        "field_name": "state",
+        "field_text": "TaskState",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "URI",
+        "field_name": "self",
+        "field_text": "URI",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "nodeId",
+        "field_text": "String",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "List<ExecutionFailureInfo>",
+        "field_name": "failures",
+        "field_text": "List<ExecutionFailureInfo>",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "queuedPartitionedDrivers",
+        "field_text": "int",
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "runningPartitionedDrivers",
+        "field_text": "int",
+        "_N": 9,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "outputBufferOverutilized",
+        "field_text": "bool",
+        "_N": 10,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "physicalWrittenDataSize",
+        "field_text": "DataSize",
+        "_N": 11,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "memoryReservation",
+        "field_text": "DataSize",
+        "_N": 12,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "peakMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 13,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "revocableMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 14,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "fullGcCount",
+        "field_text": "int64_t",
+        "_N": 15,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "fullGcTime",
+        "field_text": "Duration",
+        "_N": 16,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "dynamicFiltersVersion",
+        "field_text": "int64_t",
+        "_N": 17,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "queuedPartitionedSplitsWeight",
+        "field_text": "int64_t",
+        "_N": 18,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "runningPartitionedSplitsWeight",
+        "field_text": "int64_t",
+        "_N": 19,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "LocalCostEstimate",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "double",
+        "field_name": "cpuCost",
+        "field_text": "double",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "maxMemory",
+        "field_text": "double",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "networkCost",
+        "field_text": "double",
+        "_N": 3,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "PlanCostEstimate",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "double",
+        "field_name": "cpuCost",
+        "field_text": "double",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "maxMemory",
+        "field_text": "double",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "maxMemoryWhenOutputting",
+        "field_text": "double",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "networkCost",
+        "field_text": "double",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "LocalCostEstimate",
+        "field_name": "rootNodeLocalCostEstimate",
+        "field_text": "LocalCostEstimate",
+        "_N": 5,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ValueSet",
+    "field_name": "valueSet",
+    "abstract": true,
+    "super_class": "JsonEncodedSubclass",
+    "subclasses": [
+      {
+        "type": "EquatableValueSet",
+        "name": "equatableValueSet",
+        "key": "equatable",
+        "_N": 1
+      },
+      {
+        "type": "SortedRangeSet",
+        "name": "sortedRangeSet",
+        "key": "sortable",
+        "_N": 2
+      },
+      {
+        "type": "AllOrNoneValueSet",
+        "name": "allOrNoneValueSet",
+        "key": "allOrNone",
+        "_N": 3,
+        "_last": true
+      }
+    ],
+    "fields": []
+  },
+  {
+    "class_name": "Domain",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "ValueSet",
+        "field_name": "values",
+        "field_text": "ValueSet",
+        "_N": 1,
+        "field_local": true,
+        "optional": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "nullAllowed",
+        "field_text": "bool",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "PageBufferInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "int",
+        "field_name": "partition",
+        "field_text": "int",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "bufferedPages",
+        "field_text": "int64_t",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "bufferedBytes",
+        "field_text": "int64_t",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "rowsAdded",
+        "field_text": "int64_t",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "pagesAdded",
+        "field_text": "int64_t",
+        "_N": 5,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "Serializable",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Type",
+        "field_name": "type",
+        "field_text": "Type",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Block",
+        "field_name": "block",
+        "field_text": "Block",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "HivePartitionKey",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "name",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "value",
+        "field_text": "String",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ColumnType",
+    "enum": true,
+    "elements": [
+      {
+        "element": "PARTITION_KEY",
+        "_N": 1
+      },
+      {
+        "element": "REGULAR",
+        "_N": 2
+      },
+      {
+        "element": "SYNTHESIZED",
+        "_N": 3,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "HiveColumnProjectionInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "List<Integer>",
+        "field_name": "dereferenceIndices",
+        "field_text": "List<Integer>",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "List<String>",
+        "field_name": "dereferenceNames",
+        "field_text": "List<String>",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "HiveType",
+        "field_name": "hiveType",
+        "field_text": "HiveType",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "Type",
+        "field_name": "type",
+        "field_text": "Type",
+        "_N": 4,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "HiveColumnHandle",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "baseColumnName",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "baseHiveColumnIndex",
+        "field_text": "int",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "HiveType",
+        "field_name": "baseHiveType",
+        "field_text": "HiveType",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "Type",
+        "field_name": "baseType",
+        "field_text": "Type",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<HiveColumnProjectionInfo>",
+        "field_name": "hiveColumnProjectionInfo",
+        "field_text": "HiveColumnProjectionInfo",
+        "optional": true,
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "ColumnType",
+        "field_name": "columnType",
+        "field_text": "ColumnType",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "comment",
+        "field_text": "String",
+        "optional": true,
+        "_N": 7,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "BucketConversion",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "BucketingVersion",
+        "field_name": "bucketingVersion",
+        "field_text": "BucketingVersion",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "tableBucketCount",
+        "field_text": "int",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "partitionBucketCount",
+        "field_text": "int",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "List<HiveColumnHandle>",
+        "field_name": "bucketColumnHandles",
+        "field_text": "List<HiveColumnHandle>",
+        "_N": 4,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "EquatableValueSet",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Type",
+        "field_name": "type",
+        "field_text": "Type",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "inclusive",
+        "field_text": "bool",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<ValueEntry>",
+        "field_name": "entries",
+        "field_text": "List<ValueEntry>",
+        "_N": 3,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ValueSet",
+    "json_key": "equatable"
+  },
+  {
+    "class_name": "OriginalFileInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "name",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "fileSize",
+        "field_text": "int64_t",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "NodeVersion",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "version",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ServerInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "NodeVersion",
+        "field_name": "nodeVersion",
+        "field_text": "NodeVersion",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "environment",
+        "field_text": "String",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "coordinator",
+        "field_text": "bool",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "starting",
+        "field_text": "bool",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<Duration>",
+        "field_name": "uptime",
+        "field_text": "Duration",
+        "optional": true,
+        "_N": 5,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "NullableValue",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Serializable",
+        "field_name": "serializable",
+        "field_text": "Serializable",
+        "_N": 1,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ArgumentBinding",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Expression",
+        "field_name": "expression",
+        "field_text": "Expression",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "NullableValue",
+        "field_name": "constant",
+        "field_text": "NullableValue",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ConnectorSplit",
+    "field_name": "connectorSplit",
+    "abstract": true,
+    "super_class": "JsonEncodedSubclass",
+    "subclasses": [
+      {
+        "type": "HiveSplit",
+        "name": "hiveSplit",
+        "key": "hive",
+        "_N": 1
+      },
+      {
+        "type": "RemoteSplit",
+        "name": "remoteSplit",
+        "key": "$remote",
+        "_N": 2
+      },
+      {
+        "type": "EmptySplit",
+        "name": "emptySplit",
+        "key": "$empty",
+        "_N": 3,
+        "_last": true
+      }
+    ],
+    "fields": [],
+    "cinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\nnamespace datalight::protocol {\nvoid to_json(json& j, const std::shared_ptr<ConnectorSplit>& p) {\n  if (p == nullptr) {\n    return;\n  }\n  String type = p->_type;\n\n  if (type == \"$remote\") {\n    j = *std::static_pointer_cast<RemoteSplit>(p);\n    return;\n  }\n  if (type == \"$empty\") {\n    j = *std::static_pointer_cast<EmptySplit>(p);\n    return;\n  }\n  if (getConnectorKey(type) == \"hive\") {\n    j = *std::static_pointer_cast<HiveSplit>(p);\n    return;\n  }\n\n  throw TypeError(type + \" no abstract type ConnectorSplit\");\n}\n\nvoid from_json(const json& j, std::shared_ptr<ConnectorSplit>& p) {\n  String type;\n  try {\n    type = p->getSubclassKey(j);\n  } catch (json::parse_error& e) {\n    throw ParseError(std::string(e.what()) + \" ConnectorSplit\");\n  }\n\n  if (type == \"$remote\") {\n    auto k = std::make_shared<RemoteSplit>();\n    j.get_to(*k);\n    p = k;\n    return;\n  }\n  if (type == \"$empty\") {\n    auto k = std::make_shared<EmptySplit>();\n    j.get_to(*k);\n    p = k;\n    return;\n  }\n  if (getConnectorKey(type) == \"hive\") {\n    auto k = std::make_shared<HiveSplit>();\n    j.get_to(*k);\n    p = k;\n    return;\n  }\n\n  throw TypeError(type + \" no abstract type ConnectorSplit\");\n}\n} // namespace facebook::trino::protocol"
+  },
+  {
+    "class_name": "Split",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "CatalogName",
+        "field_name": "catalogName",
+        "field_text": "CatalogName",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "ConnectorSplit",
+        "field_name": "connectorSplit",
+        "field_text": "ConnectorSplit",
+        "_N": 2,
+        "field_local": true,
+        "optional": true
+      }
+    ]
+  },
+  {
+    "class_name": "ScheduledSplit",
+    "hinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\nnamespace datalight::protocol {\n\nstruct ScheduledSplit {\n  long sequenceId = {};\n  PlanNodeId planNodeId = {}; // dependency\n  Split split = {};\n\n  bool operator<(const ScheduledSplit& o) const {\n    return sequenceId < o.sequenceId;\n  }\n};\n\nvoid to_json(json& j, const ScheduledSplit& p);\nvoid from_json(const json& j, ScheduledSplit& p);\n\n} // namespace facebook::trino::protocol",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "long",
+        "field_name": "sequenceId",
+        "field_text": "int64_t",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "PlanNodeId",
+        "field_name": "planNodeId",
+        "field_text": "PlanNodeId",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "Split",
+        "field_name": "split",
+        "field_text": "Split",
+        "_N": 3,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "BlockedReason",
+    "enum": true,
+    "elements": [
+      {
+        "element": "WAITING_FOR_MEMORY",
+        "_N": 1,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "OperatorInfo",
+    "cinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\nnamespace datalight::protocol {\nvoid to_json(json& j, const OperatorInfo& p) {}\nvoid from_json(const json& j, OperatorInfo& p) {}\n} // namespace facebook::trino::protocol",
+    "hinc": "/*\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\nnamespace datalight::protocol {\nstruct OperatorInfo {};\nvoid to_json(json& j, const OperatorInfo& p);\nvoid from_json(const json& j, OperatorInfo& p);\n} // namespace facebook::trino::protocol"
+  },
+  {
+    "class_name": "OperatorStats",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "int",
+        "field_name": "stageId",
+        "field_text": "int",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "pipelineId",
+        "field_text": "int",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "operatorId",
+        "field_text": "int",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "PlanNodeId",
+        "field_name": "planNodeId",
+        "field_text": "PlanNodeId",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "operatorType",
+        "field_text": "String",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "totalDrivers",
+        "field_text": "int64_t",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "addInputCalls",
+        "field_text": "int64_t",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "addInputWall",
+        "field_text": "Duration",
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "addInputCpu",
+        "field_text": "Duration",
+        "_N": 9,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "physicalInputDataSize",
+        "field_text": "DataSize",
+        "_N": 10,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "physicalInputPositions",
+        "field_text": "int64_t",
+        "_N": 11,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "physicalInputReadTime",
+        "field_text": "Duration",
+        "_N": 12,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "internalNetworkInputDataSize",
+        "field_text": "DataSize",
+        "_N": 13,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "internalNetworkInputPositions",
+        "field_text": "int64_t",
+        "_N": 14,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "rawInputDataSize",
+        "field_text": "DataSize",
+        "_N": 15,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "inputDataSize",
+        "field_text": "DataSize",
+        "_N": 16,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "inputPositions",
+        "field_text": "int64_t",
+        "_N": 17,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "sumSquaredInputPositions",
+        "field_text": "double",
+        "_N": 18,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "getOutputCalls",
+        "field_text": "int64_t",
+        "_N": 19,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "getOutputWall",
+        "field_text": "Duration",
+        "_N": 20,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "getOutputCpu",
+        "field_text": "Duration",
+        "_N": 21,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "outputDataSize",
+        "field_text": "DataSize",
+        "_N": 22,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "outputPositions",
+        "field_text": "int64_t",
+        "_N": 23,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "dynamicFilterSplitsProcessed",
+        "field_text": "int64_t",
+        "_N": 24,
+        "field_local": true
+      },
+      {
+        "field_type": "Metrics",
+        "field_name": "metrics",
+        "field_text": "Metrics",
+        "_N": 25,
+        "field_local": true
+      },
+      {
+        "field_type": "Metrics",
+        "field_name": "connectorMetrics",
+        "field_text": "Metrics",
+        "_N": 26,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "physicalWrittenDataSize",
+        "field_text": "DataSize",
+        "_N": 27,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "blockedWall",
+        "field_text": "Duration",
+        "_N": 28,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "finishCalls",
+        "field_text": "int64_t",
+        "_N": 29,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "finishWall",
+        "field_text": "Duration",
+        "_N": 30,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "finishCpu",
+        "field_text": "Duration",
+        "_N": 31,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "userMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 32,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "revocableMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 33,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "peakUserMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 34,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "peakRevocableMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 35,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "peakTotalMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 36,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "spilledDataSize",
+        "field_text": "DataSize",
+        "_N": 37,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<BlockedReason>",
+        "field_name": "blockedReason",
+        "field_text": "BlockedReason",
+        "optional": true,
+        "_N": 38,
+        "field_local": true
+      },
+      {
+        "field_type": "OperatorInfo",
+        "field_name": "info",
+        "field_text": "OperatorInfo",
+        "_N": 39,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "DistributionSnapshot",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "double",
+        "field_name": "count",
+        "field_text": "double",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "total",
+        "field_text": "double",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "p01",
+        "field_text": "double",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "p05",
+        "field_text": "double",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "p10",
+        "field_text": "double",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "p25",
+        "field_text": "double",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "p50",
+        "field_text": "double",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "p75",
+        "field_text": "double",
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "p90",
+        "field_text": "double",
+        "_N": 9,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "p95",
+        "field_text": "double",
+        "_N": 10,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "p99",
+        "field_text": "double",
+        "_N": 11,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "min",
+        "field_text": "double",
+        "_N": 12,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "max",
+        "field_text": "double",
+        "_N": 13,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "avg",
+        "field_text": "double",
+        "_N": 14,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "DriverStats",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "DateTime",
+        "field_name": "createTime",
+        "field_text": "DateTime",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "startTime",
+        "field_text": "DateTime",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "endTime",
+        "field_text": "DateTime",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "queuedTime",
+        "field_text": "Duration",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "elapsedTime",
+        "field_text": "Duration",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "userMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "revocableMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "totalScheduledTime",
+        "field_text": "Duration",
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "totalCpuTime",
+        "field_text": "Duration",
+        "_N": 9,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "totalBlockedTime",
+        "field_text": "Duration",
+        "_N": 10,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "fullyBlocked",
+        "field_text": "bool",
+        "_N": 11,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<BlockedReason>",
+        "field_name": "blockedReasons",
+        "field_text": "List<BlockedReason>",
+        "_N": 12,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "physicalInputDataSize",
+        "field_text": "DataSize",
+        "_N": 13,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "physicalInputPositions",
+        "field_text": "int64_t",
+        "_N": 14,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "physicalInputReadTime",
+        "field_text": "Duration",
+        "_N": 15,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "internalNetworkInputDataSize",
+        "field_text": "DataSize",
+        "_N": 16,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "internalNetworkInputPositions",
+        "field_text": "int64_t",
+        "_N": 17,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "rawInputDataSize",
+        "field_text": "DataSize",
+        "_N": 18,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "rawInputPositions",
+        "field_text": "int64_t",
+        "_N": 19,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "rawInputReadTime",
+        "field_text": "Duration",
+        "_N": 20,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "processedInputDataSize",
+        "field_text": "DataSize",
+        "_N": 21,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "processedInputPositions",
+        "field_text": "int64_t",
+        "_N": 22,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "inputBlockedTime",
+        "field_text": "Duration",
+        "_N": 23,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "outputDataSize",
+        "field_text": "DataSize",
+        "_N": 24,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "outputPositions",
+        "field_text": "int64_t",
+        "_N": 25,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "outputBlockedTime",
+        "field_text": "Duration",
+        "_N": 26,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "physicalWrittenDataSize",
+        "field_text": "DataSize",
+        "_N": 27,
+        "field_local": true
+      },
+      {
+        "field_type": "List<OperatorStats>",
+        "field_name": "operatorStats",
+        "field_text": "List<OperatorStats>",
+        "_N": 28,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "PipelineStats",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "int",
+        "field_name": "pipelineId",
+        "field_text": "int",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "firstStartTime",
+        "field_text": "DateTime",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "lastStartTime",
+        "field_text": "DateTime",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "lastEndTime",
+        "field_text": "DateTime",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "inputPipeline",
+        "field_text": "bool",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "outputPipeline",
+        "field_text": "bool",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "totalDrivers",
+        "field_text": "int",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "queuedDrivers",
+        "field_text": "int",
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "queuedPartitionedDrivers",
+        "field_text": "int",
+        "_N": 9,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "queuedPartitionedSplitsWeight",
+        "field_text": "int64_t",
+        "_N": 10,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "runningDrivers",
+        "field_text": "int",
+        "_N": 11,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "runningPartitionedDrivers",
+        "field_text": "int",
+        "_N": 12,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "runningPartitionedSplitsWeight",
+        "field_text": "int64_t",
+        "_N": 13,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "blockedDrivers",
+        "field_text": "int",
+        "_N": 14,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "completedDrivers",
+        "field_text": "int",
+        "_N": 15,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "userMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 16,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "revocableMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 17,
+        "field_local": true
+      },
+      {
+        "field_type": "DistributionSnapshot",
+        "field_name": "queuedTime",
+        "field_text": "DistributionSnapshot",
+        "_N": 18,
+        "field_local": true
+      },
+      {
+        "field_type": "DistributionSnapshot",
+        "field_name": "elapsedTime",
+        "field_text": "DistributionSnapshot",
+        "_N": 19,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "totalScheduledTime",
+        "field_text": "Duration",
+        "_N": 20,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "totalCpuTime",
+        "field_text": "Duration",
+        "_N": 21,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "totalBlockedTime",
+        "field_text": "Duration",
+        "_N": 22,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "fullyBlocked",
+        "field_text": "bool",
+        "_N": 23,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<BlockedReason>",
+        "field_name": "blockedReasons",
+        "field_text": "List<BlockedReason>",
+        "_N": 24,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "physicalInputDataSize",
+        "field_text": "DataSize",
+        "_N": 25,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "physicalInputPositions",
+        "field_text": "int64_t",
+        "_N": 26,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "physicalInputReadTime",
+        "field_text": "Duration",
+        "_N": 27,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "internalNetworkInputDataSize",
+        "field_text": "DataSize",
+        "_N": 28,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "internalNetworkInputPositions",
+        "field_text": "int64_t",
+        "_N": 29,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "rawInputDataSize",
+        "field_text": "DataSize",
+        "_N": 30,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "rawInputPositions",
+        "field_text": "int64_t",
+        "_N": 31,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "processedInputDataSize",
+        "field_text": "DataSize",
+        "_N": 32,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "processedInputPositions",
+        "field_text": "int64_t",
+        "_N": 33,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "inputBlockedTime",
+        "field_text": "Duration",
+        "_N": 34,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "outputDataSize",
+        "field_text": "DataSize",
+        "_N": 35,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "outputPositions",
+        "field_text": "int64_t",
+        "_N": 36,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "outputBlockedTime",
+        "field_text": "Duration",
+        "_N": 37,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "physicalWrittenDataSize",
+        "field_text": "DataSize",
+        "_N": 38,
+        "field_local": true
+      },
+      {
+        "field_type": "List<OperatorStats>",
+        "field_name": "operatorSummaries",
+        "field_text": "List<OperatorStats>",
+        "_N": 39,
+        "field_local": true
+      },
+      {
+        "field_type": "List<DriverStats>",
+        "field_name": "drivers",
+        "field_text": "List<DriverStats>",
+        "_N": 40,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "Partitioning",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "PartitioningHandle",
+        "field_name": "handle",
+        "field_text": "PartitioningHandle",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "List<ArgumentBinding>",
+        "field_name": "arguments",
+        "field_text": "List<ArgumentBinding>",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "SortOrder",
+    "enum": true,
+    "elements": [
+      {
+        "element": "ASC_NULLS_FIRST",
+        "_N": 1
+      },
+      {
+        "element": "ASC_NULLS_LAST",
+        "_N": 2
+      },
+      {
+        "element": "DESC_NULLS_FIRST",
+        "_N": 3
+      },
+      {
+        "element": "DESC_NULLS_LAST",
+        "_N": 4,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "OrderingScheme",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "List<Symbol>",
+        "field_name": "orderBy",
+        "field_text": "List<Symbol>",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<Symbol, SortOrder>",
+        "field_name": "orderings",
+        "field_text": "Map<Symbol, SortOrder>",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "LimitNode",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "PlanNodeId",
+        "field_name": "id",
+        "field_text": "PlanNodeId",
+        "_N": 1,
+        "field_local": false
+      },
+      {
+        "field_type": "PlanNode",
+        "field_name": "source",
+        "field_text": "PlanNode",
+        "_N": 2,
+        "field_local": true,
+        "optional": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "count",
+        "field_text": "int64_t",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<OrderingScheme>",
+        "field_name": "tiesResolvingScheme",
+        "field_text": "OrderingScheme",
+        "optional": true,
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "partial",
+        "field_text": "bool",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "List<Symbol>",
+        "field_name": "requiresPreSortedInputs",
+        "field_text": "List<Symbol>",
+        "_N": 6,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "PlanNode",
+    "json_key": ".LimitNode"
+  },
+  {
+    "class_name": "SqlPath",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Optional<String>",
+        "field_name": "rawPath",
+        "field_text": "String",
+        "optional": true,
+        "_N": 1,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ExchangeSourceHandle",
+    "field_name": "exchangeSourceHandle",
+    "abstract": true,
+    "super_class": "JsonEncodedSubclass",
+    "subclasses": [
+      {
+        "type": "FileSystemExchangeSourceHandle",
+        "name": "fileSystemExchangeSourceHandle",
+        "key": "filesystem",
+        "_N": 1,
+        "_last": true
+      }
+    ],
+    "fields": []
+  },
+  {
+    "class_name": "SpoolingExchangeInput",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "List<ExchangeSourceHandle>",
+        "field_name": "exchangeSourceHandles",
+        "field_text": "List<ExchangeSourceHandle>",
+        "_N": 1,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ExchangeInput",
+    "json_key": "spooling"
+  },
+  {
+    "class_name": "HivePartitioningHandle",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "BucketingVersion",
+        "field_name": "bucketingVersion",
+        "field_text": "BucketingVersion",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "bucketCount",
+        "field_text": "int",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "List<HiveType>",
+        "field_name": "hiveBucketTypes",
+        "field_text": "List<HiveType>",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "OptionalInt",
+        "field_name": "maxCompatibleBucketCount",
+        "field_text": "int",
+        "optional": true,
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "usePartitionedBucketing",
+        "field_text": "bool",
+        "_N": 5,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ConnectorPartitioningHandle",
+    "json_key": "hive"
+  },
+  {
+    "class_name": "SplitAssignment",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "PlanNodeId",
+        "field_name": "planNodeId",
+        "field_text": "PlanNodeId",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<ScheduledSplit>",
+        "field_name": "splits",
+        "field_text": "List<ScheduledSplit>",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "noMoreSplits",
+        "field_text": "bool",
+        "_N": 3,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "SortedRangeSet",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Type",
+        "field_name": "type",
+        "field_text": "Type",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean[]",
+        "field_name": "inclusive",
+        "field_text": "List<bool>",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "Block",
+        "field_name": "sortedRanges",
+        "field_text": "Block",
+        "_N": 3,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ValueSet",
+    "json_key": "sortable"
+  },
+  {
+    "class_name": "TaskStats",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "DateTime",
+        "field_name": "createTime",
+        "field_text": "DateTime",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "firstStartTime",
+        "field_text": "DateTime",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "lastStartTime",
+        "field_text": "DateTime",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "lastEndTime",
+        "field_text": "DateTime",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "endTime",
+        "field_text": "DateTime",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "elapsedTime",
+        "field_text": "Duration",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "queuedTime",
+        "field_text": "Duration",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "totalDrivers",
+        "field_text": "int",
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "queuedDrivers",
+        "field_text": "int",
+        "_N": 9,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "queuedPartitionedDrivers",
+        "field_text": "int",
+        "_N": 10,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "queuedPartitionedSplitsWeight",
+        "field_text": "int64_t",
+        "_N": 11,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "runningDrivers",
+        "field_text": "int",
+        "_N": 12,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "runningPartitionedDrivers",
+        "field_text": "int",
+        "_N": 13,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "runningPartitionedSplitsWeight",
+        "field_text": "int64_t",
+        "_N": 14,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "blockedDrivers",
+        "field_text": "int",
+        "_N": 15,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "completedDrivers",
+        "field_text": "int",
+        "_N": 16,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "cumulativeUserMemory",
+        "field_text": "double",
+        "_N": 17,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "userMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 18,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "peakUserMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 19,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "revocableMemoryReservation",
+        "field_text": "DataSize",
+        "_N": 20,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "totalScheduledTime",
+        "field_text": "Duration",
+        "_N": 21,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "totalCpuTime",
+        "field_text": "Duration",
+        "_N": 22,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "totalBlockedTime",
+        "field_text": "Duration",
+        "_N": 23,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "fullyBlocked",
+        "field_text": "bool",
+        "_N": 24,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<BlockedReason>",
+        "field_name": "blockedReasons",
+        "field_text": "List<BlockedReason>",
+        "_N": 25,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "physicalInputDataSize",
+        "field_text": "DataSize",
+        "_N": 26,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "physicalInputPositions",
+        "field_text": "int64_t",
+        "_N": 27,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "physicalInputReadTime",
+        "field_text": "Duration",
+        "_N": 28,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "internalNetworkInputDataSize",
+        "field_text": "DataSize",
+        "_N": 29,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "internalNetworkInputPositions",
+        "field_text": "int64_t",
+        "_N": 30,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "rawInputDataSize",
+        "field_text": "DataSize",
+        "_N": 31,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "rawInputPositions",
+        "field_text": "int64_t",
+        "_N": 32,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "processedInputDataSize",
+        "field_text": "DataSize",
+        "_N": 33,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "processedInputPositions",
+        "field_text": "int64_t",
+        "_N": 34,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "inputBlockedTime",
+        "field_text": "Duration",
+        "_N": 35,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "outputDataSize",
+        "field_text": "DataSize",
+        "_N": 36,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "outputPositions",
+        "field_text": "int64_t",
+        "_N": 37,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "outputBlockedTime",
+        "field_text": "Duration",
+        "_N": 38,
+        "field_local": true
+      },
+      {
+        "field_type": "DataSize",
+        "field_name": "physicalWrittenDataSize",
+        "field_text": "DataSize",
+        "_N": 39,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "fullGcCount",
+        "field_text": "int",
+        "_N": 40,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "fullGcTime",
+        "field_text": "Duration",
+        "_N": 41,
+        "field_local": true
+      },
+      {
+        "field_type": "List<PipelineStats>",
+        "field_name": "pipelines",
+        "field_text": "List<PipelineStats>",
+        "_N": 42,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "BufferInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "OutputBufferId",
+        "field_name": "bufferId",
+        "field_text": "OutputBufferId",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "finished",
+        "field_text": "bool",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "bufferedPages",
+        "field_text": "int",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "pagesSent",
+        "field_text": "int64_t",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "PageBufferInfo",
+        "field_name": "pageBufferInfo",
+        "field_text": "PageBufferInfo",
+        "_N": 5,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "BufferState",
+    "enum": true,
+    "elements": [
+      {
+        "element": "OPEN",
+        "_N": 1
+      },
+      {
+        "element": "NO_MORE_BUFFERS",
+        "_N": 2
+      },
+      {
+        "element": "NO_MORE_PAGES",
+        "_N": 3
+      },
+      {
+        "element": "FLUSHING",
+        "_N": 4
+      },
+      {
+        "element": "FINISHED",
+        "_N": 5
+      },
+      {
+        "element": "ABORTED",
+        "_N": 6
+      },
+      {
+        "element": "FAILED",
+        "_N": 7,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "OutputBufferInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "type",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "BufferState",
+        "field_name": "state",
+        "field_text": "BufferState",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "canAddBuffers",
+        "field_text": "bool",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "canAddPages",
+        "field_text": "bool",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "totalBufferedBytes",
+        "field_text": "int64_t",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "totalBufferedPages",
+        "field_text": "int64_t",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "totalRowsSent",
+        "field_text": "int64_t",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "totalPagesSent",
+        "field_text": "int64_t",
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "List<BufferInfo>",
+        "field_name": "buffers",
+        "field_text": "List<BufferInfo>",
+        "_N": 9,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "TaskInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "TaskStatus",
+        "field_name": "taskStatus",
+        "field_text": "TaskStatus",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "DateTime",
+        "field_name": "lastHeartbeat",
+        "field_text": "DateTime",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "OutputBufferInfo",
+        "field_name": "outputBuffers",
+        "field_text": "OutputBufferInfo",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<PlanNodeId>",
+        "field_name": "noMoreSplits",
+        "field_text": "List<PlanNodeId>",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "TaskStats",
+        "field_name": "stats",
+        "field_text": "TaskStats",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<DataSize>",
+        "field_name": "estimatedMemory",
+        "field_text": "DataSize",
+        "optional": true,
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "needsPlan",
+        "field_text": "bool",
+        "_N": 7,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "SymbolStatsEstimate",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "double",
+        "field_name": "lowValue",
+        "field_text": "double",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "highValue",
+        "field_text": "double",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "nullsFraction",
+        "field_text": "double",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "averageRowSize",
+        "field_text": "double",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "distinctValuesCount",
+        "field_text": "double",
+        "_N": 5,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "TableToPartitionMapping",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Optional<Map<Integer, Integer>>",
+        "field_name": "tableToPartitionColumns",
+        "field_text": "Map<Integer, Integer>",
+        "optional": true,
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<Integer, HiveTypeName>",
+        "field_name": "partitionColumnCoercions",
+        "field_text": "Map<Integer, HiveTypeName>",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "DeleteDeltaInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "directoryName",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "AcidInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "partitionLocation",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "List<DeleteDeltaInfo>",
+        "field_name": "deleteDeltas",
+        "field_text": "List<DeleteDeltaInfo>",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "List<OriginalFileInfo>",
+        "field_name": "originalFiles",
+        "field_text": "List<OriginalFileInfo>",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "bucketId",
+        "field_text": "int",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "orcAcidVersionValidated",
+        "field_text": "bool",
+        "_N": 5,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "BucketValidation",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "BucketingVersion",
+        "field_name": "bucketingVersion",
+        "field_text": "BucketingVersion",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "bucketCount",
+        "field_text": "int",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "List<HiveColumnHandle>",
+        "field_name": "bucketColumns",
+        "field_text": "List<HiveColumnHandle>",
+        "_N": 3,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "HiveSplit",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "database",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "table",
+        "field_text": "String",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "partitionName",
+        "field_text": "String",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "path",
+        "field_text": "String",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "start",
+        "field_text": "int64_t",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "length",
+        "field_text": "int64_t",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "estimatedFileSize",
+        "field_text": "int64_t",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "fileModifiedTime",
+        "field_text": "int64_t",
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "Properties",
+        "field_name": "schema",
+        "field_text": "Properties",
+        "_N": 9,
+        "field_local": true
+      },
+      {
+        "field_type": "List<HivePartitionKey>",
+        "field_name": "partitionKeys",
+        "field_text": "List<HivePartitionKey>",
+        "_N": 10,
+        "field_local": true
+      },
+      {
+        "field_type": "List<HostAddress>",
+        "field_name": "addresses",
+        "field_text": "List<HostAddress>",
+        "_N": 11,
+        "field_local": true
+      },
+      {
+        "field_type": "OptionalInt",
+        "field_name": "readBucketNumber",
+        "field_text": "int",
+        "optional": true,
+        "_N": 12,
+        "field_local": true
+      },
+      {
+        "field_type": "OptionalInt",
+        "field_name": "tableBucketNumber",
+        "field_text": "int",
+        "optional": true,
+        "_N": 13,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "statementId",
+        "field_text": "int",
+        "_N": 14,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "forceLocalScheduling",
+        "field_text": "bool",
+        "_N": 15,
+        "field_local": true
+      },
+      {
+        "field_type": "TableToPartitionMapping",
+        "field_name": "tableToPartitionMapping",
+        "field_text": "TableToPartitionMapping",
+        "_N": 16,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<BucketConversion>",
+        "field_name": "bucketConversion",
+        "field_text": "BucketConversion",
+        "optional": true,
+        "_N": 17,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<BucketValidation>",
+        "field_name": "bucketValidation",
+        "field_text": "BucketValidation",
+        "optional": true,
+        "_N": 18,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "s3SelectPushdownEnabled",
+        "field_text": "bool",
+        "_N": 19,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<AcidInfo>",
+        "field_name": "acidInfo",
+        "field_text": "AcidInfo",
+        "optional": true,
+        "_N": 20,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "splitNumber",
+        "field_text": "int64_t",
+        "_N": 21,
+        "field_local": true
+      },
+      {
+        "field_type": "SplitWeight",
+        "field_name": "splitWeight",
+        "field_text": "SplitWeight",
+        "_N": 22,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ConnectorSplit",
+    "json_key": "hive"
+  },
+  {
+    "class_name": "MemoryAllocation",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "tag",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "allocation",
+        "field_text": "int64_t",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "MemoryPoolInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "long",
+        "field_name": "maxBytes",
+        "field_text": "int64_t",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "reservedBytes",
+        "field_text": "int64_t",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "reservedRevocableBytes",
+        "field_text": "int64_t",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<QueryId, Long>",
+        "field_name": "queryMemoryReservations",
+        "field_text": "Map<QueryId, Long>",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<QueryId, List<MemoryAllocation>>",
+        "field_name": "queryMemoryAllocations",
+        "field_text": "Map<QueryId, List<MemoryAllocation>>",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<QueryId, Long>",
+        "field_name": "queryMemoryRevocableReservations",
+        "field_text": "Map<QueryId, Long>",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<String, Long>",
+        "field_name": "taskMemoryReservations",
+        "field_text": "Map<String, Long>",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<String, Long>",
+        "field_name": "taskMemoryRevocableReservations",
+        "field_text": "Map<String, Long>",
+        "_N": 8,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "MemoryInfo",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "int",
+        "field_name": "availableProcessors",
+        "field_text": "int",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "MemoryPoolInfo",
+        "field_name": "pool",
+        "field_text": "MemoryPoolInfo",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "NodeStatus",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "nodeId",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "NodeVersion",
+        "field_name": "nodeVersion",
+        "field_text": "NodeVersion",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "environment",
+        "field_text": "String",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "coordinator",
+        "field_text": "bool",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "Duration",
+        "field_name": "uptime",
+        "field_text": "Duration",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "externalAddress",
+        "field_text": "String",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "internalAddress",
+        "field_text": "String",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "MemoryInfo",
+        "field_name": "memoryInfo",
+        "field_text": "MemoryInfo",
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "processors",
+        "field_text": "int",
+        "_N": 9,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "processCpuLoad",
+        "field_text": "double",
+        "_N": 10,
+        "field_local": true
+      },
+      {
+        "field_type": "double",
+        "field_name": "systemCpuLoad",
+        "field_text": "double",
+        "_N": 11,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "heapUsed",
+        "field_text": "int64_t",
+        "_N": 12,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "heapAvailable",
+        "field_text": "int64_t",
+        "_N": 13,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "nonHeapUsed",
+        "field_text": "int64_t",
+        "_N": 14,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "DirectExchangeInput",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "TaskId",
+        "field_name": "taskId",
+        "field_text": "TaskId",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "location",
+        "field_text": "String",
+        "_N": 2,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ExchangeInput",
+    "json_key": "direct"
+  },
+  {
+    "class_name": "HiveTransactionHandle",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "boolean",
+        "field_name": "autoCommit",
+        "field_text": "bool",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "UUID",
+        "field_name": "uuid",
+        "field_text": "UUID",
+        "_N": 2,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ConnectorTransactionHandle",
+    "json_key": "hive"
+  },
+  {
+    "class_name": "ExchangeInput",
+    "field_name": "exchangeInput",
+    "abstract": true,
+    "super_class": "JsonEncodedSubclass",
+    "subclasses": [
+      {
+        "type": "SpoolingExchangeInput",
+        "name": "spoolingExchangeInput",
+        "key": "spooling",
+        "_N": 1
+      },
+      {
+        "type": "DirectExchangeInput",
+        "name": "directExchangeInput",
+        "key": "direct",
+        "_N": 2,
+        "_last": true
+      }
+    ],
+    "fields": []
+  },
+  {
+    "class_name": "RemoteSplit",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "ExchangeInput",
+        "field_name": "exchangeInput",
+        "field_text": "ExchangeInput",
+        "_N": 1,
+        "field_local": true,
+        "optional": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ConnectorSplit",
+    "json_key": "$remote"
+  },
+  {
+    "class_name": "PartitioningScheme",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Partitioning",
+        "field_name": "partitioning",
+        "field_text": "Partitioning",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "List<Symbol>",
+        "field_name": "outputLayout",
+        "field_text": "List<Symbol>",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<Symbol>",
+        "field_name": "hashColumn",
+        "field_text": "Symbol",
+        "optional": true,
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "replicateNullsAndAny",
+        "field_text": "bool",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<int[]>",
+        "field_name": "bucketToPartition",
+        "field_text": "List<int>",
+        "optional": true,
+        "_N": 5,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "ExchangeSinkInstanceHandle",
+    "field_name": "exchangeSinkInstanceHandle",
+    "abstract": true,
+    "super_class": "JsonEncodedSubclass",
+    "subclasses": [
+      {
+        "type": "FileSystemExchangeSinkInstanceHandle",
+        "name": "fileSystemExchangeSinkInstanceHandle",
+        "key": "filesystem",
+        "_N": 1,
+        "_last": true
+      }
+    ],
+    "fields": []
+  },
+  {
+    "class_name": "BufferType",
+    "enum": true,
+    "elements": [
+      {
+        "element": "PARTITIONED",
+        "_N": 1
+      },
+      {
+        "element": "BROADCAST",
+        "_N": 2
+      },
+      {
+        "element": "ARBITRARY",
+        "_N": 3
+      },
+      {
+        "element": "SPOOL",
+        "_N": 4,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "OutputBuffers",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "BufferType",
+        "field_name": "type",
+        "field_text": "BufferType",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "version",
+        "field_text": "int64_t",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "noMoreBufferIds",
+        "field_text": "bool",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<OutputBufferId, Integer>",
+        "field_name": "buffers",
+        "field_text": "Map<OutputBufferId, Integer>",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<ExchangeSinkInstanceHandle>",
+        "field_name": "exchangeSinkInstanceHandle",
+        "field_text": "ExchangeSinkInstanceHandle",
+        "optional": true,
+        "_N": 5,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "PlanNodeStatsEstimate",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "double",
+        "field_name": "outputRowCount",
+        "field_text": "double",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<Symbol, SymbolStatsEstimate>",
+        "field_name": "symbolStatistics",
+        "field_text": "Map<Symbol, SymbolStatsEstimate>",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "StatsAndCosts",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Map<PlanNodeId, PlanNodeStatsEstimate>",
+        "field_name": "stats",
+        "field_text": "Map<PlanNodeId, PlanNodeStatsEstimate>",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<PlanNodeId, PlanCostEstimate>",
+        "field_name": "costs",
+        "field_text": "Map<PlanNodeId, PlanCostEstimate>",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "SelectedRoleType",
+    "enum": true,
+    "elements": [
+      {
+        "element": "ROLE",
+        "_N": 1
+      },
+      {
+        "element": "ALL",
+        "_N": 2
+      },
+      {
+        "element": "NONE",
+        "_N": 3,
+        "_last": true
+      }
+    ]
+  },
+  {
+    "class_name": "SelectedRole",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "SelectedRoleType",
+        "field_name": "type",
+        "field_text": "SelectedRoleType",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "role",
+        "field_text": "String",
+        "optional": true,
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "SessionRepresentation",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "queryId",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<TransactionId>",
+        "field_name": "transactionId",
+        "field_text": "TransactionId",
+        "optional": true,
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "clientTransactionSupport",
+        "field_text": "bool",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "user",
+        "field_text": "String",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<String>",
+        "field_name": "groups",
+        "field_text": "List<String>",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "principal",
+        "field_text": "String",
+        "optional": true,
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<String>",
+        "field_name": "enabledRoles",
+        "field_text": "List<String>",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "source",
+        "field_text": "String",
+        "optional": true,
+        "_N": 8,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "catalog",
+        "field_text": "String",
+        "optional": true,
+        "_N": 9,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "schema",
+        "field_text": "String",
+        "optional": true,
+        "_N": 10,
+        "field_local": true
+      },
+      {
+        "field_type": "SqlPath",
+        "field_name": "path",
+        "field_text": "SqlPath",
+        "_N": 11,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "traceToken",
+        "field_text": "String",
+        "optional": true,
+        "_N": 12,
+        "field_local": true
+      },
+      {
+        "field_type": "TimeZoneKey",
+        "field_name": "timeZoneKey",
+        "field_text": "TimeZoneKey",
+        "_N": 13,
+        "field_local": true
+      },
+      {
+        "field_type": "Locale",
+        "field_name": "locale",
+        "field_text": "Locale",
+        "_N": 14,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "remoteUserAddress",
+        "field_text": "String",
+        "optional": true,
+        "_N": 15,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "userAgent",
+        "field_text": "String",
+        "optional": true,
+        "_N": 16,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "clientInfo",
+        "field_text": "String",
+        "optional": true,
+        "_N": 17,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<String>",
+        "field_name": "clientTags",
+        "field_text": "List<String>",
+        "_N": 18,
+        "field_local": true
+      },
+      {
+        "field_type": "Set<String>",
+        "field_name": "clientCapabilities",
+        "field_text": "List<String>",
+        "_N": 19,
+        "field_local": true
+      },
+      {
+        "field_type": "ResourceEstimates",
+        "field_name": "resourceEstimates",
+        "field_text": "ResourceEstimates",
+        "_N": 20,
+        "field_local": true
+      },
+      {
+        "field_type": "Instant",
+        "field_name": "start",
+        "field_text": "Instant",
+        "_N": 21,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<String, String>",
+        "field_name": "systemProperties",
+        "field_text": "Map<String, String>",
+        "_N": 22,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<String, Map<String, String>>",
+        "field_name": "catalogProperties",
+        "field_text": "Map<String, Map<String, String>>",
+        "_N": 23,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<String, SelectedRole>",
+        "field_name": "catalogRoles",
+        "field_text": "Map<String, SelectedRole>",
+        "_N": 24,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<String, String>",
+        "field_name": "preparedStatements",
+        "field_text": "Map<String, String>",
+        "_N": 25,
+        "field_local": true
+      },
+      {
+        "field_type": "String",
+        "field_name": "protocolName",
+        "field_text": "String",
+        "_N": 26,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "FileStatus",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "String",
+        "field_name": "filePath",
+        "field_text": "String",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "long",
+        "field_name": "fileSize",
+        "field_text": "int64_t",
+        "_N": 2,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "FileSystemExchangeSourceHandle",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "int",
+        "field_name": "partitionId",
+        "field_text": "int",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "List<FileStatus>",
+        "field_name": "files",
+        "field_text": "List<FileStatus>",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<byte[]>",
+        "field_name": "secretKey",
+        "field_text": "String",
+        "optional": true,
+        "_N": 3,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ExchangeSourceHandle",
+    "json_key": "filesystem"
+  },
+  {
+    "class_name": "AllOrNoneValueSet",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "Type",
+        "field_name": "type",
+        "field_text": "Type",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "boolean",
+        "field_name": "all",
+        "field_text": "bool",
+        "_N": 2,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ValueSet",
+    "json_key": "allOrNone"
+  },
+  {
+    "class_name": "PlanFragment",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "PlanFragmentId",
+        "field_name": "id",
+        "field_text": "PlanFragmentId",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "PlanNode",
+        "field_name": "root",
+        "field_text": "PlanNode",
+        "_N": 2,
+        "field_local": true,
+        "optional": true
+      },
+      {
+        "field_type": "Map<Symbol, Type>",
+        "field_name": "symbols",
+        "field_text": "Map<Symbol, Type>",
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "PartitioningHandle",
+        "field_name": "partitioning",
+        "field_text": "PartitioningHandle",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "List<PlanNodeId>",
+        "field_name": "partitionedSources",
+        "field_text": "List<PlanNodeId>",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "PartitioningScheme",
+        "field_name": "partitioningScheme",
+        "field_text": "PartitioningScheme",
+        "_N": 6,
+        "field_local": true
+      },
+      {
+        "field_type": "StatsAndCosts",
+        "field_name": "statsAndCosts",
+        "field_text": "StatsAndCosts",
+        "_N": 7,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<String>",
+        "field_name": "jsonRepresentation",
+        "field_text": "String",
+        "optional": true,
+        "_N": 8,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "EmptySplit",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "CatalogName",
+        "field_name": "catalogName",
+        "field_text": "CatalogName",
+        "_N": 1,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ConnectorSplit",
+    "json_key": "$empty"
+  },
+  {
+    "class_name": "FileSystemExchangeSinkInstanceHandle",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "FileSystemExchangeSinkHandle",
+        "field_name": "sinkHandle",
+        "field_text": "FileSystemExchangeSinkHandle",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "URI",
+        "field_name": "outputDirectory",
+        "field_text": "URI",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "int",
+        "field_name": "outputPartitionCount",
+        "field_text": "int",
+        "_N": 3,
+        "field_local": true
+      }
+    ],
+    "subclass": true,
+    "super_class": "ExchangeSinkInstanceHandle",
+    "json_key": "filesystem"
+  },
+  {
+    "class_name": "TaskUpdateRequest",
+    "struct": true,
+    "fields": [
+      {
+        "field_type": "SessionRepresentation",
+        "field_name": "session",
+        "field_text": "SessionRepresentation",
+        "_N": 1,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<String, String>",
+        "field_name": "extraCredentials",
+        "field_text": "Map<String, String>",
+        "_N": 2,
+        "field_local": true
+      },
+      {
+        "field_type": "Optional<PlanFragment>",
+        "field_name": "fragment",
+        "field_text": "PlanFragment",
+        "optional": true,
+        "_N": 3,
+        "field_local": true
+      },
+      {
+        "field_type": "List<SplitAssignment>",
+        "field_name": "splitAssignments",
+        "field_text": "List<SplitAssignment>",
+        "_N": 4,
+        "field_local": true
+      },
+      {
+        "field_type": "OutputBuffers",
+        "field_name": "outputIds",
+        "field_text": "OutputBuffers",
+        "_N": 5,
+        "field_local": true
+      },
+      {
+        "field_type": "Map<DynamicFilterId, Domain>",
+        "field_name": "dynamicFilterDomains",
+        "field_text": "Map<DynamicFilterId, Domain>",
+        "_N": 6,
+        "field_local": true
+      }
+    ]
+  },
+  {
+    "class_name": "NodeState",
+    "enum": true,
+    "elements": [
+      {
+        "element": "ACTIVE",
+        "_N": 1
+      },
+      {
+        "element": "INACTIVE",
+        "_N": 2
+      },
+      {
+        "element": "SHUTTING_DOWN",
+        "_N": 3,
+        "_last": true
+      }
+    ]
+  }
+]

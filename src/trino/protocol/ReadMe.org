@@ -1,0 +1,8 @@
+#+startup: showall
+
+
+#+BEGIN_SRC shell
+  brew install jq
+  pip install yaml
+  brew install chrony
+#+END_SRC
