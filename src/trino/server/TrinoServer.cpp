@@ -42,7 +42,8 @@ namespace datalight::server
                 4096
             }
         };
-        LOG(INFO) <<"populateMemAndCPUInfo...";
+        protocol::MemoryAllocation ma{"e",23423};
+        LOG(INFO) <<"populateMemAndCPUInfo..."<<json(memoryInfo).dump();
         //**memoryInfo_.wlock() = std::move(memoryInfo);
     }
     void TrinoServer::run()
