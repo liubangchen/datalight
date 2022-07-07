@@ -62,24 +62,8 @@ add_subdirectory(glog-cmake)
 #####################################################################end glog
 
 #####################################################################start libevent
-fetchcontent_declare(
-  libevent
-  GIT_REPOSITORY https://github.com/libevent/libevent.git
-  GIT_TAG release-2.1.12-stable
-  GIT_PROGRESS TRUE
-  SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/libevent
-)
-fetchcontent_getproperties(libevent)
-if(NOT libevent_POPULATED)
-  message(STATUS "Fetching libevent")
-  fetchcontent_populate(libevent)
-  message(STATUS "Fetching libevent - done")
-  set(LIBEVENT_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/libevent)
-endif()
-
-set(EVENT__LIBRARY_TYPE STATIC)
-set(EVENT__FORCE_KQUEUE_CHECK ON)
-add_subdirectory(libevent)
+set(EVENT__LIBRARY_TYPE "STATIC")
+add_subdirectory(libevent-cmake)
 #####################################################################end libevent
 
 #####################################################################start double-conversion

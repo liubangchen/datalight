@@ -1,4 +1,17 @@
-set(LIBEVENT_LIBRARY_DIR "${PROJECT_SOURCE_DIR}/contrib/libevent")
+fetchcontent_declare(
+  libevent
+  GIT_REPOSITORY https://github.com/libevent/libevent.git
+  GIT_TAG release-2.1.12-stable
+  GIT_PROGRESS TRUE
+  SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/libevent
+)
+fetchcontent_getproperties(libevent)
+if(NOT libevent_POPULATED)
+  message(STATUS "Fetching libevent")
+  fetchcontent_populate(libevent)
+  message(STATUS "Fetching libevent - done")
+  set(LIBEVENT_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/libevent)
+endif()
 
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
@@ -23,7 +36,7 @@ set(
   "Set library type to SHARED/STATIC/BOTH (default SHARED for MSVC, otherwise BOTH)"
 )
 
-list(APPEND CMAKE_MODULE_PATH "${LIBEVENT_LIBRARY_DIR}/cmake/")
+list(APPEND CMAKE_MODULE_PATH "${LIBEVENT_SOURCE_DIR}/cmake/")
 string(REGEX MATCH "SunOS" SOLARIS "${CMAKE_SYSTEM_NAME}")
 
 
@@ -296,23 +309,18 @@ if(${GNUC})
   list(
     APPEND __FLAGS
     -Wall -Wextra -Wno-unused-parameter -Wstrict-aliasing -Wstrict-prototypes
-    
     -fno-strict-aliasing # gcc 2.9.5+
     -Wmissing-prototypes
-    
     # gcc 4
     -Winit-self
     -Wmissing-field-initializers
     -Wdeclaration-after-statement
-    
     # gcc 4.2
     -Waddress
     -Wnormalized=id
     -Woverride-init
-    
     # gcc 4.5
     -Wlogical-op
-    
     -Wwrite-strings
   )
 
@@ -333,7 +341,6 @@ if(${GNUC})
       -Wstack-protector
       "--param ssp-buffer-size=1"
     )
-
     add_definitions(-D_FORTIFY_SOURCE=2)
   endif()
 
@@ -392,59 +399,59 @@ endif()
 # Check if header files exist
 list(
   APPEND FILES_TO_CHECK
-  fcntl.h
-  inttypes.h
-  memory.h
-  signal.h
-  stdarg.h
-  stddef.h
-  stdint.h
-  stdlib.h
-  string.h
-  errno.h
-  unistd.h
-  time.h
-  sys/types.h
-  sys/stat.h
-  sys/time.h
-  sys/param.h
+  ${LIBEVENT_SOURCE_DIR}/fcntl.h
+  ${LIBEVENT_SOURCE_DIR}/inttypes.h
+  ${LIBEVENT_SOURCE_DIR}/memory.h
+  ${LIBEVENT_SOURCE_DIR}/signal.h
+  ${LIBEVENT_SOURCE_DIR}/stdarg.h
+  ${LIBEVENT_SOURCE_DIR}/stddef.h
+  ${LIBEVENT_SOURCE_DIR}/stdint.h
+  ${LIBEVENT_SOURCE_DIR}/stdlib.h
+  ${LIBEVENT_SOURCE_DIR}/string.h
+  ${LIBEVENT_SOURCE_DIR}/errno.h
+  ${LIBEVENT_SOURCE_DIR}/unistd.h
+  ${LIBEVENT_SOURCE_DIR}/time.h
+  ${LIBEVENT_SOURCE_DIR}/sys/types.h
+  ${LIBEVENT_SOURCE_DIR}/sys/stat.h
+  ${LIBEVENT_SOURCE_DIR}/sys/time.h
+  ${LIBEVENT_SOURCE_DIR}/sys/param.h
 )
 if(WIN32)
   list(
     APPEND FILES_TO_CHECK
-    io.h
-    winsock2.h
-    ws2tcpip.h
-    afunix.h
+    ${LIBEVENT_SOURCE_DIR}/io.h
+    ${LIBEVENT_SOURCE_DIR}/winsock2.h
+    ${LIBEVENT_SOURCE_DIR}/ws2tcpip.h
+    ${LIBEVENT_SOURCE_DIR}/afunix.h
   )
 else()
   list(
     APPEND FILES_TO_CHECK
-    netdb.h
-    dlfcn.h
-    arpa/inet.h
-    poll.h
-    port.h
-    sys/socket.h
-    sys/random.h
-    sys/un.h
-    sys/devpoll.h
-    sys/epoll.h
-    sys/eventfd.h
-    sys/event.h
-    sys/ioctl.h
-    sys/mman.h
-    sys/queue.h
-    sys/select.h
-    sys/sendfile.h
-    sys/uio.h
-    sys/wait.h
-    sys/resource.h
-    sys/timerfd.h
-    netinet/in.h
-    netinet/in6.h
-    netinet/tcp.h
-    ifaddrs.h
+    ${LIBEVENT_SOURCE_DIR}/netdb.h
+    ${LIBEVENT_SOURCE_DIR}/dlfcn.h
+    ${LIBEVENT_SOURCE_DIR}/arpa/inet.h
+    ${LIBEVENT_SOURCE_DIR}/poll.h
+    ${LIBEVENT_SOURCE_DIR}/port.h
+    ${LIBEVENT_SOURCE_DIR}/sys/socket.h
+    ${LIBEVENT_SOURCE_DIR}/sys/random.h
+    ${LIBEVENT_SOURCE_DIR}/sys/un.h
+    ${LIBEVENT_SOURCE_DIR}/sys/devpoll.h
+    ${LIBEVENT_SOURCE_DIR}/sys/epoll.h
+    ${LIBEVENT_SOURCE_DIR}/sys/eventfd.h
+    ${LIBEVENT_SOURCE_DIR}/sys/event.h
+    ${LIBEVENT_SOURCE_DIR}/sys/ioctl.h
+    ${LIBEVENT_SOURCE_DIR}/sys/mman.h
+    ${LIBEVENT_SOURCE_DIR}/sys/queue.h
+    ${LIBEVENT_SOURCE_DIR}/sys/select.h
+    ${LIBEVENT_SOURCE_DIR}/sys/sendfile.h
+    ${LIBEVENT_SOURCE_DIR}/sys/uio.h
+    ${LIBEVENT_SOURCE_DIR}/sys/wait.h
+    ${LIBEVENT_SOURCE_DIR}/sys/resource.h
+    ${LIBEVENT_SOURCE_DIR}/sys/timerfd.h
+    ${LIBEVENT_SOURCE_DIR}/netinet/in.h
+    ${LIBEVENT_SOURCE_DIR}/netinet/in6.h
+    ${LIBEVENT_SOURCE_DIR}/netinet/tcp.h
+    ${LIBEVENT_SOURCE_DIR}/ifaddrs.h
   )
 endif()
 
@@ -795,129 +802,129 @@ check_type_size("struct linger" EVENT__HAVE_STRUCT_LINGER)
 # Group the source files.
 set(
   HDR_PRIVATE
-  ${LIBEVENT_LIBRARY_DIR}/bufferevent-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/changelist-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/defer-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/epolltable-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/evbuffer-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/event-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/evmap-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/evrpc-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/evsignal-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/evthread-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/ht-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/http-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/iocp-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/ipv6-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/log-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/minheap-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/mm-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/ratelim-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/strlcpy-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/util-internal.h
-  ${LIBEVENT_LIBRARY_DIR}/evconfig-private.h
-  ${LIBEVENT_LIBRARY_DIR}/compat/sys/queue.h
+  ${LIBEVENT_SOURCE_DIR}/bufferevent-internal.h
+  ${LIBEVENT_SOURCE_DIR}/changelist-internal.h
+  ${LIBEVENT_SOURCE_DIR}/defer-internal.h
+  ${LIBEVENT_SOURCE_DIR}/epolltable-internal.h
+  ${LIBEVENT_SOURCE_DIR}/evbuffer-internal.h
+  ${LIBEVENT_SOURCE_DIR}/event-internal.h
+  ${LIBEVENT_SOURCE_DIR}/evmap-internal.h
+  ${LIBEVENT_SOURCE_DIR}/evrpc-internal.h
+  ${LIBEVENT_SOURCE_DIR}/evsignal-internal.h
+  ${LIBEVENT_SOURCE_DIR}/evthread-internal.h
+  ${LIBEVENT_SOURCE_DIR}/ht-internal.h
+  ${LIBEVENT_SOURCE_DIR}/http-internal.h
+  ${LIBEVENT_SOURCE_DIR}/iocp-internal.h
+  ${LIBEVENT_SOURCE_DIR}/ipv6-internal.h
+  ${LIBEVENT_SOURCE_DIR}/log-internal.h
+  ${LIBEVENT_SOURCE_DIR}/minheap-internal.h
+  ${LIBEVENT_SOURCE_DIR}/mm-internal.h
+  ${LIBEVENT_SOURCE_DIR}/ratelim-internal.h
+  ${LIBEVENT_SOURCE_DIR}/strlcpy-internal.h
+  ${LIBEVENT_SOURCE_DIR}/util-internal.h
+  ${LIBEVENT_SOURCE_DIR}/evconfig-private.h
+  ${LIBEVENT_SOURCE_DIR}/compat/sys/queue.h
 )
 
 set(
   HDR_COMPAT
-  ${LIBEVENT_LIBRARY_DIR}/include/evdns.h
-  ${LIBEVENT_LIBRARY_DIR}/include/evrpc.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event.h
-  ${LIBEVENT_LIBRARY_DIR}/include/evhttp.h
-  ${LIBEVENT_LIBRARY_DIR}/include/evutil.h
+  ${LIBEVENT_SOURCE_DIR}/include/evdns.h
+  ${LIBEVENT_SOURCE_DIR}/include/evrpc.h
+  ${LIBEVENT_SOURCE_DIR}/include/event.h
+  ${LIBEVENT_SOURCE_DIR}/include/evhttp.h
+  ${LIBEVENT_SOURCE_DIR}/include/evutil.h
 )
 
 set(
   HDR_PUBLIC
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/buffer.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/bufferevent.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/bufferevent_compat.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/bufferevent_struct.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/buffer_compat.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/dns.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/dns_compat.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/dns_struct.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/event.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/event_compat.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/event_struct.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/http.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/http_compat.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/http_struct.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/keyvalq_struct.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/listener.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/rpc.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/rpc_compat.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/rpc_struct.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/tag.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/tag_compat.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/thread.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/util.h
-  ${LIBEVENT_LIBRARY_DIR}/include/event2/visibility.h
-  ${CMAKE_THIRDPARTY_HEADER_DIR}/event2/event-config.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/buffer.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/bufferevent.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/bufferevent_compat.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/bufferevent_struct.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/buffer_compat.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/dns.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/dns_compat.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/dns_struct.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/event.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/event_compat.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/event_struct.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/http.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/http_compat.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/http_struct.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/keyvalq_struct.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/listener.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/rpc.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/rpc_compat.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/rpc_struct.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/tag.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/tag_compat.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/thread.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/util.h
+  ${LIBEVENT_SOURCE_DIR}/include/event2/visibility.h
+  ${CMAKE_CURRENT_BINARY_DIR}/include/event2/event-config.h
 )
 
 set(
   SRC_CORE
-  ${LIBEVENT_LIBRARY_DIR}/buffer.c
-  ${LIBEVENT_LIBRARY_DIR}/bufferevent.c
-  ${LIBEVENT_LIBRARY_DIR}/bufferevent_filter.c
-  ${LIBEVENT_LIBRARY_DIR}/bufferevent_pair.c
-  ${LIBEVENT_LIBRARY_DIR}/bufferevent_ratelim.c
-  ${LIBEVENT_LIBRARY_DIR}/bufferevent_sock.c
-  ${LIBEVENT_LIBRARY_DIR}/event.c
-  ${LIBEVENT_LIBRARY_DIR}/evmap.c
-  ${LIBEVENT_LIBRARY_DIR}/evthread.c
-  ${LIBEVENT_LIBRARY_DIR}/evutil.c
-  ${LIBEVENT_LIBRARY_DIR}/evutil_rand.c
-  ${LIBEVENT_LIBRARY_DIR}/evutil_time.c
-  ${LIBEVENT_LIBRARY_DIR}/listener.c
-  ${LIBEVENT_LIBRARY_DIR}/log.c
-  ${LIBEVENT_LIBRARY_DIR}/signal.c
-  ${LIBEVENT_LIBRARY_DIR}/strlcpy.c
+  ${LIBEVENT_SOURCE_DIR}/buffer.c
+  ${LIBEVENT_SOURCE_DIR}/bufferevent.c
+  ${LIBEVENT_SOURCE_DIR}/bufferevent_filter.c
+  ${LIBEVENT_SOURCE_DIR}/bufferevent_pair.c
+  ${LIBEVENT_SOURCE_DIR}/bufferevent_ratelim.c
+  ${LIBEVENT_SOURCE_DIR}/bufferevent_sock.c
+  ${LIBEVENT_SOURCE_DIR}/event.c
+  ${LIBEVENT_SOURCE_DIR}/evmap.c
+  ${LIBEVENT_SOURCE_DIR}/evthread.c
+  ${LIBEVENT_SOURCE_DIR}/evutil.c
+  ${LIBEVENT_SOURCE_DIR}/evutil_rand.c
+  ${LIBEVENT_SOURCE_DIR}/evutil_time.c
+  ${LIBEVENT_SOURCE_DIR}/listener.c
+  ${LIBEVENT_SOURCE_DIR}/log.c
+  ${LIBEVENT_SOURCE_DIR}/signal.c
+  ${LIBEVENT_SOURCE_DIR}/strlcpy.c
 )
 
 if(EVENT__HAVE_SELECT)
-  list(APPEND SRC_CORE ${LIBEVENT_LIBRARY_DIR}/select.c)
+  list(APPEND SRC_CORE ${LIBEVENT_SOURCE_DIR}/select.c)
 endif()
 
 if(EVENT__HAVE_POLL)
-  list(APPEND SRC_CORE ${LIBEVENT_LIBRARY_DIR}/poll.c)
+  list(APPEND SRC_CORE ${LIBEVENT_SOURCE_DIR}/poll.c)
 endif()
 
 if(EVENT__HAVE_KQUEUE)
-  list(APPEND SRC_CORE ${LIBEVENT_LIBRARY_DIR}/kqueue.c)
+  list(APPEND SRC_CORE ${LIBEVENT_SOURCE_DIR}/kqueue.c)
 endif()
 
 if(EVENT__HAVE_DEVPOLL)
-  list(APPEND SRC_CORE ${LIBEVENT_LIBRARY_DIR}/devpoll.c)
+  list(APPEND SRC_CORE ${LIBEVENT_SOURCE_DIR}/devpoll.c)
 endif()
 
 if(EVENT__HAVE_EPOLL)
-  list(APPEND SRC_CORE ${LIBEVENT_LIBRARY_DIR}/epoll.c)
+  list(APPEND SRC_CORE ${LIBEVENT_SOURCE_DIR}/epoll.c)
 endif()
 
 if(EVENT__HAVE_EVENT_PORTS)
-  list(APPEND SRC_CORE ${LIBEVENT_LIBRARY_DIR}/evport.c)
+  list(APPEND SRC_CORE ${LIBEVENT_SOURCE_DIR}/evport.c)
 endif()
 
 if(NOT EVENT__DISABLE_OPENSSL)
   #find_package(OpenSSL REQUIRED)
   set(EVENT__HAVE_OPENSSL 1)
 
-  message(STATUS "OpenSSL include: ${OPENSSL_INCLUDE_DIR}")
-  message(STATUS "OpenSSL lib: ssl")
+  #message(STATUS "OpenSSL include: ${OPENSSL_INCLUDE_DIR}")
+  #message(STATUS "OpenSSL lib: ssl")
 
   #include_directories(${OPENSSL_INCLUDE_DIR})
 
-  list(APPEND SRC_OPENSSL ${LIBEVENT_LIBRARY_DIR}/bufferevent_openssl.c)
-  list(APPEND HDR_PUBLIC ${LIBEVENT_LIBRARY_DIR}/include/event2/bufferevent_ssl.h)
+  list(APPEND SRC_OPENSSL ${LIBEVENT_SOURCE_DIR}/bufferevent_openssl.c)
+  list(APPEND HDR_PUBLIC ${LIBEVENT_SOURCE_DIR}/include/event2/bufferevent_ssl.h)
   #list(APPEND LIB_APPS ${OPENSSL_LIBRARIES})
 endif()
 
 if(NOT EVENT__DISABLE_THREAD_SUPPORT)
   if(WIN32)
-    list(APPEND SRC_CORE ${LIBEVENT_LIBRARY_DIR}/evthread_win32.c)
+    list(APPEND SRC_CORE ${LIBEVENT_SOURCE_DIR}/evthread_win32.c)
   else()
     find_package(Threads REQUIRED)
     if(NOT CMAKE_USE_PTHREADS_INIT)
@@ -934,10 +941,10 @@ endif()
 
 set(
   SRC_EXTRA
-  ${LIBEVENT_LIBRARY_DIR}/event_tagging.c
-  ${LIBEVENT_LIBRARY_DIR}/http.c
-  ${LIBEVENT_LIBRARY_DIR}/evdns.c
-  ${LIBEVENT_LIBRARY_DIR}/evrpc.c
+  ${LIBEVENT_SOURCE_DIR}/event_tagging.c
+  ${LIBEVENT_SOURCE_DIR}/http.c
+  ${LIBEVENT_SOURCE_DIR}/evdns.c
+  ${LIBEVENT_SOURCE_DIR}/evrpc.c
 )
 
 add_definitions(-DHAVE_CONFIG_H)
@@ -953,13 +960,13 @@ add_definitions(-DHAVE_CONFIG_H)
 if(WIN32)
   list(
     APPEND SRC_CORE
-    ${LIBEVENT_LIBRARY_DIR}/buffer_iocp.c
-    ${LIBEVENT_LIBRARY_DIR}/bufferevent_async.c
-    ${LIBEVENT_LIBRARY_DIR}/event_iocp.c
-    ${LIBEVENT_LIBRARY_DIR}/win32select.c
+    ${LIBEVENT_SOURCE_DIR}/buffer_iocp.c
+    ${LIBEVENT_SOURCE_DIR}/bufferevent_async.c
+    ${LIBEVENT_SOURCE_DIR}/event_iocp.c
+    ${LIBEVENT_SOURCE_DIR}/win32select.c
   )
 
-  list(APPEND HDR_PRIVATE ${LIBEVENT_LIBRARY_DIR}/WIN32-Code/getopt.h)
+  list(APPEND HDR_PRIVATE ${LIBEVENT_SOURCE_DIR}/WIN32-Code/getopt.h)
 
   set(EVENT__DNS_USE_FTIME_FOR_ID 1)
   set(LIB_PLATFORM ws2_32 shell32 advapi32)
@@ -968,7 +975,7 @@ if(WIN32)
     -D_CRT_NONSTDC_NO_DEPRECATE
   )
 
-  include_directories(${LIBEVENT_LIBRARY_DIR}/WIN32-Code)
+  include_directories(${LIBEVENT_SOURCE_DIR}/WIN32-Code)
 endif()
 
 if(SOLARIS)
@@ -992,112 +999,113 @@ elseif("${CMAKE_C_COMPILER_ID}" STREQUAL "SunPro")
 endif()
 
 configure_file(
-  ${LIBEVENT_LIBRARY_DIR}/event-config.h.cmake
-  ${CMAKE_THIRDPARTY_HEADER_DIR}/event2/event-config.h
+  ${LIBEVENT_SOURCE_DIR}/event-config.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/include/event2/event-config.h
   NEWLINE_STYLE UNIX
 )
 
 configure_file(
-  ${LIBEVENT_LIBRARY_DIR}/evconfig-private.h.cmake
-  ${CMAKE_THIRDPARTY_HEADER_DIR}/evconfig-private.h
+  ${LIBEVENT_SOURCE_DIR}/evconfig-private.h.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/include/evconfig-private.h
 )
+
+macro(add_library_include LIB_NAME)
+  target_include_directories(
+    ${LIB_NAME}
+    PRIVATE
+    "${CMAKE_CURRENT_BINARY_DIR}/include/"
+  )
+  target_include_directories(
+    ${LIB_NAME}
+    SYSTEM
+    PUBLIC
+    "${LIBEVENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/"
+  )
+endmacro()
 
 #
 # Create the libraries.
 #
-add_library(event_core STATIC ${SRC_CORE})
-target_include_directories(
+add_library(
   event_core
-  PRIVATE
-  ${CMAKE_THIRDPARTY_HEADER_DIR}
+  STATIC
+  ${SRC_CORE}
 )
-target_include_directories(
+add_library_include(event_core)
+
+add_library(
+  event_extra
+  STATIC
+  ${SRC_EXTRA}
+)
+target_link_libraries(
+  event_extra
+  PUBLIC
   event_core
-  SYSTEM
-  PUBLIC
-  ${CMAKE_THIRDPARTY_HEADER_DIR}
 )
-
-
-add_library(event_extra STATIC ${SRC_EXTRA})
-target_link_libraries(event_extra event_core)
-target_include_directories(
-  event_extra
-  PRIVATE
-  ${CMAKE_THIRDPARTY_HEADER_DIR}
-)
-target_include_directories(
-  event_extra
-  SYSTEM
-  PUBLIC
-  ${CMAKE_THIRDPARTY_HEADER_DIR}/event2
-)
-
+add_library_include(event_extra)
 
 if(NOT EVENT__DISABLE_OPENSSL)
-  add_library(event_openssl STATIC ${SRC_OPENSSL})
+  add_library(
+    event_openssl
+    STATIC
+    ${SRC_OPENSSL}
+  )
   target_link_libraries(
     event_openssl
+    PUBLIC
     event_core
     ssl
   )
-  target_include_directories(
-    event_openssl
-    PRIVATE
-    ${CMAKE_THIRDPARTY_HEADER_DIR}
-  )
-  target_include_directories(
-    event_openssl
-    SYSTEM
-    PUBLIC
-    ${CMAKE_THIRDPARTY_HEADER_DIR}/event2
-  )
-
+  add_library_include(event_openssl)
 endif()
 
 if(EVENT__HAVE_PTHREADS)
-  set(SRC_PTHREADS ${LIBEVENT_LIBRARY_DIR}/evthread_pthread.c)
+  set(SRC_PTHREADS ${LIBEVENT_SOURCE_DIR}/evthread_pthread.c)
   add_library(
     event_pthreads
+    STATIC
     ${SRC_PTHREADS}
   )
-  target_include_directories(
+  target_link_libraries(
     event_pthreads
-    PRIVATE
-    ${CMAKE_THIRDPARTY_HEADER_DIR}
-  )
-  target_include_directories(
-    event_pthreads
-    SYSTEM
     PUBLIC
-    ${CMAKE_THIRDPARTY_HEADER_DIR}/event2
+    event_core
   )
+  add_library_include(event_pthreads)
 endif()
 
-add_library(event STATIC ${SRC_CORE} ${SRC_EXTRA})
-target_include_directories(
+add_library(
   event
-  PRIVATE
-  ${CMAKE_THIRDPARTY_HEADER_DIR}
+  ${SRC_CORE} ${SRC_EXTRA}
 )
-target_include_directories(
-  event
-  SYSTEM
-  PUBLIC
-  ${CMAKE_THIRDPARTY_HEADER_DIR}/event2
+add_library_include(event)
+
+set(
+  EVENT__INCLUDE_DIRS
+  "${LIBEVENT_SOURCE_DIR}/include"
+  "${CMAKE_THIRDPARTY_HEADER_DIR}/event2"
 )
+
+set(
+  LIBEVENT_INCLUDE_DIRS
+  ${EVENT__INCLUDE_DIRS}
+  CACHE PATH "Libevent include directories"
+)
+
 
 ##copy head file
-foreach(headfile ${HDR_PUBLIC})
-  file(
-    COPY
-    ${headfile}
-    DESTINATION ${CMAKE_THIRDPARTY_HEADER_DIR}/event2/
-  )
-endforeach()
+#foreach(headfile ${HDR_PUBLIC})
+#  file(
+#    COPY
+#    ${headfile}
+#    DESTINATION ${CMAKE_THIRDPARTY_HEADER_DIR}/event2/
+#  )
+#endforeach()
 
 
-set(WIN32_GETOPT)
+#set(WIN32_GETOPT)
 #
 # We run all tests with the different backends turned on one at a time.
 #
@@ -1140,8 +1148,8 @@ message(STATUS "")
 message(STATUS "Available event backends: ${BACKENDS}")
 message(STATUS "CMAKE_BINARY_DIR:         ${CMAKE_BINARY_DIR}")
 message(STATUS "CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
-message(STATUS "CMAKE_SOURCE_DIR:         ${LIBEVENT_LIBRARY_DIR}")
-message(STATUS "LIBEVENT_LIBRARY_DIR: ${LIBEVENT_LIBRARY_DIR}")
+message(STATUS "CMAKE_SOURCE_DIR:         ${LIBEVENT_SOURCE_DIR}")
+message(STATUS "LIBEVENT_SOURCE_DIR:      ${LIBEVENT_SOURCE_DIR}")
 message(STATUS "PROJECT_BINARY_DIR:       ${PROJECT_BINARY_DIR}")
 message(STATUS "PROJECT_SOURCE_DIR:       ${}")
 message(STATUS "CMAKE_MODULE_PATH:        ${CMAKE_MODULE_PATH}")
