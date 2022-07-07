@@ -2,7 +2,7 @@
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
-set(FB_LIB_VERSION "v2021.06.28.00")
+set(FB_LIB_VERSION "v2022.05.30.00")
 
 #####################################################################start icu4c
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
