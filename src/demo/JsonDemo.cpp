@@ -7,6 +7,23 @@
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+
+template <typename T>
+void to_json_key(json & j, const char * key, const T & value)
+{
+    j[key] = value;
+}
+
+template <typename T>
+void to_json_key(json & j, const char * key, const std::shared_ptr<T> & value)
+{
+    if (value != nullptr)
+    {
+        j[key] = value;
+    }
+}
+
+
 int main(int argc, char * argv[])
 {
     fmt::print("The answer is {}.", 42);

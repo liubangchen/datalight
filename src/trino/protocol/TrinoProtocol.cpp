@@ -54,131 +54,122 @@ const char * const PRESTO_ABORT_TASK_URL_PARAM = "abort";
 
 }
 
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 namespace datalight::protocol
 {
 
-void to_json(json & j, const Block & p)
-{
-    j = p.data;
-}
-
-void from_json(const json & j, Block & p)
-{
-    p.data = std::string(j);
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const ValueEntry & p)
+void to_json(json & j, const ErrorLocation & p)
 {
     j = json::object();
-    to_json_key(j, "type", p.type, "ValueEntry", "Type", "type");
-    to_json_key(j, "block", p.block, "ValueEntry", "Block", "block");
+    to_json_key(j, "lineNumber", p.lineNumber, "ErrorLocation", "int", "lineNumber");
+    to_json_key(j, "columnNumber", p.columnNumber, "ErrorLocation", "int", "columnNumber");
 }
 
-void from_json(const json & j, ValueEntry & p)
+void from_json(const json & j, ErrorLocation & p)
 {
-    from_json_key(j, "type", p.type, "ValueEntry", "Type", "type");
-    from_json_key(j, "block", p.block, "ValueEntry", "Block", "block");
+    from_json_key(j, "lineNumber", p.lineNumber, "ErrorLocation", "int", "lineNumber");
+    from_json_key(j, "columnNumber", p.columnNumber, "ErrorLocation", "int", "columnNumber");
 }
 }
 namespace datalight::protocol
 {
 
-void to_json(json & j, const FileSystemExchangeSinkHandle & p)
+void to_json(json & j, const LocalCostEstimate & p)
 {
     j = json::object();
-    to_json_key(j, "partitionId", p.partitionId, "FileSystemExchangeSinkHandle", "int", "partitionId");
-    to_json_key(j, "secretKey", p.secretKey, "FileSystemExchangeSinkHandle", "String", "secretKey");
+    to_json_key(j, "cpuCost", p.cpuCost, "LocalCostEstimate", "double", "cpuCost");
+    to_json_key(j, "maxMemory", p.maxMemory, "LocalCostEstimate", "double", "maxMemory");
+    to_json_key(j, "networkCost", p.networkCost, "LocalCostEstimate", "double", "networkCost");
 }
 
-void from_json(const json & j, FileSystemExchangeSinkHandle & p)
+void from_json(const json & j, LocalCostEstimate & p)
 {
-    from_json_key(j, "partitionId", p.partitionId, "FileSystemExchangeSinkHandle", "int", "partitionId");
-    from_json_key(j, "secretKey", p.secretKey, "FileSystemExchangeSinkHandle", "String", "secretKey");
+    from_json_key(j, "cpuCost", p.cpuCost, "LocalCostEstimate", "double", "cpuCost");
+    from_json_key(j, "maxMemory", p.maxMemory, "LocalCostEstimate", "double", "maxMemory");
+    from_json_key(j, "networkCost", p.networkCost, "LocalCostEstimate", "double", "networkCost");
 }
 }
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 namespace datalight::protocol
 {
 
-void to_json(json & j, const Duration & p)
-{
-    j = p.toString();
-}
-
-void from_json(const json & j, Duration & p)
-{
-    p = Duration(std::string(j));
-}
-
-std::ostream & operator<<(std::ostream & os, const Duration & d)
-{
-    return os << d.toString();
-}
-
-} // namespace facebook::trino::protocol
-namespace datalight::protocol
-{
-
-void to_json(json & j, const ResourceEstimates & p)
+void to_json(json & j, const PlanCostEstimate & p)
 {
     j = json::object();
-    to_json_key(j, "executionTime", p.executionTime, "ResourceEstimates", "Duration", "executionTime");
-    to_json_key(j, "cpuTime", p.cpuTime, "ResourceEstimates", "Duration", "cpuTime");
-    to_json_key(j, "peakMemoryBytes", p.peakMemoryBytes, "ResourceEstimates", "Long", "peakMemoryBytes");
+    to_json_key(j, "cpuCost", p.cpuCost, "PlanCostEstimate", "double", "cpuCost");
+    to_json_key(j, "maxMemory", p.maxMemory, "PlanCostEstimate", "double", "maxMemory");
+    to_json_key(j, "maxMemoryWhenOutputting", p.maxMemoryWhenOutputting, "PlanCostEstimate", "double", "maxMemoryWhenOutputting");
+    to_json_key(j, "networkCost", p.networkCost, "PlanCostEstimate", "double", "networkCost");
+    to_json_key(
+        j, "rootNodeLocalCostEstimate", p.rootNodeLocalCostEstimate, "PlanCostEstimate", "LocalCostEstimate", "rootNodeLocalCostEstimate");
 }
 
-void from_json(const json & j, ResourceEstimates & p)
+void from_json(const json & j, PlanCostEstimate & p)
 {
-    from_json_key(j, "executionTime", p.executionTime, "ResourceEstimates", "Duration", "executionTime");
-    from_json_key(j, "cpuTime", p.cpuTime, "ResourceEstimates", "Duration", "cpuTime");
-    from_json_key(j, "peakMemoryBytes", p.peakMemoryBytes, "ResourceEstimates", "Long", "peakMemoryBytes");
+    from_json_key(j, "cpuCost", p.cpuCost, "PlanCostEstimate", "double", "cpuCost");
+    from_json_key(j, "maxMemory", p.maxMemory, "PlanCostEstimate", "double", "maxMemory");
+    from_json_key(j, "maxMemoryWhenOutputting", p.maxMemoryWhenOutputting, "PlanCostEstimate", "double", "maxMemoryWhenOutputting");
+    from_json_key(j, "networkCost", p.networkCost, "PlanCostEstimate", "double", "networkCost");
+    from_json_key(
+        j, "rootNodeLocalCostEstimate", p.rootNodeLocalCostEstimate, "PlanCostEstimate", "LocalCostEstimate", "rootNodeLocalCostEstimate");
 }
 }
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 namespace datalight::protocol
 {
-void to_json(json & j, const std::shared_ptr<ConnectorTransactionHandle> & p)
+
+void to_json(json & j, const SymbolStatsEstimate & p)
+{
+    j = json::object();
+    to_json_key(j, "lowValue", p.lowValue, "SymbolStatsEstimate", "double", "lowValue");
+    to_json_key(j, "highValue", p.highValue, "SymbolStatsEstimate", "double", "highValue");
+    to_json_key(j, "nullsFraction", p.nullsFraction, "SymbolStatsEstimate", "double", "nullsFraction");
+    to_json_key(j, "averageRowSize", p.averageRowSize, "SymbolStatsEstimate", "double", "averageRowSize");
+    to_json_key(j, "distinctValuesCount", p.distinctValuesCount, "SymbolStatsEstimate", "double", "distinctValuesCount");
+}
+
+void from_json(const json & j, SymbolStatsEstimate & p)
+{
+    from_json_key(j, "lowValue", p.lowValue, "SymbolStatsEstimate", "double", "lowValue");
+    from_json_key(j, "highValue", p.highValue, "SymbolStatsEstimate", "double", "highValue");
+    from_json_key(j, "nullsFraction", p.nullsFraction, "SymbolStatsEstimate", "double", "nullsFraction");
+    from_json_key(j, "averageRowSize", p.averageRowSize, "SymbolStatsEstimate", "double", "averageRowSize");
+    from_json_key(j, "distinctValuesCount", p.distinctValuesCount, "SymbolStatsEstimate", "double", "distinctValuesCount");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const PlanNodeStatsEstimate & p)
+{
+    j = json::object();
+    to_json_key(j, "outputRowCount", p.outputRowCount, "PlanNodeStatsEstimate", "double", "outputRowCount");
+    to_json_key(j, "symbolStatistics", p.symbolStatistics, "PlanNodeStatsEstimate", "Map<Symbol, SymbolStatsEstimate>", "symbolStatistics");
+}
+
+void from_json(const json & j, PlanNodeStatsEstimate & p)
+{
+    from_json_key(j, "outputRowCount", p.outputRowCount, "PlanNodeStatsEstimate", "double", "outputRowCount");
+    from_json_key(
+        j, "symbolStatistics", p.symbolStatistics, "PlanNodeStatsEstimate", "Map<Symbol, SymbolStatsEstimate>", "symbolStatistics");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const StatsAndCosts & p)
+{
+    j = json::object();
+    to_json_key(j, "stats", p.stats, "StatsAndCosts", "Map<PlanNodeId, PlanNodeStatsEstimate>", "stats");
+    to_json_key(j, "costs", p.costs, "StatsAndCosts", "Map<PlanNodeId, PlanCostEstimate>", "costs");
+}
+
+void from_json(const json & j, StatsAndCosts & p)
+{
+    from_json_key(j, "stats", p.stats, "StatsAndCosts", "Map<PlanNodeId, PlanNodeStatsEstimate>", "stats");
+    from_json_key(j, "costs", p.costs, "StatsAndCosts", "Map<PlanNodeId, PlanCostEstimate>", "costs");
+}
+}
+namespace datalight::protocol
+{
+void to_json(json & j, const std::shared_ptr<PlanNode> & p)
 {
     if (p == nullptr)
     {
@@ -186,16 +177,21 @@ void to_json(json & j, const std::shared_ptr<ConnectorTransactionHandle> & p)
     }
     String type = p->_type;
 
-    if (getConnectorKey(type) == "hive")
+    if (type == ".ProjectNode")
     {
-        j = *std::static_pointer_cast<HiveTransactionHandle>(p);
+        j = *std::static_pointer_cast<ProjectNode>(p);
+        return;
+    }
+    if (type == ".LimitNode")
+    {
+        j = *std::static_pointer_cast<LimitNode>(p);
         return;
     }
 
-    throw TypeError(type + " no abstract type ConnectorTransactionHandle");
+    throw TypeError(type + " no abstract type PlanNode ");
 }
 
-void from_json(const json & j, std::shared_ptr<ConnectorTransactionHandle> & p)
+void from_json(const json & j, std::shared_ptr<PlanNode> & p)
 {
     String type;
     try
@@ -204,20 +200,27 @@ void from_json(const json & j, std::shared_ptr<ConnectorTransactionHandle> & p)
     }
     catch (json::parse_error & e)
     {
-        throw ParseError(std::string(e.what()) + " ConnectorTransactionHandle  ConnectorTransactionHandle");
+        throw ParseError(std::string(e.what()) + " PlanNode  PlanNode");
     }
 
-    if (getConnectorKey(type) == "hive")
+    if (type == ".ProjectNode")
     {
-        auto k = std::make_shared<HiveTransactionHandle>();
+        std::shared_ptr<ProjectNode> k = std::make_shared<ProjectNode>();
         j.get_to(*k);
-        p = k;
+        p = std::static_pointer_cast<PlanNode>(k);
+        return;
+    }
+    if (type == ".LimitNode")
+    {
+        std::shared_ptr<LimitNode> k = std::make_shared<LimitNode>();
+        j.get_to(*k);
+        p = std::static_pointer_cast<PlanNode>(k);
         return;
     }
 
-    throw TypeError(type + " no abstract type ConnectorTransactionHandle");
+    throw TypeError(type + " no abstract type PlanNode ");
 }
-} // namespace facebook::trino::protocol
+}
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -285,6 +288,61 @@ void from_json(const json & j, std::shared_ptr<ConnectorPartitioningHandle> & p)
     throw TypeError(type + " no abstract type ConnectorPartitioningHandle");
 }
 } // namespace facebook::trino::protocol
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+namespace datalight::protocol
+{
+void to_json(json & j, const std::shared_ptr<ConnectorTransactionHandle> & p)
+{
+    if (p == nullptr)
+    {
+        return;
+    }
+    String type = p->_type;
+
+    if (getConnectorKey(type) == "hive")
+    {
+        j = *std::static_pointer_cast<HiveTransactionHandle>(p);
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ConnectorTransactionHandle");
+}
+
+void from_json(const json & j, std::shared_ptr<ConnectorTransactionHandle> & p)
+{
+    String type;
+    try
+    {
+        type = p->getSubclassKey(j);
+    }
+    catch (json::parse_error & e)
+    {
+        throw ParseError(std::string(e.what()) + " ConnectorTransactionHandle  ConnectorTransactionHandle");
+    }
+
+    if (getConnectorKey(type) == "hive")
+    {
+        auto k = std::make_shared<HiveTransactionHandle>();
+        j.get_to(*k);
+        p = k;
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ConnectorTransactionHandle");
+}
+} // namespace facebook::trino::protocol
 namespace datalight::protocol
 {
 
@@ -303,272 +361,6 @@ void from_json(const json & j, PartitioningHandle & p)
     from_json_key(j, "connectorHandle", p.connectorHandle, "PartitioningHandle", "ConnectorPartitioningHandle", "connectorHandle");
 }
 }
-namespace datalight::protocol
-{
-void to_json(json & j, const std::shared_ptr<PlanNode> & p)
-{
-    if (p == nullptr)
-    {
-        return;
-    }
-    String type = p->_type;
-
-    if (type == ".ProjectNode")
-    {
-        j = *std::static_pointer_cast<ProjectNode>(p);
-        return;
-    }
-    if (type == ".LimitNode")
-    {
-        j = *std::static_pointer_cast<LimitNode>(p);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type PlanNode ");
-}
-
-void from_json(const json & j, std::shared_ptr<PlanNode> & p)
-{
-    String type;
-    try
-    {
-        type = p->getSubclassKey(j);
-    }
-    catch (json::parse_error & e)
-    {
-        throw ParseError(std::string(e.what()) + " PlanNode  PlanNode");
-    }
-
-    if (type == ".ProjectNode")
-    {
-        std::shared_ptr<ProjectNode> k = std::make_shared<ProjectNode>();
-        j.get_to(*k);
-        p = std::static_pointer_cast<PlanNode>(k);
-        return;
-    }
-    if (type == ".LimitNode")
-    {
-        std::shared_ptr<LimitNode> k = std::make_shared<LimitNode>();
-        j.get_to(*k);
-        p = std::static_pointer_cast<PlanNode>(k);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type PlanNode ");
-}
-}
-namespace datalight::protocol
-{
-//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
-
-// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
-static const std::pair<SystemPartitioning, json> SystemPartitioning_enum_table[] = { // NOLINT: cert-err58-cpp
-    {SystemPartitioning::SINGLE, "SINGLE"},
-    {SystemPartitioning::FIXED, "FIXED"},
-    {SystemPartitioning::SOURCE, "SOURCE"},
-    {SystemPartitioning::SCALED, "SCALED"},
-    {SystemPartitioning::COORDINATOR_ONLY, "COORDINATOR_ONLY"},
-    {SystemPartitioning::ARBITRARY, "ARBITRARY"}};
-void to_json(json & j, const SystemPartitioning & e)
-{
-    static_assert(std::is_enum<SystemPartitioning>::value, "SystemPartitioning must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(SystemPartitioning_enum_table),
-        std::end(SystemPartitioning_enum_table),
-        [e](const std::pair<SystemPartitioning, json> & ej_pair) -> bool { return ej_pair.first == e; });
-    j = ((it != std::end(SystemPartitioning_enum_table)) ? it : std::begin(SystemPartitioning_enum_table))->second;
-}
-void from_json(const json & j, SystemPartitioning & e)
-{
-    static_assert(std::is_enum<SystemPartitioning>::value, "SystemPartitioning must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(SystemPartitioning_enum_table),
-        std::end(SystemPartitioning_enum_table),
-        [&j](const std::pair<SystemPartitioning, json> & ej_pair) -> bool { return ej_pair.second == j; });
-    e = ((it != std::end(SystemPartitioning_enum_table)) ? it : std::begin(SystemPartitioning_enum_table))->first;
-}
-}
-namespace datalight::protocol
-{
-//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
-
-// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
-static const std::pair<SystemPartitionFunction, json> SystemPartitionFunction_enum_table[] = { // NOLINT: cert-err58-cpp
-    {SystemPartitionFunction::SINGLE, "SINGLE"},
-    {SystemPartitionFunction::HASH, "HASH"},
-    {SystemPartitionFunction::ROUND_ROBIN, "ROUND_ROBIN"},
-    {SystemPartitionFunction::BROADCAST, "BROADCAST"},
-    {SystemPartitionFunction::UNKNOWN, "UNKNOWN"}};
-void to_json(json & j, const SystemPartitionFunction & e)
-{
-    static_assert(std::is_enum<SystemPartitionFunction>::value, "SystemPartitionFunction must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(SystemPartitionFunction_enum_table),
-        std::end(SystemPartitionFunction_enum_table),
-        [e](const std::pair<SystemPartitionFunction, json> & ej_pair) -> bool { return ej_pair.first == e; });
-    j = ((it != std::end(SystemPartitionFunction_enum_table)) ? it : std::begin(SystemPartitionFunction_enum_table))->second;
-}
-void from_json(const json & j, SystemPartitionFunction & e)
-{
-    static_assert(std::is_enum<SystemPartitionFunction>::value, "SystemPartitionFunction must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(SystemPartitionFunction_enum_table),
-        std::end(SystemPartitionFunction_enum_table),
-        [&j](const std::pair<SystemPartitionFunction, json> & ej_pair) -> bool { return ej_pair.second == j; });
-    e = ((it != std::end(SystemPartitionFunction_enum_table)) ? it : std::begin(SystemPartitionFunction_enum_table))->first;
-}
-}
-namespace datalight::protocol
-{
-SystemPartitioningHandle::SystemPartitioningHandle() noexcept
-{
-    _type = "$remote";
-}
-
-void to_json(json & j, const SystemPartitioningHandle & p)
-{
-    j = json::object();
-    j["@type"] = "$remote";
-    to_json_key(j, "partitioning", p.partitioning, "SystemPartitioningHandle", "SystemPartitioning", "partitioning");
-    to_json_key(j, "function", p.function, "SystemPartitioningHandle", "SystemPartitionFunction", "function");
-}
-
-void from_json(const json & j, SystemPartitioningHandle & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "partitioning", p.partitioning, "SystemPartitioningHandle", "SystemPartitioning", "partitioning");
-    from_json_key(j, "function", p.function, "SystemPartitioningHandle", "SystemPartitionFunction", "function");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const Assignments & p)
-{
-    j = json::object();
-    to_json_key(j, "assignments", p.assignments, "Assignments", "Map<Symbol, Expression>", "assignments");
-}
-
-void from_json(const json & j, Assignments & p)
-{
-    from_json_key(j, "assignments", p.assignments, "Assignments", "Map<Symbol, Expression>", "assignments");
-}
-}
-namespace datalight::protocol
-{
-ProjectNode::ProjectNode() noexcept
-{
-    _type = ".ProjectNode";
-}
-
-void to_json(json & j, const ProjectNode & p)
-{
-    j = json::object();
-    j["@type"] = ".ProjectNode";
-    to_json_key(j, "id", p.id, "ProjectNode", "PlanNodeId", "id");
-    to_json_key(j, "source", p.source, "ProjectNode", "PlanNode", "source");
-    to_json_key(j, "assignments", p.assignments, "ProjectNode", "Assignments", "assignments");
-}
-
-void from_json(const json & j, ProjectNode & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "id", p.id, "ProjectNode", "PlanNodeId", "id");
-    from_json_key(j, "source", p.source, "ProjectNode", "PlanNode", "source");
-    from_json_key(j, "assignments", p.assignments, "ProjectNode", "Assignments", "assignments");
-}
-}
-namespace datalight::protocol
-{
-//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
-
-// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
-static const std::pair<ErrorType, json> ErrorType_enum_table[] = { // NOLINT: cert-err58-cpp
-    {ErrorType::USER_ERROR, "USER_ERROR"},
-    {ErrorType::INTERNAL_ERROR, "INTERNAL_ERROR"},
-    {ErrorType::INSUFFICIENT_RESOURCES, "INSUFFICIENT_RESOURCES"},
-    {ErrorType::EXTERNAL, "EXTERNAL"}};
-void to_json(json & j, const ErrorType & e)
-{
-    static_assert(std::is_enum<ErrorType>::value, "ErrorType must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(ErrorType_enum_table),
-        std::end(ErrorType_enum_table),
-        [e](const std::pair<ErrorType, json> & ej_pair) -> bool { return ej_pair.first == e; });
-    j = ((it != std::end(ErrorType_enum_table)) ? it : std::begin(ErrorType_enum_table))->second;
-}
-void from_json(const json & j, ErrorType & e)
-{
-    static_assert(std::is_enum<ErrorType>::value, "ErrorType must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(ErrorType_enum_table),
-        std::end(ErrorType_enum_table),
-        [&j](const std::pair<ErrorType, json> & ej_pair) -> bool { return ej_pair.second == j; });
-    e = ((it != std::end(ErrorType_enum_table)) ? it : std::begin(ErrorType_enum_table))->first;
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const ErrorCode & p)
-{
-    j = json::object();
-    to_json_key(j, "code", p.code, "ErrorCode", "int", "code");
-    to_json_key(j, "name", p.name, "ErrorCode", "String", "name");
-    to_json_key(j, "type", p.type, "ErrorCode", "ErrorType", "type");
-}
-
-void from_json(const json & j, ErrorCode & p)
-{
-    from_json_key(j, "code", p.code, "ErrorCode", "int", "code");
-    from_json_key(j, "name", p.name, "ErrorCode", "String", "name");
-    from_json_key(j, "type", p.type, "ErrorCode", "ErrorType", "type");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const ErrorLocation & p)
-{
-    j = json::object();
-    to_json_key(j, "lineNumber", p.lineNumber, "ErrorLocation", "int", "lineNumber");
-    to_json_key(j, "columnNumber", p.columnNumber, "ErrorLocation", "int", "columnNumber");
-}
-
-void from_json(const json & j, ErrorLocation & p)
-{
-    from_json_key(j, "lineNumber", p.lineNumber, "ErrorLocation", "int", "lineNumber");
-    from_json_key(j, "columnNumber", p.columnNumber, "ErrorLocation", "int", "columnNumber");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const ExecutionFailureInfo & p)
-{
-    j = json::object();
-    to_json_key(j, "type", p.type, "ExecutionFailureInfo", "String", "type");
-    to_json_key(j, "message", p.message, "ExecutionFailureInfo", "String", "message");
-    to_json_key(j, "cause", p.cause, "ExecutionFailureInfo", "ExecutionFailureInfo", "cause");
-    to_json_key(j, "suppressed", p.suppressed, "ExecutionFailureInfo", "List<ExecutionFailureInfo>", "suppressed");
-    to_json_key(j, "stack", p.stack, "ExecutionFailureInfo", "List<String>", "stack");
-    to_json_key(j, "errorLocation", p.errorLocation, "ExecutionFailureInfo", "ErrorLocation", "errorLocation");
-    to_json_key(j, "errorCode", p.errorCode, "ExecutionFailureInfo", "ErrorCode", "errorCode");
-    to_json_key(j, "remoteHost", p.remoteHost, "ExecutionFailureInfo", "HostAddress", "remoteHost");
-}
-
-void from_json(const json & j, ExecutionFailureInfo & p)
-{
-    from_json_key(j, "type", p.type, "ExecutionFailureInfo", "String", "type");
-    from_json_key(j, "message", p.message, "ExecutionFailureInfo", "String", "message");
-    from_json_key(j, "cause", p.cause, "ExecutionFailureInfo", "ExecutionFailureInfo", "cause");
-    from_json_key(j, "suppressed", p.suppressed, "ExecutionFailureInfo", "List<ExecutionFailureInfo>", "suppressed");
-    from_json_key(j, "stack", p.stack, "ExecutionFailureInfo", "List<String>", "stack");
-    from_json_key(j, "errorLocation", p.errorLocation, "ExecutionFailureInfo", "ErrorLocation", "errorLocation");
-    from_json_key(j, "errorCode", p.errorCode, "ExecutionFailureInfo", "ErrorCode", "errorCode");
-    from_json_key(j, "remoteHost", p.remoteHost, "ExecutionFailureInfo", "HostAddress", "remoteHost");
-}
-}
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -582,256 +374,17 @@ void from_json(const json & j, ExecutionFailureInfo & p)
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 namespace datalight::protocol
 {
 
-void to_json(nlohmann::json & j, const DataSize & p)
+void to_json(json & j, const Block & p)
 {
-    j = p.toString();
+    j = p.data;
 }
 
-void from_json(const nlohmann::json & j, DataSize & p)
+void from_json(const json & j, Block & p)
 {
-    p = DataSize(std::string(j));
-}
-
-std::ostream & operator<<(std::ostream & os, const DataSize & d)
-{
-    return os << d.toString();
-}
-
-} // namespace facebook::trino::protocol
-namespace datalight::protocol
-{
-//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
-
-// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
-static const std::pair<TaskState, json> TaskState_enum_table[] = { // NOLINT: cert-err58-cpp
-    {TaskState::PLANNED, "PLANNED"},
-    {TaskState::RUNNING, "RUNNING"},
-    {TaskState::FLUSHING, "FLUSHING"},
-    {TaskState::FINISHED, "FINISHED"},
-    {TaskState::CANCELED, "CANCELED"},
-    {TaskState::ABORTED, "ABORTED"},
-    {TaskState::FAILED, "FAILED"}};
-void to_json(json & j, const TaskState & e)
-{
-    static_assert(std::is_enum<TaskState>::value, "TaskState must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(TaskState_enum_table),
-        std::end(TaskState_enum_table),
-        [e](const std::pair<TaskState, json> & ej_pair) -> bool { return ej_pair.first == e; });
-    j = ((it != std::end(TaskState_enum_table)) ? it : std::begin(TaskState_enum_table))->second;
-}
-void from_json(const json & j, TaskState & e)
-{
-    static_assert(std::is_enum<TaskState>::value, "TaskState must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(TaskState_enum_table),
-        std::end(TaskState_enum_table),
-        [&j](const std::pair<TaskState, json> & ej_pair) -> bool { return ej_pair.second == j; });
-    e = ((it != std::end(TaskState_enum_table)) ? it : std::begin(TaskState_enum_table))->first;
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const TaskStatus & p)
-{
-    j = json::object();
-    to_json_key(j, "taskId", p.taskId, "TaskStatus", "TaskId", "taskId");
-    to_json_key(j, "taskInstanceId", p.taskInstanceId, "TaskStatus", "String", "taskInstanceId");
-    to_json_key(j, "version", p.version, "TaskStatus", "int64_t", "version");
-    to_json_key(j, "state", p.state, "TaskStatus", "TaskState", "state");
-    to_json_key(j, "self", p.self, "TaskStatus", "URI", "self");
-    to_json_key(j, "nodeId", p.nodeId, "TaskStatus", "String", "nodeId");
-    to_json_key(j, "failures", p.failures, "TaskStatus", "List<ExecutionFailureInfo>", "failures");
-    to_json_key(j, "queuedPartitionedDrivers", p.queuedPartitionedDrivers, "TaskStatus", "int", "queuedPartitionedDrivers");
-    to_json_key(j, "runningPartitionedDrivers", p.runningPartitionedDrivers, "TaskStatus", "int", "runningPartitionedDrivers");
-    to_json_key(j, "outputBufferOverutilized", p.outputBufferOverutilized, "TaskStatus", "bool", "outputBufferOverutilized");
-    to_json_key(j, "physicalWrittenDataSize", p.physicalWrittenDataSize, "TaskStatus", "DataSize", "physicalWrittenDataSize");
-    to_json_key(j, "memoryReservation", p.memoryReservation, "TaskStatus", "DataSize", "memoryReservation");
-    to_json_key(j, "peakMemoryReservation", p.peakMemoryReservation, "TaskStatus", "DataSize", "peakMemoryReservation");
-    to_json_key(j, "revocableMemoryReservation", p.revocableMemoryReservation, "TaskStatus", "DataSize", "revocableMemoryReservation");
-    to_json_key(j, "fullGcCount", p.fullGcCount, "TaskStatus", "int64_t", "fullGcCount");
-    to_json_key(j, "fullGcTime", p.fullGcTime, "TaskStatus", "Duration", "fullGcTime");
-    to_json_key(j, "dynamicFiltersVersion", p.dynamicFiltersVersion, "TaskStatus", "int64_t", "dynamicFiltersVersion");
-    to_json_key(
-        j, "queuedPartitionedSplitsWeight", p.queuedPartitionedSplitsWeight, "TaskStatus", "int64_t", "queuedPartitionedSplitsWeight");
-    to_json_key(
-        j, "runningPartitionedSplitsWeight", p.runningPartitionedSplitsWeight, "TaskStatus", "int64_t", "runningPartitionedSplitsWeight");
-}
-
-void from_json(const json & j, TaskStatus & p)
-{
-    from_json_key(j, "taskId", p.taskId, "TaskStatus", "TaskId", "taskId");
-    from_json_key(j, "taskInstanceId", p.taskInstanceId, "TaskStatus", "String", "taskInstanceId");
-    from_json_key(j, "version", p.version, "TaskStatus", "int64_t", "version");
-    from_json_key(j, "state", p.state, "TaskStatus", "TaskState", "state");
-    from_json_key(j, "self", p.self, "TaskStatus", "URI", "self");
-    from_json_key(j, "nodeId", p.nodeId, "TaskStatus", "String", "nodeId");
-    from_json_key(j, "failures", p.failures, "TaskStatus", "List<ExecutionFailureInfo>", "failures");
-    from_json_key(j, "queuedPartitionedDrivers", p.queuedPartitionedDrivers, "TaskStatus", "int", "queuedPartitionedDrivers");
-    from_json_key(j, "runningPartitionedDrivers", p.runningPartitionedDrivers, "TaskStatus", "int", "runningPartitionedDrivers");
-    from_json_key(j, "outputBufferOverutilized", p.outputBufferOverutilized, "TaskStatus", "bool", "outputBufferOverutilized");
-    from_json_key(j, "physicalWrittenDataSize", p.physicalWrittenDataSize, "TaskStatus", "DataSize", "physicalWrittenDataSize");
-    from_json_key(j, "memoryReservation", p.memoryReservation, "TaskStatus", "DataSize", "memoryReservation");
-    from_json_key(j, "peakMemoryReservation", p.peakMemoryReservation, "TaskStatus", "DataSize", "peakMemoryReservation");
-    from_json_key(j, "revocableMemoryReservation", p.revocableMemoryReservation, "TaskStatus", "DataSize", "revocableMemoryReservation");
-    from_json_key(j, "fullGcCount", p.fullGcCount, "TaskStatus", "int64_t", "fullGcCount");
-    from_json_key(j, "fullGcTime", p.fullGcTime, "TaskStatus", "Duration", "fullGcTime");
-    from_json_key(j, "dynamicFiltersVersion", p.dynamicFiltersVersion, "TaskStatus", "int64_t", "dynamicFiltersVersion");
-    from_json_key(
-        j, "queuedPartitionedSplitsWeight", p.queuedPartitionedSplitsWeight, "TaskStatus", "int64_t", "queuedPartitionedSplitsWeight");
-    from_json_key(
-        j, "runningPartitionedSplitsWeight", p.runningPartitionedSplitsWeight, "TaskStatus", "int64_t", "runningPartitionedSplitsWeight");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const LocalCostEstimate & p)
-{
-    j = json::object();
-    to_json_key(j, "cpuCost", p.cpuCost, "LocalCostEstimate", "double", "cpuCost");
-    to_json_key(j, "maxMemory", p.maxMemory, "LocalCostEstimate", "double", "maxMemory");
-    to_json_key(j, "networkCost", p.networkCost, "LocalCostEstimate", "double", "networkCost");
-}
-
-void from_json(const json & j, LocalCostEstimate & p)
-{
-    from_json_key(j, "cpuCost", p.cpuCost, "LocalCostEstimate", "double", "cpuCost");
-    from_json_key(j, "maxMemory", p.maxMemory, "LocalCostEstimate", "double", "maxMemory");
-    from_json_key(j, "networkCost", p.networkCost, "LocalCostEstimate", "double", "networkCost");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const PlanCostEstimate & p)
-{
-    j = json::object();
-    to_json_key(j, "cpuCost", p.cpuCost, "PlanCostEstimate", "double", "cpuCost");
-    to_json_key(j, "maxMemory", p.maxMemory, "PlanCostEstimate", "double", "maxMemory");
-    to_json_key(j, "maxMemoryWhenOutputting", p.maxMemoryWhenOutputting, "PlanCostEstimate", "double", "maxMemoryWhenOutputting");
-    to_json_key(j, "networkCost", p.networkCost, "PlanCostEstimate", "double", "networkCost");
-    to_json_key(
-        j, "rootNodeLocalCostEstimate", p.rootNodeLocalCostEstimate, "PlanCostEstimate", "LocalCostEstimate", "rootNodeLocalCostEstimate");
-}
-
-void from_json(const json & j, PlanCostEstimate & p)
-{
-    from_json_key(j, "cpuCost", p.cpuCost, "PlanCostEstimate", "double", "cpuCost");
-    from_json_key(j, "maxMemory", p.maxMemory, "PlanCostEstimate", "double", "maxMemory");
-    from_json_key(j, "maxMemoryWhenOutputting", p.maxMemoryWhenOutputting, "PlanCostEstimate", "double", "maxMemoryWhenOutputting");
-    from_json_key(j, "networkCost", p.networkCost, "PlanCostEstimate", "double", "networkCost");
-    from_json_key(
-        j, "rootNodeLocalCostEstimate", p.rootNodeLocalCostEstimate, "PlanCostEstimate", "LocalCostEstimate", "rootNodeLocalCostEstimate");
-}
-}
-namespace datalight::protocol
-{
-void to_json(json & j, const std::shared_ptr<ValueSet> & p)
-{
-    if (p == nullptr)
-    {
-        return;
-    }
-    String type = p->_type;
-
-    if (type == "equatable")
-    {
-        j = *std::static_pointer_cast<EquatableValueSet>(p);
-        return;
-    }
-    if (type == "sortable")
-    {
-        j = *std::static_pointer_cast<SortedRangeSet>(p);
-        return;
-    }
-    if (type == "allOrNone")
-    {
-        j = *std::static_pointer_cast<AllOrNoneValueSet>(p);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type ValueSet ");
-}
-
-void from_json(const json & j, std::shared_ptr<ValueSet> & p)
-{
-    String type;
-    try
-    {
-        type = p->getSubclassKey(j);
-    }
-    catch (json::parse_error & e)
-    {
-        throw ParseError(std::string(e.what()) + " ValueSet  ValueSet");
-    }
-
-    if (type == "equatable")
-    {
-        std::shared_ptr<EquatableValueSet> k = std::make_shared<EquatableValueSet>();
-        j.get_to(*k);
-        p = std::static_pointer_cast<ValueSet>(k);
-        return;
-    }
-    if (type == "sortable")
-    {
-        std::shared_ptr<SortedRangeSet> k = std::make_shared<SortedRangeSet>();
-        j.get_to(*k);
-        p = std::static_pointer_cast<ValueSet>(k);
-        return;
-    }
-    if (type == "allOrNone")
-    {
-        std::shared_ptr<AllOrNoneValueSet> k = std::make_shared<AllOrNoneValueSet>();
-        j.get_to(*k);
-        p = std::static_pointer_cast<ValueSet>(k);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type ValueSet ");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const Domain & p)
-{
-    j = json::object();
-    to_json_key(j, "values", p.values, "Domain", "ValueSet", "values");
-    to_json_key(j, "nullAllowed", p.nullAllowed, "Domain", "bool", "nullAllowed");
-}
-
-void from_json(const json & j, Domain & p)
-{
-    from_json_key(j, "values", p.values, "Domain", "ValueSet", "values");
-    from_json_key(j, "nullAllowed", p.nullAllowed, "Domain", "bool", "nullAllowed");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const PageBufferInfo & p)
-{
-    j = json::object();
-    to_json_key(j, "partition", p.partition, "PageBufferInfo", "int", "partition");
-    to_json_key(j, "bufferedPages", p.bufferedPages, "PageBufferInfo", "int64_t", "bufferedPages");
-    to_json_key(j, "bufferedBytes", p.bufferedBytes, "PageBufferInfo", "int64_t", "bufferedBytes");
-    to_json_key(j, "rowsAdded", p.rowsAdded, "PageBufferInfo", "int64_t", "rowsAdded");
-    to_json_key(j, "pagesAdded", p.pagesAdded, "PageBufferInfo", "int64_t", "pagesAdded");
-}
-
-void from_json(const json & j, PageBufferInfo & p)
-{
-    from_json_key(j, "partition", p.partition, "PageBufferInfo", "int", "partition");
-    from_json_key(j, "bufferedPages", p.bufferedPages, "PageBufferInfo", "int64_t", "bufferedPages");
-    from_json_key(j, "bufferedBytes", p.bufferedBytes, "PageBufferInfo", "int64_t", "bufferedBytes");
-    from_json_key(j, "rowsAdded", p.rowsAdded, "PageBufferInfo", "int64_t", "rowsAdded");
-    from_json_key(j, "pagesAdded", p.pagesAdded, "PageBufferInfo", "int64_t", "pagesAdded");
+    p.data = std::string(j);
 }
 }
 namespace datalight::protocol
@@ -853,17 +406,97 @@ void from_json(const json & j, Serializable & p)
 namespace datalight::protocol
 {
 
-void to_json(json & j, const HivePartitionKey & p)
+void to_json(json & j, const NullableValue & p)
 {
     j = json::object();
-    to_json_key(j, "name", p.name, "HivePartitionKey", "String", "name");
-    to_json_key(j, "value", p.value, "HivePartitionKey", "String", "value");
+    to_json_key(j, "serializable", p.serializable, "NullableValue", "Serializable", "serializable");
 }
 
-void from_json(const json & j, HivePartitionKey & p)
+void from_json(const json & j, NullableValue & p)
 {
-    from_json_key(j, "name", p.name, "HivePartitionKey", "String", "name");
-    from_json_key(j, "value", p.value, "HivePartitionKey", "String", "value");
+    from_json_key(j, "serializable", p.serializable, "NullableValue", "Serializable", "serializable");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const ArgumentBinding & p)
+{
+    j = json::object();
+    to_json_key(j, "expression", p.expression, "ArgumentBinding", "Expression", "expression");
+    to_json_key(j, "constant", p.constant, "ArgumentBinding", "NullableValue", "constant");
+}
+
+void from_json(const json & j, ArgumentBinding & p)
+{
+    from_json_key(j, "expression", p.expression, "ArgumentBinding", "Expression", "expression");
+    from_json_key(j, "constant", p.constant, "ArgumentBinding", "NullableValue", "constant");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const Partitioning & p)
+{
+    j = json::object();
+    to_json_key(j, "handle", p.handle, "Partitioning", "PartitioningHandle", "handle");
+    to_json_key(j, "arguments", p.arguments, "Partitioning", "List<ArgumentBinding>", "arguments");
+}
+
+void from_json(const json & j, Partitioning & p)
+{
+    from_json_key(j, "handle", p.handle, "Partitioning", "PartitioningHandle", "handle");
+    from_json_key(j, "arguments", p.arguments, "Partitioning", "List<ArgumentBinding>", "arguments");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const PartitioningScheme & p)
+{
+    j = json::object();
+    to_json_key(j, "partitioning", p.partitioning, "PartitioningScheme", "Partitioning", "partitioning");
+    to_json_key(j, "outputLayout", p.outputLayout, "PartitioningScheme", "List<Symbol>", "outputLayout");
+    to_json_key(j, "hashColumn", p.hashColumn, "PartitioningScheme", "Symbol", "hashColumn");
+    to_json_key(j, "replicateNullsAndAny", p.replicateNullsAndAny, "PartitioningScheme", "bool", "replicateNullsAndAny");
+    to_json_key(j, "bucketToPartition", p.bucketToPartition, "PartitioningScheme", "List<int>", "bucketToPartition");
+}
+
+void from_json(const json & j, PartitioningScheme & p)
+{
+    from_json_key(j, "partitioning", p.partitioning, "PartitioningScheme", "Partitioning", "partitioning");
+    from_json_key(j, "outputLayout", p.outputLayout, "PartitioningScheme", "List<Symbol>", "outputLayout");
+    from_json_key(j, "hashColumn", p.hashColumn, "PartitioningScheme", "Symbol", "hashColumn");
+    from_json_key(j, "replicateNullsAndAny", p.replicateNullsAndAny, "PartitioningScheme", "bool", "replicateNullsAndAny");
+    from_json_key(j, "bucketToPartition", p.bucketToPartition, "PartitioningScheme", "List<int>", "bucketToPartition");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const PlanFragment & p)
+{
+    j = json::object();
+    to_json_key(j, "id", p.id, "PlanFragment", "PlanFragmentId", "id");
+    to_json_key(j, "root", p.root, "PlanFragment", "PlanNode", "root");
+    to_json_key(j, "symbols", p.symbols, "PlanFragment", "Map<Symbol, Type>", "symbols");
+    to_json_key(j, "partitioning", p.partitioning, "PlanFragment", "PartitioningHandle", "partitioning");
+    to_json_key(j, "partitionedSources", p.partitionedSources, "PlanFragment", "List<PlanNodeId>", "partitionedSources");
+    to_json_key(j, "partitioningScheme", p.partitioningScheme, "PlanFragment", "PartitioningScheme", "partitioningScheme");
+    to_json_key(j, "statsAndCosts", p.statsAndCosts, "PlanFragment", "StatsAndCosts", "statsAndCosts");
+    to_json_key(j, "jsonRepresentation", p.jsonRepresentation, "PlanFragment", "String", "jsonRepresentation");
+}
+
+void from_json(const json & j, PlanFragment & p)
+{
+    from_json_key(j, "id", p.id, "PlanFragment", "PlanFragmentId", "id");
+    from_json_key(j, "root", p.root, "PlanFragment", "PlanNode", "root");
+    from_json_key(j, "symbols", p.symbols, "PlanFragment", "Map<Symbol, Type>", "symbols");
+    from_json_key(j, "partitioning", p.partitioning, "PlanFragment", "PartitioningHandle", "partitioning");
+    from_json_key(j, "partitionedSources", p.partitionedSources, "PlanFragment", "List<PlanNodeId>", "partitionedSources");
+    from_json_key(j, "partitioningScheme", p.partitioningScheme, "PlanFragment", "PartitioningScheme", "partitioningScheme");
+    from_json_key(j, "statsAndCosts", p.statsAndCosts, "PlanFragment", "StatsAndCosts", "statsAndCosts");
+    from_json_key(j, "jsonRepresentation", p.jsonRepresentation, "PlanFragment", "String", "jsonRepresentation");
 }
 }
 namespace datalight::protocol
@@ -950,132 +583,6 @@ void from_json(const json & j, HiveColumnHandle & p)
         "hiveColumnProjectionInfo");
     from_json_key(j, "columnType", p.columnType, "HiveColumnHandle", "ColumnType", "columnType");
     from_json_key(j, "comment", p.comment, "HiveColumnHandle", "String", "comment");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const BucketConversion & p)
-{
-    j = json::object();
-    to_json_key(j, "bucketingVersion", p.bucketingVersion, "BucketConversion", "BucketingVersion", "bucketingVersion");
-    to_json_key(j, "tableBucketCount", p.tableBucketCount, "BucketConversion", "int", "tableBucketCount");
-    to_json_key(j, "partitionBucketCount", p.partitionBucketCount, "BucketConversion", "int", "partitionBucketCount");
-    to_json_key(j, "bucketColumnHandles", p.bucketColumnHandles, "BucketConversion", "List<HiveColumnHandle>", "bucketColumnHandles");
-}
-
-void from_json(const json & j, BucketConversion & p)
-{
-    from_json_key(j, "bucketingVersion", p.bucketingVersion, "BucketConversion", "BucketingVersion", "bucketingVersion");
-    from_json_key(j, "tableBucketCount", p.tableBucketCount, "BucketConversion", "int", "tableBucketCount");
-    from_json_key(j, "partitionBucketCount", p.partitionBucketCount, "BucketConversion", "int", "partitionBucketCount");
-    from_json_key(j, "bucketColumnHandles", p.bucketColumnHandles, "BucketConversion", "List<HiveColumnHandle>", "bucketColumnHandles");
-}
-}
-namespace datalight::protocol
-{
-EquatableValueSet::EquatableValueSet() noexcept
-{
-    _type = "equatable";
-}
-
-void to_json(json & j, const EquatableValueSet & p)
-{
-    j = json::object();
-    j["@type"] = "equatable";
-    to_json_key(j, "type", p.type, "EquatableValueSet", "Type", "type");
-    to_json_key(j, "inclusive", p.inclusive, "EquatableValueSet", "bool", "inclusive");
-    to_json_key(j, "entries", p.entries, "EquatableValueSet", "List<ValueEntry>", "entries");
-}
-
-void from_json(const json & j, EquatableValueSet & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "type", p.type, "EquatableValueSet", "Type", "type");
-    from_json_key(j, "inclusive", p.inclusive, "EquatableValueSet", "bool", "inclusive");
-    from_json_key(j, "entries", p.entries, "EquatableValueSet", "List<ValueEntry>", "entries");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const OriginalFileInfo & p)
-{
-    j = json::object();
-    to_json_key(j, "name", p.name, "OriginalFileInfo", "String", "name");
-    to_json_key(j, "fileSize", p.fileSize, "OriginalFileInfo", "int64_t", "fileSize");
-}
-
-void from_json(const json & j, OriginalFileInfo & p)
-{
-    from_json_key(j, "name", p.name, "OriginalFileInfo", "String", "name");
-    from_json_key(j, "fileSize", p.fileSize, "OriginalFileInfo", "int64_t", "fileSize");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const NodeVersion & p)
-{
-    j = json::object();
-    to_json_key(j, "version", p.version, "NodeVersion", "String", "version");
-}
-
-void from_json(const json & j, NodeVersion & p)
-{
-    from_json_key(j, "version", p.version, "NodeVersion", "String", "version");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const ServerInfo & p)
-{
-    j = json::object();
-    to_json_key(j, "nodeVersion", p.nodeVersion, "ServerInfo", "NodeVersion", "nodeVersion");
-    to_json_key(j, "environment", p.environment, "ServerInfo", "String", "environment");
-    to_json_key(j, "coordinator", p.coordinator, "ServerInfo", "bool", "coordinator");
-    to_json_key(j, "starting", p.starting, "ServerInfo", "bool", "starting");
-    to_json_key(j, "uptime", p.uptime, "ServerInfo", "Duration", "uptime");
-}
-
-void from_json(const json & j, ServerInfo & p)
-{
-    from_json_key(j, "nodeVersion", p.nodeVersion, "ServerInfo", "NodeVersion", "nodeVersion");
-    from_json_key(j, "environment", p.environment, "ServerInfo", "String", "environment");
-    from_json_key(j, "coordinator", p.coordinator, "ServerInfo", "bool", "coordinator");
-    from_json_key(j, "starting", p.starting, "ServerInfo", "bool", "starting");
-    from_json_key(j, "uptime", p.uptime, "ServerInfo", "Duration", "uptime");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const NullableValue & p)
-{
-    j = json::object();
-    to_json_key(j, "serializable", p.serializable, "NullableValue", "Serializable", "serializable");
-}
-
-void from_json(const json & j, NullableValue & p)
-{
-    from_json_key(j, "serializable", p.serializable, "NullableValue", "Serializable", "serializable");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const ArgumentBinding & p)
-{
-    j = json::object();
-    to_json_key(j, "expression", p.expression, "ArgumentBinding", "Expression", "expression");
-    to_json_key(j, "constant", p.constant, "ArgumentBinding", "NullableValue", "constant");
-}
-
-void from_json(const json & j, ArgumentBinding & p)
-{
-    from_json_key(j, "expression", p.expression, "ArgumentBinding", "Expression", "expression");
-    from_json_key(j, "constant", p.constant, "ArgumentBinding", "NullableValue", "constant");
 }
 }
 /*
@@ -1193,6 +700,95 @@ void from_json(const json & j, ScheduledSplit & p)
 }
 namespace datalight::protocol
 {
+
+void to_json(json & j, const MemoryAllocation & p)
+{
+    j = json::object();
+    to_json_key(j, "tag", p.tag, "MemoryAllocation", "String", "tag");
+    to_json_key(j, "allocation", p.allocation, "MemoryAllocation", "int64_t", "allocation");
+}
+
+void from_json(const json & j, MemoryAllocation & p)
+{
+    from_json_key(j, "tag", p.tag, "MemoryAllocation", "String", "tag");
+    from_json_key(j, "allocation", p.allocation, "MemoryAllocation", "int64_t", "allocation");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const DistributionSnapshot & p)
+{
+    j = json::object();
+    to_json_key(j, "count", p.count, "DistributionSnapshot", "double", "count");
+    to_json_key(j, "total", p.total, "DistributionSnapshot", "double", "total");
+    to_json_key(j, "p01", p.p01, "DistributionSnapshot", "double", "p01");
+    to_json_key(j, "p05", p.p05, "DistributionSnapshot", "double", "p05");
+    to_json_key(j, "p10", p.p10, "DistributionSnapshot", "double", "p10");
+    to_json_key(j, "p25", p.p25, "DistributionSnapshot", "double", "p25");
+    to_json_key(j, "p50", p.p50, "DistributionSnapshot", "double", "p50");
+    to_json_key(j, "p75", p.p75, "DistributionSnapshot", "double", "p75");
+    to_json_key(j, "p90", p.p90, "DistributionSnapshot", "double", "p90");
+    to_json_key(j, "p95", p.p95, "DistributionSnapshot", "double", "p95");
+    to_json_key(j, "p99", p.p99, "DistributionSnapshot", "double", "p99");
+    to_json_key(j, "min", p.min, "DistributionSnapshot", "double", "min");
+    to_json_key(j, "max", p.max, "DistributionSnapshot", "double", "max");
+    to_json_key(j, "avg", p.avg, "DistributionSnapshot", "double", "avg");
+}
+
+void from_json(const json & j, DistributionSnapshot & p)
+{
+    from_json_key(j, "count", p.count, "DistributionSnapshot", "double", "count");
+    from_json_key(j, "total", p.total, "DistributionSnapshot", "double", "total");
+    from_json_key(j, "p01", p.p01, "DistributionSnapshot", "double", "p01");
+    from_json_key(j, "p05", p.p05, "DistributionSnapshot", "double", "p05");
+    from_json_key(j, "p10", p.p10, "DistributionSnapshot", "double", "p10");
+    from_json_key(j, "p25", p.p25, "DistributionSnapshot", "double", "p25");
+    from_json_key(j, "p50", p.p50, "DistributionSnapshot", "double", "p50");
+    from_json_key(j, "p75", p.p75, "DistributionSnapshot", "double", "p75");
+    from_json_key(j, "p90", p.p90, "DistributionSnapshot", "double", "p90");
+    from_json_key(j, "p95", p.p95, "DistributionSnapshot", "double", "p95");
+    from_json_key(j, "p99", p.p99, "DistributionSnapshot", "double", "p99");
+    from_json_key(j, "min", p.min, "DistributionSnapshot", "double", "min");
+    from_json_key(j, "max", p.max, "DistributionSnapshot", "double", "max");
+    from_json_key(j, "avg", p.avg, "DistributionSnapshot", "double", "avg");
+}
+}
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace datalight::protocol
+{
+
+void to_json(nlohmann::json & j, const DataSize & p)
+{
+    j = p.toString();
+}
+
+void from_json(const nlohmann::json & j, DataSize & p)
+{
+    p = DataSize(std::string(j));
+}
+
+std::ostream & operator<<(std::ostream & os, const DataSize & d)
+{
+    return os << d.toString();
+}
+
+} // namespace facebook::trino::protocol
+namespace datalight::protocol
+{
 //Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
 
 // NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
@@ -1238,6 +834,39 @@ void to_json(json & j, const OperatorInfo & p)
 void from_json(const json & j, OperatorInfo & p)
 {
 }
+} // namespace facebook::trino::protocol
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace datalight::protocol
+{
+
+void to_json(json & j, const Duration & p)
+{
+    j = p.toString();
+}
+
+void from_json(const json & j, Duration & p)
+{
+    p = Duration(std::string(j));
+}
+
+std::ostream & operator<<(std::ostream & os, const Duration & d)
+{
+    return os << d.toString();
+}
+
 } // namespace facebook::trino::protocol
 namespace datalight::protocol
 {
@@ -1345,46 +974,6 @@ void from_json(const json & j, OperatorStats & p)
     from_json_key(j, "spilledDataSize", p.spilledDataSize, "OperatorStats", "DataSize", "spilledDataSize");
     from_json_key(j, "blockedReason", p.blockedReason, "OperatorStats", "BlockedReason", "blockedReason");
     from_json_key(j, "info", p.info, "OperatorStats", "OperatorInfo", "info");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const DistributionSnapshot & p)
-{
-    j = json::object();
-    to_json_key(j, "count", p.count, "DistributionSnapshot", "double", "count");
-    to_json_key(j, "total", p.total, "DistributionSnapshot", "double", "total");
-    to_json_key(j, "p01", p.p01, "DistributionSnapshot", "double", "p01");
-    to_json_key(j, "p05", p.p05, "DistributionSnapshot", "double", "p05");
-    to_json_key(j, "p10", p.p10, "DistributionSnapshot", "double", "p10");
-    to_json_key(j, "p25", p.p25, "DistributionSnapshot", "double", "p25");
-    to_json_key(j, "p50", p.p50, "DistributionSnapshot", "double", "p50");
-    to_json_key(j, "p75", p.p75, "DistributionSnapshot", "double", "p75");
-    to_json_key(j, "p90", p.p90, "DistributionSnapshot", "double", "p90");
-    to_json_key(j, "p95", p.p95, "DistributionSnapshot", "double", "p95");
-    to_json_key(j, "p99", p.p99, "DistributionSnapshot", "double", "p99");
-    to_json_key(j, "min", p.min, "DistributionSnapshot", "double", "min");
-    to_json_key(j, "max", p.max, "DistributionSnapshot", "double", "max");
-    to_json_key(j, "avg", p.avg, "DistributionSnapshot", "double", "avg");
-}
-
-void from_json(const json & j, DistributionSnapshot & p)
-{
-    from_json_key(j, "count", p.count, "DistributionSnapshot", "double", "count");
-    from_json_key(j, "total", p.total, "DistributionSnapshot", "double", "total");
-    from_json_key(j, "p01", p.p01, "DistributionSnapshot", "double", "p01");
-    from_json_key(j, "p05", p.p05, "DistributionSnapshot", "double", "p05");
-    from_json_key(j, "p10", p.p10, "DistributionSnapshot", "double", "p10");
-    from_json_key(j, "p25", p.p25, "DistributionSnapshot", "double", "p25");
-    from_json_key(j, "p50", p.p50, "DistributionSnapshot", "double", "p50");
-    from_json_key(j, "p75", p.p75, "DistributionSnapshot", "double", "p75");
-    from_json_key(j, "p90", p.p90, "DistributionSnapshot", "double", "p90");
-    from_json_key(j, "p95", p.p95, "DistributionSnapshot", "double", "p95");
-    from_json_key(j, "p99", p.p99, "DistributionSnapshot", "double", "p99");
-    from_json_key(j, "min", p.min, "DistributionSnapshot", "double", "min");
-    from_json_key(j, "max", p.max, "DistributionSnapshot", "double", "max");
-    from_json_key(j, "avg", p.avg, "DistributionSnapshot", "double", "avg");
 }
 }
 namespace datalight::protocol
@@ -1572,255 +1161,6 @@ void from_json(const json & j, PipelineStats & p)
 namespace datalight::protocol
 {
 
-void to_json(json & j, const Partitioning & p)
-{
-    j = json::object();
-    to_json_key(j, "handle", p.handle, "Partitioning", "PartitioningHandle", "handle");
-    to_json_key(j, "arguments", p.arguments, "Partitioning", "List<ArgumentBinding>", "arguments");
-}
-
-void from_json(const json & j, Partitioning & p)
-{
-    from_json_key(j, "handle", p.handle, "Partitioning", "PartitioningHandle", "handle");
-    from_json_key(j, "arguments", p.arguments, "Partitioning", "List<ArgumentBinding>", "arguments");
-}
-}
-namespace datalight::protocol
-{
-//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
-
-// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
-static const std::pair<SortOrder, json> SortOrder_enum_table[] = { // NOLINT: cert-err58-cpp
-    {SortOrder::ASC_NULLS_FIRST, "ASC_NULLS_FIRST"},
-    {SortOrder::ASC_NULLS_LAST, "ASC_NULLS_LAST"},
-    {SortOrder::DESC_NULLS_FIRST, "DESC_NULLS_FIRST"},
-    {SortOrder::DESC_NULLS_LAST, "DESC_NULLS_LAST"}};
-void to_json(json & j, const SortOrder & e)
-{
-    static_assert(std::is_enum<SortOrder>::value, "SortOrder must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(SortOrder_enum_table),
-        std::end(SortOrder_enum_table),
-        [e](const std::pair<SortOrder, json> & ej_pair) -> bool { return ej_pair.first == e; });
-    j = ((it != std::end(SortOrder_enum_table)) ? it : std::begin(SortOrder_enum_table))->second;
-}
-void from_json(const json & j, SortOrder & e)
-{
-    static_assert(std::is_enum<SortOrder>::value, "SortOrder must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(SortOrder_enum_table),
-        std::end(SortOrder_enum_table),
-        [&j](const std::pair<SortOrder, json> & ej_pair) -> bool { return ej_pair.second == j; });
-    e = ((it != std::end(SortOrder_enum_table)) ? it : std::begin(SortOrder_enum_table))->first;
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const OrderingScheme & p)
-{
-    j = json::object();
-    to_json_key(j, "orderBy", p.orderBy, "OrderingScheme", "List<Symbol>", "orderBy");
-    to_json_key(j, "orderings", p.orderings, "OrderingScheme", "Map<Symbol, SortOrder>", "orderings");
-}
-
-void from_json(const json & j, OrderingScheme & p)
-{
-    from_json_key(j, "orderBy", p.orderBy, "OrderingScheme", "List<Symbol>", "orderBy");
-    from_json_key(j, "orderings", p.orderings, "OrderingScheme", "Map<Symbol, SortOrder>", "orderings");
-}
-}
-namespace datalight::protocol
-{
-LimitNode::LimitNode() noexcept
-{
-    _type = ".LimitNode";
-}
-
-void to_json(json & j, const LimitNode & p)
-{
-    j = json::object();
-    j["@type"] = ".LimitNode";
-    to_json_key(j, "id", p.id, "LimitNode", "PlanNodeId", "id");
-    to_json_key(j, "source", p.source, "LimitNode", "PlanNode", "source");
-    to_json_key(j, "count", p.count, "LimitNode", "int64_t", "count");
-    to_json_key(j, "tiesResolvingScheme", p.tiesResolvingScheme, "LimitNode", "OrderingScheme", "tiesResolvingScheme");
-    to_json_key(j, "partial", p.partial, "LimitNode", "bool", "partial");
-    to_json_key(j, "requiresPreSortedInputs", p.requiresPreSortedInputs, "LimitNode", "List<Symbol>", "requiresPreSortedInputs");
-}
-
-void from_json(const json & j, LimitNode & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "id", p.id, "LimitNode", "PlanNodeId", "id");
-    from_json_key(j, "source", p.source, "LimitNode", "PlanNode", "source");
-    from_json_key(j, "count", p.count, "LimitNode", "int64_t", "count");
-    from_json_key(j, "tiesResolvingScheme", p.tiesResolvingScheme, "LimitNode", "OrderingScheme", "tiesResolvingScheme");
-    from_json_key(j, "partial", p.partial, "LimitNode", "bool", "partial");
-    from_json_key(j, "requiresPreSortedInputs", p.requiresPreSortedInputs, "LimitNode", "List<Symbol>", "requiresPreSortedInputs");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const SqlPath & p)
-{
-    j = json::object();
-    to_json_key(j, "rawPath", p.rawPath, "SqlPath", "String", "rawPath");
-}
-
-void from_json(const json & j, SqlPath & p)
-{
-    from_json_key(j, "rawPath", p.rawPath, "SqlPath", "String", "rawPath");
-}
-}
-namespace datalight::protocol
-{
-void to_json(json & j, const std::shared_ptr<ExchangeSourceHandle> & p)
-{
-    if (p == nullptr)
-    {
-        return;
-    }
-    String type = p->_type;
-
-    if (type == "filesystem")
-    {
-        j = *std::static_pointer_cast<FileSystemExchangeSourceHandle>(p);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type ExchangeSourceHandle ");
-}
-
-void from_json(const json & j, std::shared_ptr<ExchangeSourceHandle> & p)
-{
-    String type;
-    try
-    {
-        type = p->getSubclassKey(j);
-    }
-    catch (json::parse_error & e)
-    {
-        throw ParseError(std::string(e.what()) + " ExchangeSourceHandle  ExchangeSourceHandle");
-    }
-
-    if (type == "filesystem")
-    {
-        std::shared_ptr<FileSystemExchangeSourceHandle> k = std::make_shared<FileSystemExchangeSourceHandle>();
-        j.get_to(*k);
-        p = std::static_pointer_cast<ExchangeSourceHandle>(k);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type ExchangeSourceHandle ");
-}
-}
-namespace datalight::protocol
-{
-SpoolingExchangeInput::SpoolingExchangeInput() noexcept
-{
-    _type = "spooling";
-}
-
-void to_json(json & j, const SpoolingExchangeInput & p)
-{
-    j = json::object();
-    j["@type"] = "spooling";
-    to_json_key(
-        j,
-        "exchangeSourceHandles",
-        p.exchangeSourceHandles,
-        "SpoolingExchangeInput",
-        "List<ExchangeSourceHandle>",
-        "exchangeSourceHandles");
-}
-
-void from_json(const json & j, SpoolingExchangeInput & p)
-{
-    p._type = j["@type"];
-    from_json_key(
-        j,
-        "exchangeSourceHandles",
-        p.exchangeSourceHandles,
-        "SpoolingExchangeInput",
-        "List<ExchangeSourceHandle>",
-        "exchangeSourceHandles");
-}
-}
-namespace datalight::protocol
-{
-HivePartitioningHandle::HivePartitioningHandle() noexcept
-{
-    _type = "hive";
-}
-
-void to_json(json & j, const HivePartitioningHandle & p)
-{
-    j = json::object();
-    j["@type"] = "hive";
-    to_json_key(j, "bucketingVersion", p.bucketingVersion, "HivePartitioningHandle", "BucketingVersion", "bucketingVersion");
-    to_json_key(j, "bucketCount", p.bucketCount, "HivePartitioningHandle", "int", "bucketCount");
-    to_json_key(j, "hiveBucketTypes", p.hiveBucketTypes, "HivePartitioningHandle", "List<HiveType>", "hiveBucketTypes");
-    to_json_key(j, "maxCompatibleBucketCount", p.maxCompatibleBucketCount, "HivePartitioningHandle", "int", "maxCompatibleBucketCount");
-    to_json_key(j, "usePartitionedBucketing", p.usePartitionedBucketing, "HivePartitioningHandle", "bool", "usePartitionedBucketing");
-}
-
-void from_json(const json & j, HivePartitioningHandle & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "bucketingVersion", p.bucketingVersion, "HivePartitioningHandle", "BucketingVersion", "bucketingVersion");
-    from_json_key(j, "bucketCount", p.bucketCount, "HivePartitioningHandle", "int", "bucketCount");
-    from_json_key(j, "hiveBucketTypes", p.hiveBucketTypes, "HivePartitioningHandle", "List<HiveType>", "hiveBucketTypes");
-    from_json_key(j, "maxCompatibleBucketCount", p.maxCompatibleBucketCount, "HivePartitioningHandle", "int", "maxCompatibleBucketCount");
-    from_json_key(j, "usePartitionedBucketing", p.usePartitionedBucketing, "HivePartitioningHandle", "bool", "usePartitionedBucketing");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const SplitAssignment & p)
-{
-    j = json::object();
-    to_json_key(j, "planNodeId", p.planNodeId, "SplitAssignment", "PlanNodeId", "planNodeId");
-    to_json_key(j, "splits", p.splits, "SplitAssignment", "List<ScheduledSplit>", "splits");
-    to_json_key(j, "noMoreSplits", p.noMoreSplits, "SplitAssignment", "bool", "noMoreSplits");
-}
-
-void from_json(const json & j, SplitAssignment & p)
-{
-    from_json_key(j, "planNodeId", p.planNodeId, "SplitAssignment", "PlanNodeId", "planNodeId");
-    from_json_key(j, "splits", p.splits, "SplitAssignment", "List<ScheduledSplit>", "splits");
-    from_json_key(j, "noMoreSplits", p.noMoreSplits, "SplitAssignment", "bool", "noMoreSplits");
-}
-}
-namespace datalight::protocol
-{
-SortedRangeSet::SortedRangeSet() noexcept
-{
-    _type = "sortable";
-}
-
-void to_json(json & j, const SortedRangeSet & p)
-{
-    j = json::object();
-    j["@type"] = "sortable";
-    to_json_key(j, "type", p.type, "SortedRangeSet", "Type", "type");
-    to_json_key(j, "inclusive", p.inclusive, "SortedRangeSet", "List<bool>", "inclusive");
-    to_json_key(j, "sortedRanges", p.sortedRanges, "SortedRangeSet", "Block", "sortedRanges");
-}
-
-void from_json(const json & j, SortedRangeSet & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "type", p.type, "SortedRangeSet", "Type", "type");
-    from_json_key(j, "inclusive", p.inclusive, "SortedRangeSet", "List<bool>", "inclusive");
-    from_json_key(j, "sortedRanges", p.sortedRanges, "SortedRangeSet", "Block", "sortedRanges");
-}
-}
-namespace datalight::protocol
-{
-
 void to_json(json & j, const TaskStats & p)
 {
     j = json::object();
@@ -1923,6 +1263,655 @@ void from_json(const json & j, TaskStats & p)
 }
 namespace datalight::protocol
 {
+//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
+
+// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
+static const std::pair<ErrorType, json> ErrorType_enum_table[] = { // NOLINT: cert-err58-cpp
+    {ErrorType::USER_ERROR, "USER_ERROR"},
+    {ErrorType::INTERNAL_ERROR, "INTERNAL_ERROR"},
+    {ErrorType::INSUFFICIENT_RESOURCES, "INSUFFICIENT_RESOURCES"},
+    {ErrorType::EXTERNAL, "EXTERNAL"}};
+void to_json(json & j, const ErrorType & e)
+{
+    static_assert(std::is_enum<ErrorType>::value, "ErrorType must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(ErrorType_enum_table),
+        std::end(ErrorType_enum_table),
+        [e](const std::pair<ErrorType, json> & ej_pair) -> bool { return ej_pair.first == e; });
+    j = ((it != std::end(ErrorType_enum_table)) ? it : std::begin(ErrorType_enum_table))->second;
+}
+void from_json(const json & j, ErrorType & e)
+{
+    static_assert(std::is_enum<ErrorType>::value, "ErrorType must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(ErrorType_enum_table),
+        std::end(ErrorType_enum_table),
+        [&j](const std::pair<ErrorType, json> & ej_pair) -> bool { return ej_pair.second == j; });
+    e = ((it != std::end(ErrorType_enum_table)) ? it : std::begin(ErrorType_enum_table))->first;
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const ErrorCode & p)
+{
+    j = json::object();
+    to_json_key(j, "code", p.code, "ErrorCode", "int", "code");
+    to_json_key(j, "name", p.name, "ErrorCode", "String", "name");
+    to_json_key(j, "type", p.type, "ErrorCode", "ErrorType", "type");
+}
+
+void from_json(const json & j, ErrorCode & p)
+{
+    from_json_key(j, "code", p.code, "ErrorCode", "int", "code");
+    from_json_key(j, "name", p.name, "ErrorCode", "String", "name");
+    from_json_key(j, "type", p.type, "ErrorCode", "ErrorType", "type");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const ExecutionFailureInfo & p)
+{
+    j = json::object();
+    to_json_key(j, "type", p.type, "ExecutionFailureInfo", "String", "type");
+    to_json_key(j, "message", p.message, "ExecutionFailureInfo", "String", "message");
+    to_json_key(j, "cause", p.cause, "ExecutionFailureInfo", "ExecutionFailureInfo", "cause");
+    to_json_key(j, "suppressed", p.suppressed, "ExecutionFailureInfo", "List<ExecutionFailureInfo>", "suppressed");
+    to_json_key(j, "stack", p.stack, "ExecutionFailureInfo", "List<String>", "stack");
+    to_json_key(j, "errorLocation", p.errorLocation, "ExecutionFailureInfo", "ErrorLocation", "errorLocation");
+    to_json_key(j, "errorCode", p.errorCode, "ExecutionFailureInfo", "ErrorCode", "errorCode");
+    to_json_key(j, "remoteHost", p.remoteHost, "ExecutionFailureInfo", "HostAddress", "remoteHost");
+}
+
+void from_json(const json & j, ExecutionFailureInfo & p)
+{
+    from_json_key(j, "type", p.type, "ExecutionFailureInfo", "String", "type");
+    from_json_key(j, "message", p.message, "ExecutionFailureInfo", "String", "message");
+    from_json_key(j, "cause", p.cause, "ExecutionFailureInfo", "ExecutionFailureInfo", "cause");
+    from_json_key(j, "suppressed", p.suppressed, "ExecutionFailureInfo", "List<ExecutionFailureInfo>", "suppressed");
+    from_json_key(j, "stack", p.stack, "ExecutionFailureInfo", "List<String>", "stack");
+    from_json_key(j, "errorLocation", p.errorLocation, "ExecutionFailureInfo", "ErrorLocation", "errorLocation");
+    from_json_key(j, "errorCode", p.errorCode, "ExecutionFailureInfo", "ErrorCode", "errorCode");
+    from_json_key(j, "remoteHost", p.remoteHost, "ExecutionFailureInfo", "HostAddress", "remoteHost");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const SqlPath & p)
+{
+    j = json::object();
+    to_json_key(j, "rawPath", p.rawPath, "SqlPath", "String", "rawPath");
+}
+
+void from_json(const json & j, SqlPath & p)
+{
+    from_json_key(j, "rawPath", p.rawPath, "SqlPath", "String", "rawPath");
+}
+}
+namespace datalight::protocol
+{
+//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
+
+// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
+static const std::pair<SystemPartitioning, json> SystemPartitioning_enum_table[] = { // NOLINT: cert-err58-cpp
+    {SystemPartitioning::SINGLE, "SINGLE"},
+    {SystemPartitioning::FIXED, "FIXED"},
+    {SystemPartitioning::SOURCE, "SOURCE"},
+    {SystemPartitioning::SCALED, "SCALED"},
+    {SystemPartitioning::COORDINATOR_ONLY, "COORDINATOR_ONLY"},
+    {SystemPartitioning::ARBITRARY, "ARBITRARY"}};
+void to_json(json & j, const SystemPartitioning & e)
+{
+    static_assert(std::is_enum<SystemPartitioning>::value, "SystemPartitioning must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(SystemPartitioning_enum_table),
+        std::end(SystemPartitioning_enum_table),
+        [e](const std::pair<SystemPartitioning, json> & ej_pair) -> bool { return ej_pair.first == e; });
+    j = ((it != std::end(SystemPartitioning_enum_table)) ? it : std::begin(SystemPartitioning_enum_table))->second;
+}
+void from_json(const json & j, SystemPartitioning & e)
+{
+    static_assert(std::is_enum<SystemPartitioning>::value, "SystemPartitioning must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(SystemPartitioning_enum_table),
+        std::end(SystemPartitioning_enum_table),
+        [&j](const std::pair<SystemPartitioning, json> & ej_pair) -> bool { return ej_pair.second == j; });
+    e = ((it != std::end(SystemPartitioning_enum_table)) ? it : std::begin(SystemPartitioning_enum_table))->first;
+}
+}
+namespace datalight::protocol
+{
+//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
+
+// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
+static const std::pair<SystemPartitionFunction, json> SystemPartitionFunction_enum_table[] = { // NOLINT: cert-err58-cpp
+    {SystemPartitionFunction::SINGLE, "SINGLE"},
+    {SystemPartitionFunction::HASH, "HASH"},
+    {SystemPartitionFunction::ROUND_ROBIN, "ROUND_ROBIN"},
+    {SystemPartitionFunction::BROADCAST, "BROADCAST"},
+    {SystemPartitionFunction::UNKNOWN, "UNKNOWN"}};
+void to_json(json & j, const SystemPartitionFunction & e)
+{
+    static_assert(std::is_enum<SystemPartitionFunction>::value, "SystemPartitionFunction must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(SystemPartitionFunction_enum_table),
+        std::end(SystemPartitionFunction_enum_table),
+        [e](const std::pair<SystemPartitionFunction, json> & ej_pair) -> bool { return ej_pair.first == e; });
+    j = ((it != std::end(SystemPartitionFunction_enum_table)) ? it : std::begin(SystemPartitionFunction_enum_table))->second;
+}
+void from_json(const json & j, SystemPartitionFunction & e)
+{
+    static_assert(std::is_enum<SystemPartitionFunction>::value, "SystemPartitionFunction must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(SystemPartitionFunction_enum_table),
+        std::end(SystemPartitionFunction_enum_table),
+        [&j](const std::pair<SystemPartitionFunction, json> & ej_pair) -> bool { return ej_pair.second == j; });
+    e = ((it != std::end(SystemPartitionFunction_enum_table)) ? it : std::begin(SystemPartitionFunction_enum_table))->first;
+}
+}
+namespace datalight::protocol
+{
+SystemPartitioningHandle::SystemPartitioningHandle() noexcept
+{
+    _type = "$remote";
+}
+
+void to_json(json & j, const SystemPartitioningHandle & p)
+{
+    j = json::object();
+    j["@type"] = "$remote";
+    to_json_key(j, "partitioning", p.partitioning, "SystemPartitioningHandle", "SystemPartitioning", "partitioning");
+    to_json_key(j, "function", p.function, "SystemPartitioningHandle", "SystemPartitionFunction", "function");
+}
+
+void from_json(const json & j, SystemPartitioningHandle & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "partitioning", p.partitioning, "SystemPartitioningHandle", "SystemPartitioning", "partitioning");
+    from_json_key(j, "function", p.function, "SystemPartitioningHandle", "SystemPartitionFunction", "function");
+}
+}
+namespace datalight::protocol
+{
+void to_json(json & j, const std::shared_ptr<ValueSet> & p)
+{
+    if (p == nullptr)
+    {
+        return;
+    }
+    String type = p->_type;
+
+    if (type == "equatable")
+    {
+        j = *std::static_pointer_cast<EquatableValueSet>(p);
+        return;
+    }
+    if (type == "sortable")
+    {
+        j = *std::static_pointer_cast<SortedRangeSet>(p);
+        return;
+    }
+    if (type == "allOrNone")
+    {
+        j = *std::static_pointer_cast<AllOrNoneValueSet>(p);
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ValueSet ");
+}
+
+void from_json(const json & j, std::shared_ptr<ValueSet> & p)
+{
+    String type;
+    try
+    {
+        type = p->getSubclassKey(j);
+    }
+    catch (json::parse_error & e)
+    {
+        throw ParseError(std::string(e.what()) + " ValueSet  ValueSet");
+    }
+
+    if (type == "equatable")
+    {
+        std::shared_ptr<EquatableValueSet> k = std::make_shared<EquatableValueSet>();
+        j.get_to(*k);
+        p = std::static_pointer_cast<ValueSet>(k);
+        return;
+    }
+    if (type == "sortable")
+    {
+        std::shared_ptr<SortedRangeSet> k = std::make_shared<SortedRangeSet>();
+        j.get_to(*k);
+        p = std::static_pointer_cast<ValueSet>(k);
+        return;
+    }
+    if (type == "allOrNone")
+    {
+        std::shared_ptr<AllOrNoneValueSet> k = std::make_shared<AllOrNoneValueSet>();
+        j.get_to(*k);
+        p = std::static_pointer_cast<ValueSet>(k);
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ValueSet ");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const Domain & p)
+{
+    j = json::object();
+    to_json_key(j, "values", p.values, "Domain", "ValueSet", "values");
+    to_json_key(j, "nullAllowed", p.nullAllowed, "Domain", "bool", "nullAllowed");
+}
+
+void from_json(const json & j, Domain & p)
+{
+    from_json_key(j, "values", p.values, "Domain", "ValueSet", "values");
+    from_json_key(j, "nullAllowed", p.nullAllowed, "Domain", "bool", "nullAllowed");
+}
+}
+namespace datalight::protocol
+{
+//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
+
+// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
+static const std::pair<BufferType, json> BufferType_enum_table[] = { // NOLINT: cert-err58-cpp
+    {BufferType::PARTITIONED, "PARTITIONED"},
+    {BufferType::BROADCAST, "BROADCAST"},
+    {BufferType::ARBITRARY, "ARBITRARY"},
+    {BufferType::SPOOL, "SPOOL"}};
+void to_json(json & j, const BufferType & e)
+{
+    static_assert(std::is_enum<BufferType>::value, "BufferType must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(BufferType_enum_table),
+        std::end(BufferType_enum_table),
+        [e](const std::pair<BufferType, json> & ej_pair) -> bool { return ej_pair.first == e; });
+    j = ((it != std::end(BufferType_enum_table)) ? it : std::begin(BufferType_enum_table))->second;
+}
+void from_json(const json & j, BufferType & e)
+{
+    static_assert(std::is_enum<BufferType>::value, "BufferType must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(BufferType_enum_table),
+        std::end(BufferType_enum_table),
+        [&j](const std::pair<BufferType, json> & ej_pair) -> bool { return ej_pair.second == j; });
+    e = ((it != std::end(BufferType_enum_table)) ? it : std::begin(BufferType_enum_table))->first;
+}
+}
+namespace datalight::protocol
+{
+void to_json(json & j, const std::shared_ptr<ExchangeSinkInstanceHandle> & p)
+{
+    if (p == nullptr)
+    {
+        return;
+    }
+    String type = p->_type;
+
+    if (type == "filesystem")
+    {
+        j = *std::static_pointer_cast<FileSystemExchangeSinkInstanceHandle>(p);
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ExchangeSinkInstanceHandle ");
+}
+
+void from_json(const json & j, std::shared_ptr<ExchangeSinkInstanceHandle> & p)
+{
+    String type;
+    try
+    {
+        type = p->getSubclassKey(j);
+    }
+    catch (json::parse_error & e)
+    {
+        throw ParseError(std::string(e.what()) + " ExchangeSinkInstanceHandle  ExchangeSinkInstanceHandle");
+    }
+
+    if (type == "filesystem")
+    {
+        std::shared_ptr<FileSystemExchangeSinkInstanceHandle> k = std::make_shared<FileSystemExchangeSinkInstanceHandle>();
+        j.get_to(*k);
+        p = std::static_pointer_cast<ExchangeSinkInstanceHandle>(k);
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ExchangeSinkInstanceHandle ");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const OutputBuffers & p)
+{
+    j = json::object();
+    to_json_key(j, "type", p.type, "OutputBuffers", "BufferType", "type");
+    to_json_key(j, "version", p.version, "OutputBuffers", "int64_t", "version");
+    to_json_key(j, "noMoreBufferIds", p.noMoreBufferIds, "OutputBuffers", "bool", "noMoreBufferIds");
+    to_json_key(j, "buffers", p.buffers, "OutputBuffers", "Map<OutputBufferId, Integer>", "buffers");
+    to_json_key(
+        j,
+        "exchangeSinkInstanceHandle",
+        p.exchangeSinkInstanceHandle,
+        "OutputBuffers",
+        "ExchangeSinkInstanceHandle",
+        "exchangeSinkInstanceHandle");
+}
+
+void from_json(const json & j, OutputBuffers & p)
+{
+    from_json_key(j, "type", p.type, "OutputBuffers", "BufferType", "type");
+    from_json_key(j, "version", p.version, "OutputBuffers", "int64_t", "version");
+    from_json_key(j, "noMoreBufferIds", p.noMoreBufferIds, "OutputBuffers", "bool", "noMoreBufferIds");
+    from_json_key(j, "buffers", p.buffers, "OutputBuffers", "Map<OutputBufferId, Integer>", "buffers");
+    from_json_key(
+        j,
+        "exchangeSinkInstanceHandle",
+        p.exchangeSinkInstanceHandle,
+        "OutputBuffers",
+        "ExchangeSinkInstanceHandle",
+        "exchangeSinkInstanceHandle");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const SplitAssignment & p)
+{
+    j = json::object();
+    to_json_key(j, "planNodeId", p.planNodeId, "SplitAssignment", "PlanNodeId", "planNodeId");
+    to_json_key(j, "splits", p.splits, "SplitAssignment", "List<ScheduledSplit>", "splits");
+    to_json_key(j, "noMoreSplits", p.noMoreSplits, "SplitAssignment", "bool", "noMoreSplits");
+}
+
+void from_json(const json & j, SplitAssignment & p)
+{
+    from_json_key(j, "planNodeId", p.planNodeId, "SplitAssignment", "PlanNodeId", "planNodeId");
+    from_json_key(j, "splits", p.splits, "SplitAssignment", "List<ScheduledSplit>", "splits");
+    from_json_key(j, "noMoreSplits", p.noMoreSplits, "SplitAssignment", "bool", "noMoreSplits");
+}
+}
+namespace datalight::protocol
+{
+//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
+
+// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
+static const std::pair<SelectedRoleType, json> SelectedRoleType_enum_table[] = { // NOLINT: cert-err58-cpp
+    {SelectedRoleType::ROLE, "ROLE"},
+    {SelectedRoleType::ALL, "ALL"},
+    {SelectedRoleType::NONE, "NONE"}};
+void to_json(json & j, const SelectedRoleType & e)
+{
+    static_assert(std::is_enum<SelectedRoleType>::value, "SelectedRoleType must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(SelectedRoleType_enum_table),
+        std::end(SelectedRoleType_enum_table),
+        [e](const std::pair<SelectedRoleType, json> & ej_pair) -> bool { return ej_pair.first == e; });
+    j = ((it != std::end(SelectedRoleType_enum_table)) ? it : std::begin(SelectedRoleType_enum_table))->second;
+}
+void from_json(const json & j, SelectedRoleType & e)
+{
+    static_assert(std::is_enum<SelectedRoleType>::value, "SelectedRoleType must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(SelectedRoleType_enum_table),
+        std::end(SelectedRoleType_enum_table),
+        [&j](const std::pair<SelectedRoleType, json> & ej_pair) -> bool { return ej_pair.second == j; });
+    e = ((it != std::end(SelectedRoleType_enum_table)) ? it : std::begin(SelectedRoleType_enum_table))->first;
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const SelectedRole & p)
+{
+    j = json::object();
+    to_json_key(j, "type", p.type, "SelectedRole", "SelectedRoleType", "type");
+    to_json_key(j, "role", p.role, "SelectedRole", "String", "role");
+}
+
+void from_json(const json & j, SelectedRole & p)
+{
+    from_json_key(j, "type", p.type, "SelectedRole", "SelectedRoleType", "type");
+    from_json_key(j, "role", p.role, "SelectedRole", "String", "role");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const ResourceEstimates & p)
+{
+    j = json::object();
+    to_json_key(j, "executionTime", p.executionTime, "ResourceEstimates", "Duration", "executionTime");
+    to_json_key(j, "cpuTime", p.cpuTime, "ResourceEstimates", "Duration", "cpuTime");
+    to_json_key(j, "peakMemoryBytes", p.peakMemoryBytes, "ResourceEstimates", "Long", "peakMemoryBytes");
+}
+
+void from_json(const json & j, ResourceEstimates & p)
+{
+    from_json_key(j, "executionTime", p.executionTime, "ResourceEstimates", "Duration", "executionTime");
+    from_json_key(j, "cpuTime", p.cpuTime, "ResourceEstimates", "Duration", "cpuTime");
+    from_json_key(j, "peakMemoryBytes", p.peakMemoryBytes, "ResourceEstimates", "Long", "peakMemoryBytes");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const SessionRepresentation & p)
+{
+    j = json::object();
+    to_json_key(j, "queryId", p.queryId, "SessionRepresentation", "String", "queryId");
+    to_json_key(j, "transactionId", p.transactionId, "SessionRepresentation", "TransactionId", "transactionId");
+    to_json_key(j, "clientTransactionSupport", p.clientTransactionSupport, "SessionRepresentation", "bool", "clientTransactionSupport");
+    to_json_key(j, "user", p.user, "SessionRepresentation", "String", "user");
+    to_json_key(j, "groups", p.groups, "SessionRepresentation", "List<String>", "groups");
+    to_json_key(j, "principal", p.principal, "SessionRepresentation", "String", "principal");
+    to_json_key(j, "enabledRoles", p.enabledRoles, "SessionRepresentation", "List<String>", "enabledRoles");
+    to_json_key(j, "source", p.source, "SessionRepresentation", "String", "source");
+    to_json_key(j, "catalog", p.catalog, "SessionRepresentation", "String", "catalog");
+    to_json_key(j, "schema", p.schema, "SessionRepresentation", "String", "schema");
+    to_json_key(j, "path", p.path, "SessionRepresentation", "SqlPath", "path");
+    to_json_key(j, "traceToken", p.traceToken, "SessionRepresentation", "String", "traceToken");
+    to_json_key(j, "timeZoneKey", p.timeZoneKey, "SessionRepresentation", "TimeZoneKey", "timeZoneKey");
+    to_json_key(j, "locale", p.locale, "SessionRepresentation", "Locale", "locale");
+    to_json_key(j, "remoteUserAddress", p.remoteUserAddress, "SessionRepresentation", "String", "remoteUserAddress");
+    to_json_key(j, "userAgent", p.userAgent, "SessionRepresentation", "String", "userAgent");
+    to_json_key(j, "clientInfo", p.clientInfo, "SessionRepresentation", "String", "clientInfo");
+    to_json_key(j, "clientTags", p.clientTags, "SessionRepresentation", "List<String>", "clientTags");
+    to_json_key(j, "clientCapabilities", p.clientCapabilities, "SessionRepresentation", "List<String>", "clientCapabilities");
+    to_json_key(j, "resourceEstimates", p.resourceEstimates, "SessionRepresentation", "ResourceEstimates", "resourceEstimates");
+    to_json_key(j, "start", p.start, "SessionRepresentation", "Instant", "start");
+    to_json_key(j, "systemProperties", p.systemProperties, "SessionRepresentation", "Map<String, String>", "systemProperties");
+    to_json_key(
+        j, "catalogProperties", p.catalogProperties, "SessionRepresentation", "Map<String, Map<String, String>>", "catalogProperties");
+    to_json_key(j, "catalogRoles", p.catalogRoles, "SessionRepresentation", "Map<String, SelectedRole>", "catalogRoles");
+    to_json_key(j, "preparedStatements", p.preparedStatements, "SessionRepresentation", "Map<String, String>", "preparedStatements");
+    to_json_key(j, "protocolName", p.protocolName, "SessionRepresentation", "String", "protocolName");
+}
+
+void from_json(const json & j, SessionRepresentation & p)
+{
+    from_json_key(j, "queryId", p.queryId, "SessionRepresentation", "String", "queryId");
+    from_json_key(j, "transactionId", p.transactionId, "SessionRepresentation", "TransactionId", "transactionId");
+    from_json_key(j, "clientTransactionSupport", p.clientTransactionSupport, "SessionRepresentation", "bool", "clientTransactionSupport");
+    from_json_key(j, "user", p.user, "SessionRepresentation", "String", "user");
+    from_json_key(j, "groups", p.groups, "SessionRepresentation", "List<String>", "groups");
+    from_json_key(j, "principal", p.principal, "SessionRepresentation", "String", "principal");
+    from_json_key(j, "enabledRoles", p.enabledRoles, "SessionRepresentation", "List<String>", "enabledRoles");
+    from_json_key(j, "source", p.source, "SessionRepresentation", "String", "source");
+    from_json_key(j, "catalog", p.catalog, "SessionRepresentation", "String", "catalog");
+    from_json_key(j, "schema", p.schema, "SessionRepresentation", "String", "schema");
+    from_json_key(j, "path", p.path, "SessionRepresentation", "SqlPath", "path");
+    from_json_key(j, "traceToken", p.traceToken, "SessionRepresentation", "String", "traceToken");
+    from_json_key(j, "timeZoneKey", p.timeZoneKey, "SessionRepresentation", "TimeZoneKey", "timeZoneKey");
+    from_json_key(j, "locale", p.locale, "SessionRepresentation", "Locale", "locale");
+    from_json_key(j, "remoteUserAddress", p.remoteUserAddress, "SessionRepresentation", "String", "remoteUserAddress");
+    from_json_key(j, "userAgent", p.userAgent, "SessionRepresentation", "String", "userAgent");
+    from_json_key(j, "clientInfo", p.clientInfo, "SessionRepresentation", "String", "clientInfo");
+    from_json_key(j, "clientTags", p.clientTags, "SessionRepresentation", "List<String>", "clientTags");
+    from_json_key(j, "clientCapabilities", p.clientCapabilities, "SessionRepresentation", "List<String>", "clientCapabilities");
+    from_json_key(j, "resourceEstimates", p.resourceEstimates, "SessionRepresentation", "ResourceEstimates", "resourceEstimates");
+    from_json_key(j, "start", p.start, "SessionRepresentation", "Instant", "start");
+    from_json_key(j, "systemProperties", p.systemProperties, "SessionRepresentation", "Map<String, String>", "systemProperties");
+    from_json_key(
+        j, "catalogProperties", p.catalogProperties, "SessionRepresentation", "Map<String, Map<String, String>>", "catalogProperties");
+    from_json_key(j, "catalogRoles", p.catalogRoles, "SessionRepresentation", "Map<String, SelectedRole>", "catalogRoles");
+    from_json_key(j, "preparedStatements", p.preparedStatements, "SessionRepresentation", "Map<String, String>", "preparedStatements");
+    from_json_key(j, "protocolName", p.protocolName, "SessionRepresentation", "String", "protocolName");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const TaskUpdateRequest & p)
+{
+    j = json::object();
+    to_json_key(j, "session", p.session, "TaskUpdateRequest", "SessionRepresentation", "session");
+    to_json_key(j, "extraCredentials", p.extraCredentials, "TaskUpdateRequest", "Map<String, String>", "extraCredentials");
+    to_json_key(j, "fragment", p.fragment, "TaskUpdateRequest", "PlanFragment", "fragment");
+    to_json_key(j, "splitAssignments", p.splitAssignments, "TaskUpdateRequest", "List<SplitAssignment>", "splitAssignments");
+    to_json_key(j, "outputIds", p.outputIds, "TaskUpdateRequest", "OutputBuffers", "outputIds");
+    to_json_key(
+        j, "dynamicFilterDomains", p.dynamicFilterDomains, "TaskUpdateRequest", "Map<DynamicFilterId, Domain>", "dynamicFilterDomains");
+}
+
+void from_json(const json & j, TaskUpdateRequest & p)
+{
+    from_json_key(j, "session", p.session, "TaskUpdateRequest", "SessionRepresentation", "session");
+    from_json_key(j, "extraCredentials", p.extraCredentials, "TaskUpdateRequest", "Map<String, String>", "extraCredentials");
+    from_json_key(j, "fragment", p.fragment, "TaskUpdateRequest", "PlanFragment", "fragment");
+    from_json_key(j, "splitAssignments", p.splitAssignments, "TaskUpdateRequest", "List<SplitAssignment>", "splitAssignments");
+    from_json_key(j, "outputIds", p.outputIds, "TaskUpdateRequest", "OutputBuffers", "outputIds");
+    from_json_key(
+        j, "dynamicFilterDomains", p.dynamicFilterDomains, "TaskUpdateRequest", "Map<DynamicFilterId, Domain>", "dynamicFilterDomains");
+}
+}
+namespace datalight::protocol
+{
+AllOrNoneValueSet::AllOrNoneValueSet() noexcept
+{
+    _type = "allOrNone";
+}
+
+void to_json(json & j, const AllOrNoneValueSet & p)
+{
+    j = json::object();
+    j["@type"] = "allOrNone";
+    to_json_key(j, "type", p.type, "AllOrNoneValueSet", "Type", "type");
+    to_json_key(j, "all", p.all, "AllOrNoneValueSet", "bool", "all");
+}
+
+void from_json(const json & j, AllOrNoneValueSet & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "type", p.type, "AllOrNoneValueSet", "Type", "type");
+    from_json_key(j, "all", p.all, "AllOrNoneValueSet", "bool", "all");
+}
+}
+namespace datalight::protocol
+{
+void to_json(json & j, const std::shared_ptr<ExchangeSourceHandle> & p)
+{
+    if (p == nullptr)
+    {
+        return;
+    }
+    String type = p->_type;
+
+    if (type == "filesystem")
+    {
+        j = *std::static_pointer_cast<FileSystemExchangeSourceHandle>(p);
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ExchangeSourceHandle ");
+}
+
+void from_json(const json & j, std::shared_ptr<ExchangeSourceHandle> & p)
+{
+    String type;
+    try
+    {
+        type = p->getSubclassKey(j);
+    }
+    catch (json::parse_error & e)
+    {
+        throw ParseError(std::string(e.what()) + " ExchangeSourceHandle  ExchangeSourceHandle");
+    }
+
+    if (type == "filesystem")
+    {
+        std::shared_ptr<FileSystemExchangeSourceHandle> k = std::make_shared<FileSystemExchangeSourceHandle>();
+        j.get_to(*k);
+        p = std::static_pointer_cast<ExchangeSourceHandle>(k);
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ExchangeSourceHandle ");
+}
+}
+namespace datalight::protocol
+{
+SpoolingExchangeInput::SpoolingExchangeInput() noexcept
+{
+    _type = "spooling";
+}
+
+void to_json(json & j, const SpoolingExchangeInput & p)
+{
+    j = json::object();
+    j["@type"] = "spooling";
+    to_json_key(
+        j,
+        "exchangeSourceHandles",
+        p.exchangeSourceHandles,
+        "SpoolingExchangeInput",
+        "List<ExchangeSourceHandle>",
+        "exchangeSourceHandles");
+}
+
+void from_json(const json & j, SpoolingExchangeInput & p)
+{
+    p._type = j["@type"];
+    from_json_key(
+        j,
+        "exchangeSourceHandles",
+        p.exchangeSourceHandles,
+        "SpoolingExchangeInput",
+        "List<ExchangeSourceHandle>",
+        "exchangeSourceHandles");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const PageBufferInfo & p)
+{
+    j = json::object();
+    to_json_key(j, "partition", p.partition, "PageBufferInfo", "int", "partition");
+    to_json_key(j, "bufferedPages", p.bufferedPages, "PageBufferInfo", "int64_t", "bufferedPages");
+    to_json_key(j, "bufferedBytes", p.bufferedBytes, "PageBufferInfo", "int64_t", "bufferedBytes");
+    to_json_key(j, "rowsAdded", p.rowsAdded, "PageBufferInfo", "int64_t", "rowsAdded");
+    to_json_key(j, "pagesAdded", p.pagesAdded, "PageBufferInfo", "int64_t", "pagesAdded");
+}
+
+void from_json(const json & j, PageBufferInfo & p)
+{
+    from_json_key(j, "partition", p.partition, "PageBufferInfo", "int", "partition");
+    from_json_key(j, "bufferedPages", p.bufferedPages, "PageBufferInfo", "int64_t", "bufferedPages");
+    from_json_key(j, "bufferedBytes", p.bufferedBytes, "PageBufferInfo", "int64_t", "bufferedBytes");
+    from_json_key(j, "rowsAdded", p.rowsAdded, "PageBufferInfo", "int64_t", "rowsAdded");
+    from_json_key(j, "pagesAdded", p.pagesAdded, "PageBufferInfo", "int64_t", "pagesAdded");
+}
+}
+namespace datalight::protocol
+{
 
 void to_json(json & j, const BufferInfo & p)
 {
@@ -1941,6 +1930,555 @@ void from_json(const json & j, BufferInfo & p)
     from_json_key(j, "bufferedPages", p.bufferedPages, "BufferInfo", "int", "bufferedPages");
     from_json_key(j, "pagesSent", p.pagesSent, "BufferInfo", "int64_t", "pagesSent");
     from_json_key(j, "pageBufferInfo", p.pageBufferInfo, "BufferInfo", "PageBufferInfo", "pageBufferInfo");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const DeleteDeltaInfo & p)
+{
+    j = json::object();
+    to_json_key(j, "directoryName", p.directoryName, "DeleteDeltaInfo", "String", "directoryName");
+}
+
+void from_json(const json & j, DeleteDeltaInfo & p)
+{
+    from_json_key(j, "directoryName", p.directoryName, "DeleteDeltaInfo", "String", "directoryName");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const OriginalFileInfo & p)
+{
+    j = json::object();
+    to_json_key(j, "name", p.name, "OriginalFileInfo", "String", "name");
+    to_json_key(j, "fileSize", p.fileSize, "OriginalFileInfo", "int64_t", "fileSize");
+}
+
+void from_json(const json & j, OriginalFileInfo & p)
+{
+    from_json_key(j, "name", p.name, "OriginalFileInfo", "String", "name");
+    from_json_key(j, "fileSize", p.fileSize, "OriginalFileInfo", "int64_t", "fileSize");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const AcidInfo & p)
+{
+    j = json::object();
+    to_json_key(j, "partitionLocation", p.partitionLocation, "AcidInfo", "String", "partitionLocation");
+    to_json_key(j, "deleteDeltas", p.deleteDeltas, "AcidInfo", "List<DeleteDeltaInfo>", "deleteDeltas");
+    to_json_key(j, "originalFiles", p.originalFiles, "AcidInfo", "List<OriginalFileInfo>", "originalFiles");
+    to_json_key(j, "bucketId", p.bucketId, "AcidInfo", "int", "bucketId");
+    to_json_key(j, "orcAcidVersionValidated", p.orcAcidVersionValidated, "AcidInfo", "bool", "orcAcidVersionValidated");
+}
+
+void from_json(const json & j, AcidInfo & p)
+{
+    from_json_key(j, "partitionLocation", p.partitionLocation, "AcidInfo", "String", "partitionLocation");
+    from_json_key(j, "deleteDeltas", p.deleteDeltas, "AcidInfo", "List<DeleteDeltaInfo>", "deleteDeltas");
+    from_json_key(j, "originalFiles", p.originalFiles, "AcidInfo", "List<OriginalFileInfo>", "originalFiles");
+    from_json_key(j, "bucketId", p.bucketId, "AcidInfo", "int", "bucketId");
+    from_json_key(j, "orcAcidVersionValidated", p.orcAcidVersionValidated, "AcidInfo", "bool", "orcAcidVersionValidated");
+}
+}
+namespace datalight::protocol
+{
+SortedRangeSet::SortedRangeSet() noexcept
+{
+    _type = "sortable";
+}
+
+void to_json(json & j, const SortedRangeSet & p)
+{
+    j = json::object();
+    j["@type"] = "sortable";
+    to_json_key(j, "type", p.type, "SortedRangeSet", "Type", "type");
+    to_json_key(j, "inclusive", p.inclusive, "SortedRangeSet", "List<bool>", "inclusive");
+    to_json_key(j, "sortedRanges", p.sortedRanges, "SortedRangeSet", "Block", "sortedRanges");
+}
+
+void from_json(const json & j, SortedRangeSet & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "type", p.type, "SortedRangeSet", "Type", "type");
+    from_json_key(j, "inclusive", p.inclusive, "SortedRangeSet", "List<bool>", "inclusive");
+    from_json_key(j, "sortedRanges", p.sortedRanges, "SortedRangeSet", "Block", "sortedRanges");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const FileSystemExchangeSinkHandle & p)
+{
+    j = json::object();
+    to_json_key(j, "partitionId", p.partitionId, "FileSystemExchangeSinkHandle", "int", "partitionId");
+    to_json_key(j, "secretKey", p.secretKey, "FileSystemExchangeSinkHandle", "String", "secretKey");
+}
+
+void from_json(const json & j, FileSystemExchangeSinkHandle & p)
+{
+    from_json_key(j, "partitionId", p.partitionId, "FileSystemExchangeSinkHandle", "int", "partitionId");
+    from_json_key(j, "secretKey", p.secretKey, "FileSystemExchangeSinkHandle", "String", "secretKey");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const MemoryPoolInfo & p)
+{
+    j = json::object();
+    to_json_key(j, "maxBytes", p.maxBytes, "MemoryPoolInfo", "int64_t", "maxBytes");
+    to_json_key(j, "reservedBytes", p.reservedBytes, "MemoryPoolInfo", "int64_t", "reservedBytes");
+    to_json_key(j, "reservedRevocableBytes", p.reservedRevocableBytes, "MemoryPoolInfo", "int64_t", "reservedRevocableBytes");
+    to_json_key(j, "queryMemoryReservations", p.queryMemoryReservations, "MemoryPoolInfo", "Map<QueryId, Long>", "queryMemoryReservations");
+    to_json_key(
+        j,
+        "queryMemoryAllocations",
+        p.queryMemoryAllocations,
+        "MemoryPoolInfo",
+        "Map<QueryId, List<MemoryAllocation>>",
+        "queryMemoryAllocations");
+    to_json_key(
+        j,
+        "queryMemoryRevocableReservations",
+        p.queryMemoryRevocableReservations,
+        "MemoryPoolInfo",
+        "Map<QueryId, Long>",
+        "queryMemoryRevocableReservations");
+    to_json_key(j, "taskMemoryReservations", p.taskMemoryReservations, "MemoryPoolInfo", "Map<String, Long>", "taskMemoryReservations");
+    to_json_key(
+        j,
+        "taskMemoryRevocableReservations",
+        p.taskMemoryRevocableReservations,
+        "MemoryPoolInfo",
+        "Map<String, Long>",
+        "taskMemoryRevocableReservations");
+}
+
+void from_json(const json & j, MemoryPoolInfo & p)
+{
+    from_json_key(j, "maxBytes", p.maxBytes, "MemoryPoolInfo", "int64_t", "maxBytes");
+    from_json_key(j, "reservedBytes", p.reservedBytes, "MemoryPoolInfo", "int64_t", "reservedBytes");
+    from_json_key(j, "reservedRevocableBytes", p.reservedRevocableBytes, "MemoryPoolInfo", "int64_t", "reservedRevocableBytes");
+    from_json_key(
+        j, "queryMemoryReservations", p.queryMemoryReservations, "MemoryPoolInfo", "Map<QueryId, Long>", "queryMemoryReservations");
+    from_json_key(
+        j,
+        "queryMemoryAllocations",
+        p.queryMemoryAllocations,
+        "MemoryPoolInfo",
+        "Map<QueryId, List<MemoryAllocation>>",
+        "queryMemoryAllocations");
+    from_json_key(
+        j,
+        "queryMemoryRevocableReservations",
+        p.queryMemoryRevocableReservations,
+        "MemoryPoolInfo",
+        "Map<QueryId, Long>",
+        "queryMemoryRevocableReservations");
+    from_json_key(j, "taskMemoryReservations", p.taskMemoryReservations, "MemoryPoolInfo", "Map<String, Long>", "taskMemoryReservations");
+    from_json_key(
+        j,
+        "taskMemoryRevocableReservations",
+        p.taskMemoryRevocableReservations,
+        "MemoryPoolInfo",
+        "Map<String, Long>",
+        "taskMemoryRevocableReservations");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const MemoryInfo & p)
+{
+    j = json::object();
+    to_json_key(j, "availableProcessors", p.availableProcessors, "MemoryInfo", "int", "availableProcessors");
+    to_json_key(j, "pool", p.pool, "MemoryInfo", "MemoryPoolInfo", "pool");
+}
+
+void from_json(const json & j, MemoryInfo & p)
+{
+    from_json_key(j, "availableProcessors", p.availableProcessors, "MemoryInfo", "int", "availableProcessors");
+    from_json_key(j, "pool", p.pool, "MemoryInfo", "MemoryPoolInfo", "pool");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const NodeVersion & p)
+{
+    j = json::object();
+    to_json_key(j, "version", p.version, "NodeVersion", "String", "version");
+}
+
+void from_json(const json & j, NodeVersion & p)
+{
+    from_json_key(j, "version", p.version, "NodeVersion", "String", "version");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const NodeStatus & p)
+{
+    j = json::object();
+    to_json_key(j, "nodeId", p.nodeId, "NodeStatus", "String", "nodeId");
+    to_json_key(j, "nodeVersion", p.nodeVersion, "NodeStatus", "NodeVersion", "nodeVersion");
+    to_json_key(j, "environment", p.environment, "NodeStatus", "String", "environment");
+    to_json_key(j, "coordinator", p.coordinator, "NodeStatus", "bool", "coordinator");
+    to_json_key(j, "uptime", p.uptime, "NodeStatus", "Duration", "uptime");
+    to_json_key(j, "externalAddress", p.externalAddress, "NodeStatus", "String", "externalAddress");
+    to_json_key(j, "internalAddress", p.internalAddress, "NodeStatus", "String", "internalAddress");
+    to_json_key(j, "memoryInfo", p.memoryInfo, "NodeStatus", "MemoryInfo", "memoryInfo");
+    to_json_key(j, "processors", p.processors, "NodeStatus", "int", "processors");
+    to_json_key(j, "processCpuLoad", p.processCpuLoad, "NodeStatus", "double", "processCpuLoad");
+    to_json_key(j, "systemCpuLoad", p.systemCpuLoad, "NodeStatus", "double", "systemCpuLoad");
+    to_json_key(j, "heapUsed", p.heapUsed, "NodeStatus", "int64_t", "heapUsed");
+    to_json_key(j, "heapAvailable", p.heapAvailable, "NodeStatus", "int64_t", "heapAvailable");
+    to_json_key(j, "nonHeapUsed", p.nonHeapUsed, "NodeStatus", "int64_t", "nonHeapUsed");
+}
+
+void from_json(const json & j, NodeStatus & p)
+{
+    from_json_key(j, "nodeId", p.nodeId, "NodeStatus", "String", "nodeId");
+    from_json_key(j, "nodeVersion", p.nodeVersion, "NodeStatus", "NodeVersion", "nodeVersion");
+    from_json_key(j, "environment", p.environment, "NodeStatus", "String", "environment");
+    from_json_key(j, "coordinator", p.coordinator, "NodeStatus", "bool", "coordinator");
+    from_json_key(j, "uptime", p.uptime, "NodeStatus", "Duration", "uptime");
+    from_json_key(j, "externalAddress", p.externalAddress, "NodeStatus", "String", "externalAddress");
+    from_json_key(j, "internalAddress", p.internalAddress, "NodeStatus", "String", "internalAddress");
+    from_json_key(j, "memoryInfo", p.memoryInfo, "NodeStatus", "MemoryInfo", "memoryInfo");
+    from_json_key(j, "processors", p.processors, "NodeStatus", "int", "processors");
+    from_json_key(j, "processCpuLoad", p.processCpuLoad, "NodeStatus", "double", "processCpuLoad");
+    from_json_key(j, "systemCpuLoad", p.systemCpuLoad, "NodeStatus", "double", "systemCpuLoad");
+    from_json_key(j, "heapUsed", p.heapUsed, "NodeStatus", "int64_t", "heapUsed");
+    from_json_key(j, "heapAvailable", p.heapAvailable, "NodeStatus", "int64_t", "heapAvailable");
+    from_json_key(j, "nonHeapUsed", p.nonHeapUsed, "NodeStatus", "int64_t", "nonHeapUsed");
+}
+}
+namespace datalight::protocol
+{
+void to_json(json & j, const std::shared_ptr<ExchangeInput> & p)
+{
+    if (p == nullptr)
+    {
+        return;
+    }
+    String type = p->_type;
+
+    if (type == "spooling")
+    {
+        j = *std::static_pointer_cast<SpoolingExchangeInput>(p);
+        return;
+    }
+    if (type == "direct")
+    {
+        j = *std::static_pointer_cast<DirectExchangeInput>(p);
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ExchangeInput ");
+}
+
+void from_json(const json & j, std::shared_ptr<ExchangeInput> & p)
+{
+    String type;
+    try
+    {
+        type = p->getSubclassKey(j);
+    }
+    catch (json::parse_error & e)
+    {
+        throw ParseError(std::string(e.what()) + " ExchangeInput  ExchangeInput");
+    }
+
+    if (type == "spooling")
+    {
+        std::shared_ptr<SpoolingExchangeInput> k = std::make_shared<SpoolingExchangeInput>();
+        j.get_to(*k);
+        p = std::static_pointer_cast<ExchangeInput>(k);
+        return;
+    }
+    if (type == "direct")
+    {
+        std::shared_ptr<DirectExchangeInput> k = std::make_shared<DirectExchangeInput>();
+        j.get_to(*k);
+        p = std::static_pointer_cast<ExchangeInput>(k);
+        return;
+    }
+
+    throw TypeError(type + " no abstract type ExchangeInput ");
+}
+}
+namespace datalight::protocol
+{
+RemoteSplit::RemoteSplit() noexcept
+{
+    _type = "$remote";
+}
+
+void to_json(json & j, const RemoteSplit & p)
+{
+    j = json::object();
+    j["@type"] = "$remote";
+    to_json_key(j, "exchangeInput", p.exchangeInput, "RemoteSplit", "ExchangeInput", "exchangeInput");
+}
+
+void from_json(const json & j, RemoteSplit & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "exchangeInput", p.exchangeInput, "RemoteSplit", "ExchangeInput", "exchangeInput");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const BucketConversion & p)
+{
+    j = json::object();
+    to_json_key(j, "bucketingVersion", p.bucketingVersion, "BucketConversion", "BucketingVersion", "bucketingVersion");
+    to_json_key(j, "tableBucketCount", p.tableBucketCount, "BucketConversion", "int", "tableBucketCount");
+    to_json_key(j, "partitionBucketCount", p.partitionBucketCount, "BucketConversion", "int", "partitionBucketCount");
+    to_json_key(j, "bucketColumnHandles", p.bucketColumnHandles, "BucketConversion", "List<HiveColumnHandle>", "bucketColumnHandles");
+}
+
+void from_json(const json & j, BucketConversion & p)
+{
+    from_json_key(j, "bucketingVersion", p.bucketingVersion, "BucketConversion", "BucketingVersion", "bucketingVersion");
+    from_json_key(j, "tableBucketCount", p.tableBucketCount, "BucketConversion", "int", "tableBucketCount");
+    from_json_key(j, "partitionBucketCount", p.partitionBucketCount, "BucketConversion", "int", "partitionBucketCount");
+    from_json_key(j, "bucketColumnHandles", p.bucketColumnHandles, "BucketConversion", "List<HiveColumnHandle>", "bucketColumnHandles");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const BucketValidation & p)
+{
+    j = json::object();
+    to_json_key(j, "bucketingVersion", p.bucketingVersion, "BucketValidation", "BucketingVersion", "bucketingVersion");
+    to_json_key(j, "bucketCount", p.bucketCount, "BucketValidation", "int", "bucketCount");
+    to_json_key(j, "bucketColumns", p.bucketColumns, "BucketValidation", "List<HiveColumnHandle>", "bucketColumns");
+}
+
+void from_json(const json & j, BucketValidation & p)
+{
+    from_json_key(j, "bucketingVersion", p.bucketingVersion, "BucketValidation", "BucketingVersion", "bucketingVersion");
+    from_json_key(j, "bucketCount", p.bucketCount, "BucketValidation", "int", "bucketCount");
+    from_json_key(j, "bucketColumns", p.bucketColumns, "BucketValidation", "List<HiveColumnHandle>", "bucketColumns");
+}
+}
+namespace datalight::protocol
+{
+FileSystemExchangeSinkInstanceHandle::FileSystemExchangeSinkInstanceHandle() noexcept
+{
+    _type = "filesystem";
+}
+
+void to_json(json & j, const FileSystemExchangeSinkInstanceHandle & p)
+{
+    j = json::object();
+    j["@type"] = "filesystem";
+    to_json_key(j, "sinkHandle", p.sinkHandle, "FileSystemExchangeSinkInstanceHandle", "FileSystemExchangeSinkHandle", "sinkHandle");
+    to_json_key(j, "outputDirectory", p.outputDirectory, "FileSystemExchangeSinkInstanceHandle", "URI", "outputDirectory");
+    to_json_key(j, "outputPartitionCount", p.outputPartitionCount, "FileSystemExchangeSinkInstanceHandle", "int", "outputPartitionCount");
+}
+
+void from_json(const json & j, FileSystemExchangeSinkInstanceHandle & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "sinkHandle", p.sinkHandle, "FileSystemExchangeSinkInstanceHandle", "FileSystemExchangeSinkHandle", "sinkHandle");
+    from_json_key(j, "outputDirectory", p.outputDirectory, "FileSystemExchangeSinkInstanceHandle", "URI", "outputDirectory");
+    from_json_key(j, "outputPartitionCount", p.outputPartitionCount, "FileSystemExchangeSinkInstanceHandle", "int", "outputPartitionCount");
+}
+}
+namespace datalight::protocol
+{
+EmptySplit::EmptySplit() noexcept
+{
+    _type = "$empty";
+}
+
+void to_json(json & j, const EmptySplit & p)
+{
+    j = json::object();
+    j["@type"] = "$empty";
+    to_json_key(j, "catalogName", p.catalogName, "EmptySplit", "CatalogName", "catalogName");
+}
+
+void from_json(const json & j, EmptySplit & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "catalogName", p.catalogName, "EmptySplit", "CatalogName", "catalogName");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const FileStatus & p)
+{
+    j = json::object();
+    to_json_key(j, "filePath", p.filePath, "FileStatus", "String", "filePath");
+    to_json_key(j, "fileSize", p.fileSize, "FileStatus", "int64_t", "fileSize");
+}
+
+void from_json(const json & j, FileStatus & p)
+{
+    from_json_key(j, "filePath", p.filePath, "FileStatus", "String", "filePath");
+    from_json_key(j, "fileSize", p.fileSize, "FileStatus", "int64_t", "fileSize");
+}
+}
+namespace datalight::protocol
+{
+FileSystemExchangeSourceHandle::FileSystemExchangeSourceHandle() noexcept
+{
+    _type = "filesystem";
+}
+
+void to_json(json & j, const FileSystemExchangeSourceHandle & p)
+{
+    j = json::object();
+    j["@type"] = "filesystem";
+    to_json_key(j, "partitionId", p.partitionId, "FileSystemExchangeSourceHandle", "int", "partitionId");
+    to_json_key(j, "files", p.files, "FileSystemExchangeSourceHandle", "List<FileStatus>", "files");
+    to_json_key(j, "secretKey", p.secretKey, "FileSystemExchangeSourceHandle", "String", "secretKey");
+}
+
+void from_json(const json & j, FileSystemExchangeSourceHandle & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "partitionId", p.partitionId, "FileSystemExchangeSourceHandle", "int", "partitionId");
+    from_json_key(j, "files", p.files, "FileSystemExchangeSourceHandle", "List<FileStatus>", "files");
+    from_json_key(j, "secretKey", p.secretKey, "FileSystemExchangeSourceHandle", "String", "secretKey");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const ValueEntry & p)
+{
+    j = json::object();
+    to_json_key(j, "type", p.type, "ValueEntry", "Type", "type");
+    to_json_key(j, "block", p.block, "ValueEntry", "Block", "block");
+}
+
+void from_json(const json & j, ValueEntry & p)
+{
+    from_json_key(j, "type", p.type, "ValueEntry", "Type", "type");
+    from_json_key(j, "block", p.block, "ValueEntry", "Block", "block");
+}
+}
+namespace datalight::protocol
+{
+EquatableValueSet::EquatableValueSet() noexcept
+{
+    _type = "equatable";
+}
+
+void to_json(json & j, const EquatableValueSet & p)
+{
+    j = json::object();
+    j["@type"] = "equatable";
+    to_json_key(j, "type", p.type, "EquatableValueSet", "Type", "type");
+    to_json_key(j, "inclusive", p.inclusive, "EquatableValueSet", "bool", "inclusive");
+    to_json_key(j, "entries", p.entries, "EquatableValueSet", "List<ValueEntry>", "entries");
+}
+
+void from_json(const json & j, EquatableValueSet & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "type", p.type, "EquatableValueSet", "Type", "type");
+    from_json_key(j, "inclusive", p.inclusive, "EquatableValueSet", "bool", "inclusive");
+    from_json_key(j, "entries", p.entries, "EquatableValueSet", "List<ValueEntry>", "entries");
+}
+}
+namespace datalight::protocol
+{
+//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
+
+// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
+static const std::pair<TaskState, json> TaskState_enum_table[] = { // NOLINT: cert-err58-cpp
+    {TaskState::PLANNED, "PLANNED"},
+    {TaskState::RUNNING, "RUNNING"},
+    {TaskState::FLUSHING, "FLUSHING"},
+    {TaskState::FINISHED, "FINISHED"},
+    {TaskState::CANCELED, "CANCELED"},
+    {TaskState::ABORTED, "ABORTED"},
+    {TaskState::FAILED, "FAILED"}};
+void to_json(json & j, const TaskState & e)
+{
+    static_assert(std::is_enum<TaskState>::value, "TaskState must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(TaskState_enum_table),
+        std::end(TaskState_enum_table),
+        [e](const std::pair<TaskState, json> & ej_pair) -> bool { return ej_pair.first == e; });
+    j = ((it != std::end(TaskState_enum_table)) ? it : std::begin(TaskState_enum_table))->second;
+}
+void from_json(const json & j, TaskState & e)
+{
+    static_assert(std::is_enum<TaskState>::value, "TaskState must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(TaskState_enum_table),
+        std::end(TaskState_enum_table),
+        [&j](const std::pair<TaskState, json> & ej_pair) -> bool { return ej_pair.second == j; });
+    e = ((it != std::end(TaskState_enum_table)) ? it : std::begin(TaskState_enum_table))->first;
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const TaskStatus & p)
+{
+    j = json::object();
+    to_json_key(j, "taskId", p.taskId, "TaskStatus", "TaskId", "taskId");
+    to_json_key(j, "taskInstanceId", p.taskInstanceId, "TaskStatus", "String", "taskInstanceId");
+    to_json_key(j, "version", p.version, "TaskStatus", "int64_t", "version");
+    to_json_key(j, "state", p.state, "TaskStatus", "TaskState", "state");
+    to_json_key(j, "self", p.self, "TaskStatus", "URI", "self");
+    to_json_key(j, "nodeId", p.nodeId, "TaskStatus", "String", "nodeId");
+    to_json_key(j, "failures", p.failures, "TaskStatus", "List<ExecutionFailureInfo>", "failures");
+    to_json_key(j, "queuedPartitionedDrivers", p.queuedPartitionedDrivers, "TaskStatus", "int", "queuedPartitionedDrivers");
+    to_json_key(j, "runningPartitionedDrivers", p.runningPartitionedDrivers, "TaskStatus", "int", "runningPartitionedDrivers");
+    to_json_key(j, "outputBufferOverutilized", p.outputBufferOverutilized, "TaskStatus", "bool", "outputBufferOverutilized");
+    to_json_key(j, "physicalWrittenDataSize", p.physicalWrittenDataSize, "TaskStatus", "DataSize", "physicalWrittenDataSize");
+    to_json_key(j, "memoryReservation", p.memoryReservation, "TaskStatus", "DataSize", "memoryReservation");
+    to_json_key(j, "peakMemoryReservation", p.peakMemoryReservation, "TaskStatus", "DataSize", "peakMemoryReservation");
+    to_json_key(j, "revocableMemoryReservation", p.revocableMemoryReservation, "TaskStatus", "DataSize", "revocableMemoryReservation");
+    to_json_key(j, "fullGcCount", p.fullGcCount, "TaskStatus", "int64_t", "fullGcCount");
+    to_json_key(j, "fullGcTime", p.fullGcTime, "TaskStatus", "Duration", "fullGcTime");
+    to_json_key(j, "dynamicFiltersVersion", p.dynamicFiltersVersion, "TaskStatus", "int64_t", "dynamicFiltersVersion");
+    to_json_key(
+        j, "queuedPartitionedSplitsWeight", p.queuedPartitionedSplitsWeight, "TaskStatus", "int64_t", "queuedPartitionedSplitsWeight");
+    to_json_key(
+        j, "runningPartitionedSplitsWeight", p.runningPartitionedSplitsWeight, "TaskStatus", "int64_t", "runningPartitionedSplitsWeight");
+}
+
+void from_json(const json & j, TaskStatus & p)
+{
+    from_json_key(j, "taskId", p.taskId, "TaskStatus", "TaskId", "taskId");
+    from_json_key(j, "taskInstanceId", p.taskInstanceId, "TaskStatus", "String", "taskInstanceId");
+    from_json_key(j, "version", p.version, "TaskStatus", "int64_t", "version");
+    from_json_key(j, "state", p.state, "TaskStatus", "TaskState", "state");
+    from_json_key(j, "self", p.self, "TaskStatus", "URI", "self");
+    from_json_key(j, "nodeId", p.nodeId, "TaskStatus", "String", "nodeId");
+    from_json_key(j, "failures", p.failures, "TaskStatus", "List<ExecutionFailureInfo>", "failures");
+    from_json_key(j, "queuedPartitionedDrivers", p.queuedPartitionedDrivers, "TaskStatus", "int", "queuedPartitionedDrivers");
+    from_json_key(j, "runningPartitionedDrivers", p.runningPartitionedDrivers, "TaskStatus", "int", "runningPartitionedDrivers");
+    from_json_key(j, "outputBufferOverutilized", p.outputBufferOverutilized, "TaskStatus", "bool", "outputBufferOverutilized");
+    from_json_key(j, "physicalWrittenDataSize", p.physicalWrittenDataSize, "TaskStatus", "DataSize", "physicalWrittenDataSize");
+    from_json_key(j, "memoryReservation", p.memoryReservation, "TaskStatus", "DataSize", "memoryReservation");
+    from_json_key(j, "peakMemoryReservation", p.peakMemoryReservation, "TaskStatus", "DataSize", "peakMemoryReservation");
+    from_json_key(j, "revocableMemoryReservation", p.revocableMemoryReservation, "TaskStatus", "DataSize", "revocableMemoryReservation");
+    from_json_key(j, "fullGcCount", p.fullGcCount, "TaskStatus", "int64_t", "fullGcCount");
+    from_json_key(j, "fullGcTime", p.fullGcTime, "TaskStatus", "Duration", "fullGcTime");
+    from_json_key(j, "dynamicFiltersVersion", p.dynamicFiltersVersion, "TaskStatus", "int64_t", "dynamicFiltersVersion");
+    from_json_key(
+        j, "queuedPartitionedSplitsWeight", p.queuedPartitionedSplitsWeight, "TaskStatus", "int64_t", "queuedPartitionedSplitsWeight");
+    from_json_key(
+        j, "runningPartitionedSplitsWeight", p.runningPartitionedSplitsWeight, "TaskStatus", "int64_t", "runningPartitionedSplitsWeight");
 }
 }
 namespace datalight::protocol
@@ -2034,23 +2572,150 @@ void from_json(const json & j, TaskInfo & p)
 namespace datalight::protocol
 {
 
-void to_json(json & j, const SymbolStatsEstimate & p)
+void to_json(json & j, const HivePartitionKey & p)
 {
     j = json::object();
-    to_json_key(j, "lowValue", p.lowValue, "SymbolStatsEstimate", "double", "lowValue");
-    to_json_key(j, "highValue", p.highValue, "SymbolStatsEstimate", "double", "highValue");
-    to_json_key(j, "nullsFraction", p.nullsFraction, "SymbolStatsEstimate", "double", "nullsFraction");
-    to_json_key(j, "averageRowSize", p.averageRowSize, "SymbolStatsEstimate", "double", "averageRowSize");
-    to_json_key(j, "distinctValuesCount", p.distinctValuesCount, "SymbolStatsEstimate", "double", "distinctValuesCount");
+    to_json_key(j, "name", p.name, "HivePartitionKey", "String", "name");
+    to_json_key(j, "value", p.value, "HivePartitionKey", "String", "value");
 }
 
-void from_json(const json & j, SymbolStatsEstimate & p)
+void from_json(const json & j, HivePartitionKey & p)
 {
-    from_json_key(j, "lowValue", p.lowValue, "SymbolStatsEstimate", "double", "lowValue");
-    from_json_key(j, "highValue", p.highValue, "SymbolStatsEstimate", "double", "highValue");
-    from_json_key(j, "nullsFraction", p.nullsFraction, "SymbolStatsEstimate", "double", "nullsFraction");
-    from_json_key(j, "averageRowSize", p.averageRowSize, "SymbolStatsEstimate", "double", "averageRowSize");
-    from_json_key(j, "distinctValuesCount", p.distinctValuesCount, "SymbolStatsEstimate", "double", "distinctValuesCount");
+    from_json_key(j, "name", p.name, "HivePartitionKey", "String", "name");
+    from_json_key(j, "value", p.value, "HivePartitionKey", "String", "value");
+}
+}
+namespace datalight::protocol
+{
+HiveTransactionHandle::HiveTransactionHandle() noexcept
+{
+    _type = "hive";
+}
+
+void to_json(json & j, const HiveTransactionHandle & p)
+{
+    j = json::object();
+    j["@type"] = "hive";
+    to_json_key(j, "autoCommit", p.autoCommit, "HiveTransactionHandle", "bool", "autoCommit");
+    to_json_key(j, "uuid", p.uuid, "HiveTransactionHandle", "UUID", "uuid");
+}
+
+void from_json(const json & j, HiveTransactionHandle & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "autoCommit", p.autoCommit, "HiveTransactionHandle", "bool", "autoCommit");
+    from_json_key(j, "uuid", p.uuid, "HiveTransactionHandle", "UUID", "uuid");
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const Assignments & p)
+{
+    j = json::object();
+    to_json_key(j, "assignments", p.assignments, "Assignments", "Map<Symbol, Expression>", "assignments");
+}
+
+void from_json(const json & j, Assignments & p)
+{
+    from_json_key(j, "assignments", p.assignments, "Assignments", "Map<Symbol, Expression>", "assignments");
+}
+}
+namespace datalight::protocol
+{
+HivePartitioningHandle::HivePartitioningHandle() noexcept
+{
+    _type = "hive";
+}
+
+void to_json(json & j, const HivePartitioningHandle & p)
+{
+    j = json::object();
+    j["@type"] = "hive";
+    to_json_key(j, "bucketingVersion", p.bucketingVersion, "HivePartitioningHandle", "BucketingVersion", "bucketingVersion");
+    to_json_key(j, "bucketCount", p.bucketCount, "HivePartitioningHandle", "int", "bucketCount");
+    to_json_key(j, "hiveBucketTypes", p.hiveBucketTypes, "HivePartitioningHandle", "List<HiveType>", "hiveBucketTypes");
+    to_json_key(j, "maxCompatibleBucketCount", p.maxCompatibleBucketCount, "HivePartitioningHandle", "int", "maxCompatibleBucketCount");
+    to_json_key(j, "usePartitionedBucketing", p.usePartitionedBucketing, "HivePartitioningHandle", "bool", "usePartitionedBucketing");
+}
+
+void from_json(const json & j, HivePartitioningHandle & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "bucketingVersion", p.bucketingVersion, "HivePartitioningHandle", "BucketingVersion", "bucketingVersion");
+    from_json_key(j, "bucketCount", p.bucketCount, "HivePartitioningHandle", "int", "bucketCount");
+    from_json_key(j, "hiveBucketTypes", p.hiveBucketTypes, "HivePartitioningHandle", "List<HiveType>", "hiveBucketTypes");
+    from_json_key(j, "maxCompatibleBucketCount", p.maxCompatibleBucketCount, "HivePartitioningHandle", "int", "maxCompatibleBucketCount");
+    from_json_key(j, "usePartitionedBucketing", p.usePartitionedBucketing, "HivePartitioningHandle", "bool", "usePartitionedBucketing");
+}
+}
+namespace datalight::protocol
+{
+ProjectNode::ProjectNode() noexcept
+{
+    _type = ".ProjectNode";
+}
+
+void to_json(json & j, const ProjectNode & p)
+{
+    j = json::object();
+    j["@type"] = ".ProjectNode";
+    to_json_key(j, "id", p.id, "ProjectNode", "PlanNodeId", "id");
+    to_json_key(j, "source", p.source, "ProjectNode", "PlanNode", "source");
+    to_json_key(j, "assignments", p.assignments, "ProjectNode", "Assignments", "assignments");
+}
+
+void from_json(const json & j, ProjectNode & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "id", p.id, "ProjectNode", "PlanNodeId", "id");
+    from_json_key(j, "source", p.source, "ProjectNode", "PlanNode", "source");
+    from_json_key(j, "assignments", p.assignments, "ProjectNode", "Assignments", "assignments");
+}
+}
+namespace datalight::protocol
+{
+//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
+
+// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
+static const std::pair<SortOrder, json> SortOrder_enum_table[] = { // NOLINT: cert-err58-cpp
+    {SortOrder::ASC_NULLS_FIRST, "ASC_NULLS_FIRST"},
+    {SortOrder::ASC_NULLS_LAST, "ASC_NULLS_LAST"},
+    {SortOrder::DESC_NULLS_FIRST, "DESC_NULLS_FIRST"},
+    {SortOrder::DESC_NULLS_LAST, "DESC_NULLS_LAST"}};
+void to_json(json & j, const SortOrder & e)
+{
+    static_assert(std::is_enum<SortOrder>::value, "SortOrder must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(SortOrder_enum_table),
+        std::end(SortOrder_enum_table),
+        [e](const std::pair<SortOrder, json> & ej_pair) -> bool { return ej_pair.first == e; });
+    j = ((it != std::end(SortOrder_enum_table)) ? it : std::begin(SortOrder_enum_table))->second;
+}
+void from_json(const json & j, SortOrder & e)
+{
+    static_assert(std::is_enum<SortOrder>::value, "SortOrder must be an enum!");
+    const auto * it = std::find_if(
+        std::begin(SortOrder_enum_table),
+        std::end(SortOrder_enum_table),
+        [&j](const std::pair<SortOrder, json> & ej_pair) -> bool { return ej_pair.second == j; });
+    e = ((it != std::end(SortOrder_enum_table)) ? it : std::begin(SortOrder_enum_table))->first;
+}
+}
+namespace datalight::protocol
+{
+
+void to_json(json & j, const OrderingScheme & p)
+{
+    j = json::object();
+    to_json_key(j, "orderBy", p.orderBy, "OrderingScheme", "List<Symbol>", "orderBy");
+    to_json_key(j, "orderings", p.orderings, "OrderingScheme", "Map<Symbol, SortOrder>", "orderings");
+}
+
+void from_json(const json & j, OrderingScheme & p)
+{
+    from_json_key(j, "orderBy", p.orderBy, "OrderingScheme", "List<Symbol>", "orderBy");
+    from_json_key(j, "orderings", p.orderings, "OrderingScheme", "Map<Symbol, SortOrder>", "orderings");
 }
 }
 namespace datalight::protocol
@@ -2095,56 +2760,76 @@ void from_json(const json & j, TableToPartitionMapping & p)
 }
 namespace datalight::protocol
 {
-
-void to_json(json & j, const DeleteDeltaInfo & p)
+DirectExchangeInput::DirectExchangeInput() noexcept
 {
-    j = json::object();
-    to_json_key(j, "directoryName", p.directoryName, "DeleteDeltaInfo", "String", "directoryName");
+    _type = "direct";
 }
 
-void from_json(const json & j, DeleteDeltaInfo & p)
+void to_json(json & j, const DirectExchangeInput & p)
 {
-    from_json_key(j, "directoryName", p.directoryName, "DeleteDeltaInfo", "String", "directoryName");
+    j = json::object();
+    j["@type"] = "direct";
+    to_json_key(j, "taskId", p.taskId, "DirectExchangeInput", "TaskId", "taskId");
+    to_json_key(j, "location", p.location, "DirectExchangeInput", "String", "location");
+}
+
+void from_json(const json & j, DirectExchangeInput & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "taskId", p.taskId, "DirectExchangeInput", "TaskId", "taskId");
+    from_json_key(j, "location", p.location, "DirectExchangeInput", "String", "location");
 }
 }
 namespace datalight::protocol
 {
 
-void to_json(json & j, const AcidInfo & p)
+void to_json(json & j, const ServerInfo & p)
 {
     j = json::object();
-    to_json_key(j, "partitionLocation", p.partitionLocation, "AcidInfo", "String", "partitionLocation");
-    to_json_key(j, "deleteDeltas", p.deleteDeltas, "AcidInfo", "List<DeleteDeltaInfo>", "deleteDeltas");
-    to_json_key(j, "originalFiles", p.originalFiles, "AcidInfo", "List<OriginalFileInfo>", "originalFiles");
-    to_json_key(j, "bucketId", p.bucketId, "AcidInfo", "int", "bucketId");
-    to_json_key(j, "orcAcidVersionValidated", p.orcAcidVersionValidated, "AcidInfo", "bool", "orcAcidVersionValidated");
+    to_json_key(j, "nodeVersion", p.nodeVersion, "ServerInfo", "NodeVersion", "nodeVersion");
+    to_json_key(j, "environment", p.environment, "ServerInfo", "String", "environment");
+    to_json_key(j, "coordinator", p.coordinator, "ServerInfo", "bool", "coordinator");
+    to_json_key(j, "starting", p.starting, "ServerInfo", "bool", "starting");
+    to_json_key(j, "uptime", p.uptime, "ServerInfo", "Duration", "uptime");
 }
 
-void from_json(const json & j, AcidInfo & p)
+void from_json(const json & j, ServerInfo & p)
 {
-    from_json_key(j, "partitionLocation", p.partitionLocation, "AcidInfo", "String", "partitionLocation");
-    from_json_key(j, "deleteDeltas", p.deleteDeltas, "AcidInfo", "List<DeleteDeltaInfo>", "deleteDeltas");
-    from_json_key(j, "originalFiles", p.originalFiles, "AcidInfo", "List<OriginalFileInfo>", "originalFiles");
-    from_json_key(j, "bucketId", p.bucketId, "AcidInfo", "int", "bucketId");
-    from_json_key(j, "orcAcidVersionValidated", p.orcAcidVersionValidated, "AcidInfo", "bool", "orcAcidVersionValidated");
+    from_json_key(j, "nodeVersion", p.nodeVersion, "ServerInfo", "NodeVersion", "nodeVersion");
+    from_json_key(j, "environment", p.environment, "ServerInfo", "String", "environment");
+    from_json_key(j, "coordinator", p.coordinator, "ServerInfo", "bool", "coordinator");
+    from_json_key(j, "starting", p.starting, "ServerInfo", "bool", "starting");
+    from_json_key(j, "uptime", p.uptime, "ServerInfo", "Duration", "uptime");
 }
 }
 namespace datalight::protocol
 {
-
-void to_json(json & j, const BucketValidation & p)
+LimitNode::LimitNode() noexcept
 {
-    j = json::object();
-    to_json_key(j, "bucketingVersion", p.bucketingVersion, "BucketValidation", "BucketingVersion", "bucketingVersion");
-    to_json_key(j, "bucketCount", p.bucketCount, "BucketValidation", "int", "bucketCount");
-    to_json_key(j, "bucketColumns", p.bucketColumns, "BucketValidation", "List<HiveColumnHandle>", "bucketColumns");
+    _type = ".LimitNode";
 }
 
-void from_json(const json & j, BucketValidation & p)
+void to_json(json & j, const LimitNode & p)
 {
-    from_json_key(j, "bucketingVersion", p.bucketingVersion, "BucketValidation", "BucketingVersion", "bucketingVersion");
-    from_json_key(j, "bucketCount", p.bucketCount, "BucketValidation", "int", "bucketCount");
-    from_json_key(j, "bucketColumns", p.bucketColumns, "BucketValidation", "List<HiveColumnHandle>", "bucketColumns");
+    j = json::object();
+    j["@type"] = ".LimitNode";
+    to_json_key(j, "id", p.id, "LimitNode", "PlanNodeId", "id");
+    to_json_key(j, "source", p.source, "LimitNode", "PlanNode", "source");
+    to_json_key(j, "count", p.count, "LimitNode", "int64_t", "count");
+    to_json_key(j, "tiesResolvingScheme", p.tiesResolvingScheme, "LimitNode", "OrderingScheme", "tiesResolvingScheme");
+    to_json_key(j, "partial", p.partial, "LimitNode", "bool", "partial");
+    to_json_key(j, "requiresPreSortedInputs", p.requiresPreSortedInputs, "LimitNode", "List<Symbol>", "requiresPreSortedInputs");
+}
+
+void from_json(const json & j, LimitNode & p)
+{
+    p._type = j["@type"];
+    from_json_key(j, "id", p.id, "LimitNode", "PlanNodeId", "id");
+    from_json_key(j, "source", p.source, "LimitNode", "PlanNode", "source");
+    from_json_key(j, "count", p.count, "LimitNode", "int64_t", "count");
+    from_json_key(j, "tiesResolvingScheme", p.tiesResolvingScheme, "LimitNode", "OrderingScheme", "tiesResolvingScheme");
+    from_json_key(j, "partial", p.partial, "LimitNode", "bool", "partial");
+    from_json_key(j, "requiresPreSortedInputs", p.requiresPreSortedInputs, "LimitNode", "List<Symbol>", "requiresPreSortedInputs");
 }
 }
 namespace datalight::protocol
@@ -2208,691 +2893,6 @@ void from_json(const json & j, HiveSplit & p)
     from_json_key(j, "acidInfo", p.acidInfo, "HiveSplit", "AcidInfo", "acidInfo");
     from_json_key(j, "splitNumber", p.splitNumber, "HiveSplit", "int64_t", "splitNumber");
     from_json_key(j, "splitWeight", p.splitWeight, "HiveSplit", "SplitWeight", "splitWeight");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const MemoryAllocation & p)
-{
-    j = json::object();
-    to_json_key(j, "tag", p.tag, "MemoryAllocation", "String", "tag");
-    to_json_key(j, "allocation", p.allocation, "MemoryAllocation", "int64_t", "allocation");
-}
-
-void from_json(const json & j, MemoryAllocation & p)
-{
-    from_json_key(j, "tag", p.tag, "MemoryAllocation", "String", "tag");
-    from_json_key(j, "allocation", p.allocation, "MemoryAllocation", "int64_t", "allocation");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const MemoryPoolInfo & p)
-{
-    j = json::object();
-    to_json_key(j, "maxBytes", p.maxBytes, "MemoryPoolInfo", "int64_t", "maxBytes");
-    to_json_key(j, "reservedBytes", p.reservedBytes, "MemoryPoolInfo", "int64_t", "reservedBytes");
-    to_json_key(j, "reservedRevocableBytes", p.reservedRevocableBytes, "MemoryPoolInfo", "int64_t", "reservedRevocableBytes");
-    to_json_key(j, "queryMemoryReservations", p.queryMemoryReservations, "MemoryPoolInfo", "Map<QueryId, Long>", "queryMemoryReservations");
-    to_json_key(
-        j,
-        "queryMemoryAllocations",
-        p.queryMemoryAllocations,
-        "MemoryPoolInfo",
-        "Map<QueryId, List<MemoryAllocation>>",
-        "queryMemoryAllocations");
-    to_json_key(
-        j,
-        "queryMemoryRevocableReservations",
-        p.queryMemoryRevocableReservations,
-        "MemoryPoolInfo",
-        "Map<QueryId, Long>",
-        "queryMemoryRevocableReservations");
-    to_json_key(j, "taskMemoryReservations", p.taskMemoryReservations, "MemoryPoolInfo", "Map<String, Long>", "taskMemoryReservations");
-    to_json_key(
-        j,
-        "taskMemoryRevocableReservations",
-        p.taskMemoryRevocableReservations,
-        "MemoryPoolInfo",
-        "Map<String, Long>",
-        "taskMemoryRevocableReservations");
-}
-
-void from_json(const json & j, MemoryPoolInfo & p)
-{
-    from_json_key(j, "maxBytes", p.maxBytes, "MemoryPoolInfo", "int64_t", "maxBytes");
-    from_json_key(j, "reservedBytes", p.reservedBytes, "MemoryPoolInfo", "int64_t", "reservedBytes");
-    from_json_key(j, "reservedRevocableBytes", p.reservedRevocableBytes, "MemoryPoolInfo", "int64_t", "reservedRevocableBytes");
-    from_json_key(
-        j, "queryMemoryReservations", p.queryMemoryReservations, "MemoryPoolInfo", "Map<QueryId, Long>", "queryMemoryReservations");
-    from_json_key(
-        j,
-        "queryMemoryAllocations",
-        p.queryMemoryAllocations,
-        "MemoryPoolInfo",
-        "Map<QueryId, List<MemoryAllocation>>",
-        "queryMemoryAllocations");
-    from_json_key(
-        j,
-        "queryMemoryRevocableReservations",
-        p.queryMemoryRevocableReservations,
-        "MemoryPoolInfo",
-        "Map<QueryId, Long>",
-        "queryMemoryRevocableReservations");
-    from_json_key(j, "taskMemoryReservations", p.taskMemoryReservations, "MemoryPoolInfo", "Map<String, Long>", "taskMemoryReservations");
-    from_json_key(
-        j,
-        "taskMemoryRevocableReservations",
-        p.taskMemoryRevocableReservations,
-        "MemoryPoolInfo",
-        "Map<String, Long>",
-        "taskMemoryRevocableReservations");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const MemoryInfo & p)
-{
-    j = json::object();
-    to_json_key(j, "availableProcessors", p.availableProcessors, "MemoryInfo", "int", "availableProcessors");
-    to_json_key(j, "pool", p.pool, "MemoryInfo", "MemoryPoolInfo", "pool");
-}
-
-void from_json(const json & j, MemoryInfo & p)
-{
-    from_json_key(j, "availableProcessors", p.availableProcessors, "MemoryInfo", "int", "availableProcessors");
-    from_json_key(j, "pool", p.pool, "MemoryInfo", "MemoryPoolInfo", "pool");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const NodeStatus & p)
-{
-    j = json::object();
-    to_json_key(j, "nodeId", p.nodeId, "NodeStatus", "String", "nodeId");
-    to_json_key(j, "nodeVersion", p.nodeVersion, "NodeStatus", "NodeVersion", "nodeVersion");
-    to_json_key(j, "environment", p.environment, "NodeStatus", "String", "environment");
-    to_json_key(j, "coordinator", p.coordinator, "NodeStatus", "bool", "coordinator");
-    to_json_key(j, "uptime", p.uptime, "NodeStatus", "Duration", "uptime");
-    to_json_key(j, "externalAddress", p.externalAddress, "NodeStatus", "String", "externalAddress");
-    to_json_key(j, "internalAddress", p.internalAddress, "NodeStatus", "String", "internalAddress");
-    to_json_key(j, "memoryInfo", p.memoryInfo, "NodeStatus", "MemoryInfo", "memoryInfo");
-    to_json_key(j, "processors", p.processors, "NodeStatus", "int", "processors");
-    to_json_key(j, "processCpuLoad", p.processCpuLoad, "NodeStatus", "double", "processCpuLoad");
-    to_json_key(j, "systemCpuLoad", p.systemCpuLoad, "NodeStatus", "double", "systemCpuLoad");
-    to_json_key(j, "heapUsed", p.heapUsed, "NodeStatus", "int64_t", "heapUsed");
-    to_json_key(j, "heapAvailable", p.heapAvailable, "NodeStatus", "int64_t", "heapAvailable");
-    to_json_key(j, "nonHeapUsed", p.nonHeapUsed, "NodeStatus", "int64_t", "nonHeapUsed");
-}
-
-void from_json(const json & j, NodeStatus & p)
-{
-    from_json_key(j, "nodeId", p.nodeId, "NodeStatus", "String", "nodeId");
-    from_json_key(j, "nodeVersion", p.nodeVersion, "NodeStatus", "NodeVersion", "nodeVersion");
-    from_json_key(j, "environment", p.environment, "NodeStatus", "String", "environment");
-    from_json_key(j, "coordinator", p.coordinator, "NodeStatus", "bool", "coordinator");
-    from_json_key(j, "uptime", p.uptime, "NodeStatus", "Duration", "uptime");
-    from_json_key(j, "externalAddress", p.externalAddress, "NodeStatus", "String", "externalAddress");
-    from_json_key(j, "internalAddress", p.internalAddress, "NodeStatus", "String", "internalAddress");
-    from_json_key(j, "memoryInfo", p.memoryInfo, "NodeStatus", "MemoryInfo", "memoryInfo");
-    from_json_key(j, "processors", p.processors, "NodeStatus", "int", "processors");
-    from_json_key(j, "processCpuLoad", p.processCpuLoad, "NodeStatus", "double", "processCpuLoad");
-    from_json_key(j, "systemCpuLoad", p.systemCpuLoad, "NodeStatus", "double", "systemCpuLoad");
-    from_json_key(j, "heapUsed", p.heapUsed, "NodeStatus", "int64_t", "heapUsed");
-    from_json_key(j, "heapAvailable", p.heapAvailable, "NodeStatus", "int64_t", "heapAvailable");
-    from_json_key(j, "nonHeapUsed", p.nonHeapUsed, "NodeStatus", "int64_t", "nonHeapUsed");
-}
-}
-namespace datalight::protocol
-{
-DirectExchangeInput::DirectExchangeInput() noexcept
-{
-    _type = "direct";
-}
-
-void to_json(json & j, const DirectExchangeInput & p)
-{
-    j = json::object();
-    j["@type"] = "direct";
-    to_json_key(j, "taskId", p.taskId, "DirectExchangeInput", "TaskId", "taskId");
-    to_json_key(j, "location", p.location, "DirectExchangeInput", "String", "location");
-}
-
-void from_json(const json & j, DirectExchangeInput & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "taskId", p.taskId, "DirectExchangeInput", "TaskId", "taskId");
-    from_json_key(j, "location", p.location, "DirectExchangeInput", "String", "location");
-}
-}
-namespace datalight::protocol
-{
-HiveTransactionHandle::HiveTransactionHandle() noexcept
-{
-    _type = "hive";
-}
-
-void to_json(json & j, const HiveTransactionHandle & p)
-{
-    j = json::object();
-    j["@type"] = "hive";
-    to_json_key(j, "autoCommit", p.autoCommit, "HiveTransactionHandle", "bool", "autoCommit");
-    to_json_key(j, "uuid", p.uuid, "HiveTransactionHandle", "UUID", "uuid");
-}
-
-void from_json(const json & j, HiveTransactionHandle & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "autoCommit", p.autoCommit, "HiveTransactionHandle", "bool", "autoCommit");
-    from_json_key(j, "uuid", p.uuid, "HiveTransactionHandle", "UUID", "uuid");
-}
-}
-namespace datalight::protocol
-{
-void to_json(json & j, const std::shared_ptr<ExchangeInput> & p)
-{
-    if (p == nullptr)
-    {
-        return;
-    }
-    String type = p->_type;
-
-    if (type == "spooling")
-    {
-        j = *std::static_pointer_cast<SpoolingExchangeInput>(p);
-        return;
-    }
-    if (type == "direct")
-    {
-        j = *std::static_pointer_cast<DirectExchangeInput>(p);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type ExchangeInput ");
-}
-
-void from_json(const json & j, std::shared_ptr<ExchangeInput> & p)
-{
-    String type;
-    try
-    {
-        type = p->getSubclassKey(j);
-    }
-    catch (json::parse_error & e)
-    {
-        throw ParseError(std::string(e.what()) + " ExchangeInput  ExchangeInput");
-    }
-
-    if (type == "spooling")
-    {
-        std::shared_ptr<SpoolingExchangeInput> k = std::make_shared<SpoolingExchangeInput>();
-        j.get_to(*k);
-        p = std::static_pointer_cast<ExchangeInput>(k);
-        return;
-    }
-    if (type == "direct")
-    {
-        std::shared_ptr<DirectExchangeInput> k = std::make_shared<DirectExchangeInput>();
-        j.get_to(*k);
-        p = std::static_pointer_cast<ExchangeInput>(k);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type ExchangeInput ");
-}
-}
-namespace datalight::protocol
-{
-RemoteSplit::RemoteSplit() noexcept
-{
-    _type = "$remote";
-}
-
-void to_json(json & j, const RemoteSplit & p)
-{
-    j = json::object();
-    j["@type"] = "$remote";
-    to_json_key(j, "exchangeInput", p.exchangeInput, "RemoteSplit", "ExchangeInput", "exchangeInput");
-}
-
-void from_json(const json & j, RemoteSplit & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "exchangeInput", p.exchangeInput, "RemoteSplit", "ExchangeInput", "exchangeInput");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const PartitioningScheme & p)
-{
-    j = json::object();
-    to_json_key(j, "partitioning", p.partitioning, "PartitioningScheme", "Partitioning", "partitioning");
-    to_json_key(j, "outputLayout", p.outputLayout, "PartitioningScheme", "List<Symbol>", "outputLayout");
-    to_json_key(j, "hashColumn", p.hashColumn, "PartitioningScheme", "Symbol", "hashColumn");
-    to_json_key(j, "replicateNullsAndAny", p.replicateNullsAndAny, "PartitioningScheme", "bool", "replicateNullsAndAny");
-    to_json_key(j, "bucketToPartition", p.bucketToPartition, "PartitioningScheme", "List<int>", "bucketToPartition");
-}
-
-void from_json(const json & j, PartitioningScheme & p)
-{
-    from_json_key(j, "partitioning", p.partitioning, "PartitioningScheme", "Partitioning", "partitioning");
-    from_json_key(j, "outputLayout", p.outputLayout, "PartitioningScheme", "List<Symbol>", "outputLayout");
-    from_json_key(j, "hashColumn", p.hashColumn, "PartitioningScheme", "Symbol", "hashColumn");
-    from_json_key(j, "replicateNullsAndAny", p.replicateNullsAndAny, "PartitioningScheme", "bool", "replicateNullsAndAny");
-    from_json_key(j, "bucketToPartition", p.bucketToPartition, "PartitioningScheme", "List<int>", "bucketToPartition");
-}
-}
-namespace datalight::protocol
-{
-void to_json(json & j, const std::shared_ptr<ExchangeSinkInstanceHandle> & p)
-{
-    if (p == nullptr)
-    {
-        return;
-    }
-    String type = p->_type;
-
-    if (type == "filesystem")
-    {
-        j = *std::static_pointer_cast<FileSystemExchangeSinkInstanceHandle>(p);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type ExchangeSinkInstanceHandle ");
-}
-
-void from_json(const json & j, std::shared_ptr<ExchangeSinkInstanceHandle> & p)
-{
-    String type;
-    try
-    {
-        type = p->getSubclassKey(j);
-    }
-    catch (json::parse_error & e)
-    {
-        throw ParseError(std::string(e.what()) + " ExchangeSinkInstanceHandle  ExchangeSinkInstanceHandle");
-    }
-
-    if (type == "filesystem")
-    {
-        std::shared_ptr<FileSystemExchangeSinkInstanceHandle> k = std::make_shared<FileSystemExchangeSinkInstanceHandle>();
-        j.get_to(*k);
-        p = std::static_pointer_cast<ExchangeSinkInstanceHandle>(k);
-        return;
-    }
-
-    throw TypeError(type + " no abstract type ExchangeSinkInstanceHandle ");
-}
-}
-namespace datalight::protocol
-{
-//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
-
-// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
-static const std::pair<BufferType, json> BufferType_enum_table[] = { // NOLINT: cert-err58-cpp
-    {BufferType::PARTITIONED, "PARTITIONED"},
-    {BufferType::BROADCAST, "BROADCAST"},
-    {BufferType::ARBITRARY, "ARBITRARY"},
-    {BufferType::SPOOL, "SPOOL"}};
-void to_json(json & j, const BufferType & e)
-{
-    static_assert(std::is_enum<BufferType>::value, "BufferType must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(BufferType_enum_table),
-        std::end(BufferType_enum_table),
-        [e](const std::pair<BufferType, json> & ej_pair) -> bool { return ej_pair.first == e; });
-    j = ((it != std::end(BufferType_enum_table)) ? it : std::begin(BufferType_enum_table))->second;
-}
-void from_json(const json & j, BufferType & e)
-{
-    static_assert(std::is_enum<BufferType>::value, "BufferType must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(BufferType_enum_table),
-        std::end(BufferType_enum_table),
-        [&j](const std::pair<BufferType, json> & ej_pair) -> bool { return ej_pair.second == j; });
-    e = ((it != std::end(BufferType_enum_table)) ? it : std::begin(BufferType_enum_table))->first;
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const OutputBuffers & p)
-{
-    j = json::object();
-    to_json_key(j, "type", p.type, "OutputBuffers", "BufferType", "type");
-    to_json_key(j, "version", p.version, "OutputBuffers", "int64_t", "version");
-    to_json_key(j, "noMoreBufferIds", p.noMoreBufferIds, "OutputBuffers", "bool", "noMoreBufferIds");
-    to_json_key(j, "buffers", p.buffers, "OutputBuffers", "Map<OutputBufferId, Integer>", "buffers");
-    to_json_key(
-        j,
-        "exchangeSinkInstanceHandle",
-        p.exchangeSinkInstanceHandle,
-        "OutputBuffers",
-        "ExchangeSinkInstanceHandle",
-        "exchangeSinkInstanceHandle");
-}
-
-void from_json(const json & j, OutputBuffers & p)
-{
-    from_json_key(j, "type", p.type, "OutputBuffers", "BufferType", "type");
-    from_json_key(j, "version", p.version, "OutputBuffers", "int64_t", "version");
-    from_json_key(j, "noMoreBufferIds", p.noMoreBufferIds, "OutputBuffers", "bool", "noMoreBufferIds");
-    from_json_key(j, "buffers", p.buffers, "OutputBuffers", "Map<OutputBufferId, Integer>", "buffers");
-    from_json_key(
-        j,
-        "exchangeSinkInstanceHandle",
-        p.exchangeSinkInstanceHandle,
-        "OutputBuffers",
-        "ExchangeSinkInstanceHandle",
-        "exchangeSinkInstanceHandle");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const PlanNodeStatsEstimate & p)
-{
-    j = json::object();
-    to_json_key(j, "outputRowCount", p.outputRowCount, "PlanNodeStatsEstimate", "double", "outputRowCount");
-    to_json_key(j, "symbolStatistics", p.symbolStatistics, "PlanNodeStatsEstimate", "Map<Symbol, SymbolStatsEstimate>", "symbolStatistics");
-}
-
-void from_json(const json & j, PlanNodeStatsEstimate & p)
-{
-    from_json_key(j, "outputRowCount", p.outputRowCount, "PlanNodeStatsEstimate", "double", "outputRowCount");
-    from_json_key(
-        j, "symbolStatistics", p.symbolStatistics, "PlanNodeStatsEstimate", "Map<Symbol, SymbolStatsEstimate>", "symbolStatistics");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const StatsAndCosts & p)
-{
-    j = json::object();
-    to_json_key(j, "stats", p.stats, "StatsAndCosts", "Map<PlanNodeId, PlanNodeStatsEstimate>", "stats");
-    to_json_key(j, "costs", p.costs, "StatsAndCosts", "Map<PlanNodeId, PlanCostEstimate>", "costs");
-}
-
-void from_json(const json & j, StatsAndCosts & p)
-{
-    from_json_key(j, "stats", p.stats, "StatsAndCosts", "Map<PlanNodeId, PlanNodeStatsEstimate>", "stats");
-    from_json_key(j, "costs", p.costs, "StatsAndCosts", "Map<PlanNodeId, PlanCostEstimate>", "costs");
-}
-}
-namespace datalight::protocol
-{
-//Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
-
-// NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
-static const std::pair<SelectedRoleType, json> SelectedRoleType_enum_table[] = { // NOLINT: cert-err58-cpp
-    {SelectedRoleType::ROLE, "ROLE"},
-    {SelectedRoleType::ALL, "ALL"},
-    {SelectedRoleType::NONE, "NONE"}};
-void to_json(json & j, const SelectedRoleType & e)
-{
-    static_assert(std::is_enum<SelectedRoleType>::value, "SelectedRoleType must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(SelectedRoleType_enum_table),
-        std::end(SelectedRoleType_enum_table),
-        [e](const std::pair<SelectedRoleType, json> & ej_pair) -> bool { return ej_pair.first == e; });
-    j = ((it != std::end(SelectedRoleType_enum_table)) ? it : std::begin(SelectedRoleType_enum_table))->second;
-}
-void from_json(const json & j, SelectedRoleType & e)
-{
-    static_assert(std::is_enum<SelectedRoleType>::value, "SelectedRoleType must be an enum!");
-    const auto * it = std::find_if(
-        std::begin(SelectedRoleType_enum_table),
-        std::end(SelectedRoleType_enum_table),
-        [&j](const std::pair<SelectedRoleType, json> & ej_pair) -> bool { return ej_pair.second == j; });
-    e = ((it != std::end(SelectedRoleType_enum_table)) ? it : std::begin(SelectedRoleType_enum_table))->first;
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const SelectedRole & p)
-{
-    j = json::object();
-    to_json_key(j, "type", p.type, "SelectedRole", "SelectedRoleType", "type");
-    to_json_key(j, "role", p.role, "SelectedRole", "String", "role");
-}
-
-void from_json(const json & j, SelectedRole & p)
-{
-    from_json_key(j, "type", p.type, "SelectedRole", "SelectedRoleType", "type");
-    from_json_key(j, "role", p.role, "SelectedRole", "String", "role");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const SessionRepresentation & p)
-{
-    j = json::object();
-    to_json_key(j, "queryId", p.queryId, "SessionRepresentation", "String", "queryId");
-    to_json_key(j, "transactionId", p.transactionId, "SessionRepresentation", "TransactionId", "transactionId");
-    to_json_key(j, "clientTransactionSupport", p.clientTransactionSupport, "SessionRepresentation", "bool", "clientTransactionSupport");
-    to_json_key(j, "user", p.user, "SessionRepresentation", "String", "user");
-    to_json_key(j, "groups", p.groups, "SessionRepresentation", "List<String>", "groups");
-    to_json_key(j, "principal", p.principal, "SessionRepresentation", "String", "principal");
-    to_json_key(j, "enabledRoles", p.enabledRoles, "SessionRepresentation", "List<String>", "enabledRoles");
-    to_json_key(j, "source", p.source, "SessionRepresentation", "String", "source");
-    to_json_key(j, "catalog", p.catalog, "SessionRepresentation", "String", "catalog");
-    to_json_key(j, "schema", p.schema, "SessionRepresentation", "String", "schema");
-    to_json_key(j, "path", p.path, "SessionRepresentation", "SqlPath", "path");
-    to_json_key(j, "traceToken", p.traceToken, "SessionRepresentation", "String", "traceToken");
-    to_json_key(j, "timeZoneKey", p.timeZoneKey, "SessionRepresentation", "TimeZoneKey", "timeZoneKey");
-    to_json_key(j, "locale", p.locale, "SessionRepresentation", "Locale", "locale");
-    to_json_key(j, "remoteUserAddress", p.remoteUserAddress, "SessionRepresentation", "String", "remoteUserAddress");
-    to_json_key(j, "userAgent", p.userAgent, "SessionRepresentation", "String", "userAgent");
-    to_json_key(j, "clientInfo", p.clientInfo, "SessionRepresentation", "String", "clientInfo");
-    to_json_key(j, "clientTags", p.clientTags, "SessionRepresentation", "List<String>", "clientTags");
-    to_json_key(j, "clientCapabilities", p.clientCapabilities, "SessionRepresentation", "List<String>", "clientCapabilities");
-    to_json_key(j, "resourceEstimates", p.resourceEstimates, "SessionRepresentation", "ResourceEstimates", "resourceEstimates");
-    to_json_key(j, "start", p.start, "SessionRepresentation", "Instant", "start");
-    to_json_key(j, "systemProperties", p.systemProperties, "SessionRepresentation", "Map<String, String>", "systemProperties");
-    to_json_key(
-        j, "catalogProperties", p.catalogProperties, "SessionRepresentation", "Map<String, Map<String, String>>", "catalogProperties");
-    to_json_key(j, "catalogRoles", p.catalogRoles, "SessionRepresentation", "Map<String, SelectedRole>", "catalogRoles");
-    to_json_key(j, "preparedStatements", p.preparedStatements, "SessionRepresentation", "Map<String, String>", "preparedStatements");
-    to_json_key(j, "protocolName", p.protocolName, "SessionRepresentation", "String", "protocolName");
-}
-
-void from_json(const json & j, SessionRepresentation & p)
-{
-    from_json_key(j, "queryId", p.queryId, "SessionRepresentation", "String", "queryId");
-    from_json_key(j, "transactionId", p.transactionId, "SessionRepresentation", "TransactionId", "transactionId");
-    from_json_key(j, "clientTransactionSupport", p.clientTransactionSupport, "SessionRepresentation", "bool", "clientTransactionSupport");
-    from_json_key(j, "user", p.user, "SessionRepresentation", "String", "user");
-    from_json_key(j, "groups", p.groups, "SessionRepresentation", "List<String>", "groups");
-    from_json_key(j, "principal", p.principal, "SessionRepresentation", "String", "principal");
-    from_json_key(j, "enabledRoles", p.enabledRoles, "SessionRepresentation", "List<String>", "enabledRoles");
-    from_json_key(j, "source", p.source, "SessionRepresentation", "String", "source");
-    from_json_key(j, "catalog", p.catalog, "SessionRepresentation", "String", "catalog");
-    from_json_key(j, "schema", p.schema, "SessionRepresentation", "String", "schema");
-    from_json_key(j, "path", p.path, "SessionRepresentation", "SqlPath", "path");
-    from_json_key(j, "traceToken", p.traceToken, "SessionRepresentation", "String", "traceToken");
-    from_json_key(j, "timeZoneKey", p.timeZoneKey, "SessionRepresentation", "TimeZoneKey", "timeZoneKey");
-    from_json_key(j, "locale", p.locale, "SessionRepresentation", "Locale", "locale");
-    from_json_key(j, "remoteUserAddress", p.remoteUserAddress, "SessionRepresentation", "String", "remoteUserAddress");
-    from_json_key(j, "userAgent", p.userAgent, "SessionRepresentation", "String", "userAgent");
-    from_json_key(j, "clientInfo", p.clientInfo, "SessionRepresentation", "String", "clientInfo");
-    from_json_key(j, "clientTags", p.clientTags, "SessionRepresentation", "List<String>", "clientTags");
-    from_json_key(j, "clientCapabilities", p.clientCapabilities, "SessionRepresentation", "List<String>", "clientCapabilities");
-    from_json_key(j, "resourceEstimates", p.resourceEstimates, "SessionRepresentation", "ResourceEstimates", "resourceEstimates");
-    from_json_key(j, "start", p.start, "SessionRepresentation", "Instant", "start");
-    from_json_key(j, "systemProperties", p.systemProperties, "SessionRepresentation", "Map<String, String>", "systemProperties");
-    from_json_key(
-        j, "catalogProperties", p.catalogProperties, "SessionRepresentation", "Map<String, Map<String, String>>", "catalogProperties");
-    from_json_key(j, "catalogRoles", p.catalogRoles, "SessionRepresentation", "Map<String, SelectedRole>", "catalogRoles");
-    from_json_key(j, "preparedStatements", p.preparedStatements, "SessionRepresentation", "Map<String, String>", "preparedStatements");
-    from_json_key(j, "protocolName", p.protocolName, "SessionRepresentation", "String", "protocolName");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const FileStatus & p)
-{
-    j = json::object();
-    to_json_key(j, "filePath", p.filePath, "FileStatus", "String", "filePath");
-    to_json_key(j, "fileSize", p.fileSize, "FileStatus", "int64_t", "fileSize");
-}
-
-void from_json(const json & j, FileStatus & p)
-{
-    from_json_key(j, "filePath", p.filePath, "FileStatus", "String", "filePath");
-    from_json_key(j, "fileSize", p.fileSize, "FileStatus", "int64_t", "fileSize");
-}
-}
-namespace datalight::protocol
-{
-FileSystemExchangeSourceHandle::FileSystemExchangeSourceHandle() noexcept
-{
-    _type = "filesystem";
-}
-
-void to_json(json & j, const FileSystemExchangeSourceHandle & p)
-{
-    j = json::object();
-    j["@type"] = "filesystem";
-    to_json_key(j, "partitionId", p.partitionId, "FileSystemExchangeSourceHandle", "int", "partitionId");
-    to_json_key(j, "files", p.files, "FileSystemExchangeSourceHandle", "List<FileStatus>", "files");
-    to_json_key(j, "secretKey", p.secretKey, "FileSystemExchangeSourceHandle", "String", "secretKey");
-}
-
-void from_json(const json & j, FileSystemExchangeSourceHandle & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "partitionId", p.partitionId, "FileSystemExchangeSourceHandle", "int", "partitionId");
-    from_json_key(j, "files", p.files, "FileSystemExchangeSourceHandle", "List<FileStatus>", "files");
-    from_json_key(j, "secretKey", p.secretKey, "FileSystemExchangeSourceHandle", "String", "secretKey");
-}
-}
-namespace datalight::protocol
-{
-AllOrNoneValueSet::AllOrNoneValueSet() noexcept
-{
-    _type = "allOrNone";
-}
-
-void to_json(json & j, const AllOrNoneValueSet & p)
-{
-    j = json::object();
-    j["@type"] = "allOrNone";
-    to_json_key(j, "type", p.type, "AllOrNoneValueSet", "Type", "type");
-    to_json_key(j, "all", p.all, "AllOrNoneValueSet", "bool", "all");
-}
-
-void from_json(const json & j, AllOrNoneValueSet & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "type", p.type, "AllOrNoneValueSet", "Type", "type");
-    from_json_key(j, "all", p.all, "AllOrNoneValueSet", "bool", "all");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const PlanFragment & p)
-{
-    j = json::object();
-    to_json_key(j, "id", p.id, "PlanFragment", "PlanFragmentId", "id");
-    to_json_key(j, "root", p.root, "PlanFragment", "PlanNode", "root");
-    to_json_key(j, "symbols", p.symbols, "PlanFragment", "Map<Symbol, Type>", "symbols");
-    to_json_key(j, "partitioning", p.partitioning, "PlanFragment", "PartitioningHandle", "partitioning");
-    to_json_key(j, "partitionedSources", p.partitionedSources, "PlanFragment", "List<PlanNodeId>", "partitionedSources");
-    to_json_key(j, "partitioningScheme", p.partitioningScheme, "PlanFragment", "PartitioningScheme", "partitioningScheme");
-    to_json_key(j, "statsAndCosts", p.statsAndCosts, "PlanFragment", "StatsAndCosts", "statsAndCosts");
-    to_json_key(j, "jsonRepresentation", p.jsonRepresentation, "PlanFragment", "String", "jsonRepresentation");
-}
-
-void from_json(const json & j, PlanFragment & p)
-{
-    from_json_key(j, "id", p.id, "PlanFragment", "PlanFragmentId", "id");
-    from_json_key(j, "root", p.root, "PlanFragment", "PlanNode", "root");
-    from_json_key(j, "symbols", p.symbols, "PlanFragment", "Map<Symbol, Type>", "symbols");
-    from_json_key(j, "partitioning", p.partitioning, "PlanFragment", "PartitioningHandle", "partitioning");
-    from_json_key(j, "partitionedSources", p.partitionedSources, "PlanFragment", "List<PlanNodeId>", "partitionedSources");
-    from_json_key(j, "partitioningScheme", p.partitioningScheme, "PlanFragment", "PartitioningScheme", "partitioningScheme");
-    from_json_key(j, "statsAndCosts", p.statsAndCosts, "PlanFragment", "StatsAndCosts", "statsAndCosts");
-    from_json_key(j, "jsonRepresentation", p.jsonRepresentation, "PlanFragment", "String", "jsonRepresentation");
-}
-}
-namespace datalight::protocol
-{
-EmptySplit::EmptySplit() noexcept
-{
-    _type = "$empty";
-}
-
-void to_json(json & j, const EmptySplit & p)
-{
-    j = json::object();
-    j["@type"] = "$empty";
-    to_json_key(j, "catalogName", p.catalogName, "EmptySplit", "CatalogName", "catalogName");
-}
-
-void from_json(const json & j, EmptySplit & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "catalogName", p.catalogName, "EmptySplit", "CatalogName", "catalogName");
-}
-}
-namespace datalight::protocol
-{
-FileSystemExchangeSinkInstanceHandle::FileSystemExchangeSinkInstanceHandle() noexcept
-{
-    _type = "filesystem";
-}
-
-void to_json(json & j, const FileSystemExchangeSinkInstanceHandle & p)
-{
-    j = json::object();
-    j["@type"] = "filesystem";
-    to_json_key(j, "sinkHandle", p.sinkHandle, "FileSystemExchangeSinkInstanceHandle", "FileSystemExchangeSinkHandle", "sinkHandle");
-    to_json_key(j, "outputDirectory", p.outputDirectory, "FileSystemExchangeSinkInstanceHandle", "URI", "outputDirectory");
-    to_json_key(j, "outputPartitionCount", p.outputPartitionCount, "FileSystemExchangeSinkInstanceHandle", "int", "outputPartitionCount");
-}
-
-void from_json(const json & j, FileSystemExchangeSinkInstanceHandle & p)
-{
-    p._type = j["@type"];
-    from_json_key(j, "sinkHandle", p.sinkHandle, "FileSystemExchangeSinkInstanceHandle", "FileSystemExchangeSinkHandle", "sinkHandle");
-    from_json_key(j, "outputDirectory", p.outputDirectory, "FileSystemExchangeSinkInstanceHandle", "URI", "outputDirectory");
-    from_json_key(j, "outputPartitionCount", p.outputPartitionCount, "FileSystemExchangeSinkInstanceHandle", "int", "outputPartitionCount");
-}
-}
-namespace datalight::protocol
-{
-
-void to_json(json & j, const TaskUpdateRequest & p)
-{
-    j = json::object();
-    to_json_key(j, "session", p.session, "TaskUpdateRequest", "SessionRepresentation", "session");
-    to_json_key(j, "extraCredentials", p.extraCredentials, "TaskUpdateRequest", "Map<String, String>", "extraCredentials");
-    to_json_key(j, "fragment", p.fragment, "TaskUpdateRequest", "PlanFragment", "fragment");
-    to_json_key(j, "splitAssignments", p.splitAssignments, "TaskUpdateRequest", "List<SplitAssignment>", "splitAssignments");
-    to_json_key(j, "outputIds", p.outputIds, "TaskUpdateRequest", "OutputBuffers", "outputIds");
-    to_json_key(
-        j, "dynamicFilterDomains", p.dynamicFilterDomains, "TaskUpdateRequest", "Map<DynamicFilterId, Domain>", "dynamicFilterDomains");
-}
-
-void from_json(const json & j, TaskUpdateRequest & p)
-{
-    from_json_key(j, "session", p.session, "TaskUpdateRequest", "SessionRepresentation", "session");
-    from_json_key(j, "extraCredentials", p.extraCredentials, "TaskUpdateRequest", "Map<String, String>", "extraCredentials");
-    from_json_key(j, "fragment", p.fragment, "TaskUpdateRequest", "PlanFragment", "fragment");
-    from_json_key(j, "splitAssignments", p.splitAssignments, "TaskUpdateRequest", "List<SplitAssignment>", "splitAssignments");
-    from_json_key(j, "outputIds", p.outputIds, "TaskUpdateRequest", "OutputBuffers", "outputIds");
-    from_json_key(
-        j, "dynamicFilterDomains", p.dynamicFilterDomains, "TaskUpdateRequest", "Map<DynamicFilterId, Domain>", "dynamicFilterDomains");
 }
 }
 namespace datalight::protocol

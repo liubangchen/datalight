@@ -279,11 +279,12 @@ struct adl_serializer<datalight::protocol::Map<K, V>>
 //
 namespace datalight::protocol
 {
-struct ConnectorTransactionHandle : public JsonEncodedSubclass
+struct PlanNode : public JsonEncodedSubclass
 {
+    PlanNodeId id = {};
 };
-void to_json(json & j, const std::shared_ptr<ConnectorTransactionHandle> & p);
-void from_json(const json & j, std::shared_ptr<ConnectorTransactionHandle> & p);
+void to_json(json & j, const std::shared_ptr<PlanNode> & p);
+void from_json(const json & j, std::shared_ptr<PlanNode> & p);
 }
 namespace datalight::protocol
 {
@@ -295,12 +296,19 @@ void from_json(const json & j, std::shared_ptr<ConnectorPartitioningHandle> & p)
 }
 namespace datalight::protocol
 {
-struct PlanNode : public JsonEncodedSubclass
+struct ConnectorTransactionHandle : public JsonEncodedSubclass
 {
-    PlanNodeId id = {};
 };
-void to_json(json & j, const std::shared_ptr<PlanNode> & p);
-void from_json(const json & j, std::shared_ptr<PlanNode> & p);
+void to_json(json & j, const std::shared_ptr<ConnectorTransactionHandle> & p);
+void from_json(const json & j, std::shared_ptr<ConnectorTransactionHandle> & p);
+}
+namespace datalight::protocol
+{
+struct ConnectorSplit : public JsonEncodedSubclass
+{
+};
+void to_json(json & j, const std::shared_ptr<ConnectorSplit> & p);
+void from_json(const json & j, std::shared_ptr<ConnectorSplit> & p);
 }
 namespace datalight::protocol
 {
@@ -312,11 +320,11 @@ void from_json(const json & j, std::shared_ptr<ValueSet> & p);
 }
 namespace datalight::protocol
 {
-struct ConnectorSplit : public JsonEncodedSubclass
+struct ExchangeSinkInstanceHandle : public JsonEncodedSubclass
 {
 };
-void to_json(json & j, const std::shared_ptr<ConnectorSplit> & p);
-void from_json(const json & j, std::shared_ptr<ConnectorSplit> & p);
+void to_json(json & j, const std::shared_ptr<ExchangeSinkInstanceHandle> & p);
+void from_json(const json & j, std::shared_ptr<ExchangeSinkInstanceHandle> & p);
 }
 namespace datalight::protocol
 {
@@ -334,15 +342,85 @@ struct ExchangeInput : public JsonEncodedSubclass
 void to_json(json & j, const std::shared_ptr<ExchangeInput> & p);
 void from_json(const json & j, std::shared_ptr<ExchangeInput> & p);
 }
+
 namespace datalight::protocol
 {
-struct ExchangeSinkInstanceHandle : public JsonEncodedSubclass
+struct ErrorLocation
 {
+    int lineNumber = {};
+    int columnNumber = {};
 };
-void to_json(json & j, const std::shared_ptr<ExchangeSinkInstanceHandle> & p);
-void from_json(const json & j, std::shared_ptr<ExchangeSinkInstanceHandle> & p);
+void to_json(json & j, const ErrorLocation & p);
+void from_json(const json & j, ErrorLocation & p);
 }
-
+namespace datalight::protocol
+{
+struct LocalCostEstimate
+{
+    double cpuCost = {};
+    double maxMemory = {};
+    double networkCost = {};
+};
+void to_json(json & j, const LocalCostEstimate & p);
+void from_json(const json & j, LocalCostEstimate & p);
+}
+namespace datalight::protocol
+{
+struct PlanCostEstimate
+{
+    double cpuCost = {};
+    double maxMemory = {};
+    double maxMemoryWhenOutputting = {};
+    double networkCost = {};
+    LocalCostEstimate rootNodeLocalCostEstimate = {};
+};
+void to_json(json & j, const PlanCostEstimate & p);
+void from_json(const json & j, PlanCostEstimate & p);
+}
+namespace datalight::protocol
+{
+struct SymbolStatsEstimate
+{
+    double lowValue = {};
+    double highValue = {};
+    double nullsFraction = {};
+    double averageRowSize = {};
+    double distinctValuesCount = {};
+};
+void to_json(json & j, const SymbolStatsEstimate & p);
+void from_json(const json & j, SymbolStatsEstimate & p);
+}
+namespace datalight::protocol
+{
+struct PlanNodeStatsEstimate
+{
+    double outputRowCount = {};
+    Map<Symbol, SymbolStatsEstimate> symbolStatistics = {};
+};
+void to_json(json & j, const PlanNodeStatsEstimate & p);
+void from_json(const json & j, PlanNodeStatsEstimate & p);
+}
+namespace datalight::protocol
+{
+struct StatsAndCosts
+{
+    Map<PlanNodeId, PlanNodeStatsEstimate> stats = {};
+    Map<PlanNodeId, PlanCostEstimate> costs = {};
+};
+void to_json(json & j, const StatsAndCosts & p);
+void from_json(const json & j, StatsAndCosts & p);
+}
+namespace datalight::protocol
+{
+struct PartitioningHandle
+{
+    std::shared_ptr<CatalogName> connectorId = {};
+    std::shared_ptr<ConnectorTransactionHandle> transactionHandle = {};
+    std::shared_ptr<ConnectorPartitioningHandle> connectorHandle = {};
+};
+void to_json(json & j, const PartitioningHandle & p);
+void from_json(const json & j, PartitioningHandle & p);
+}
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -371,312 +449,6 @@ void from_json(const json & j, Block & p);
 } // namespace facebook::trino::protocol
 namespace datalight::protocol
 {
-struct ValueEntry
-{
-    Type type = {};
-    Block block = {};
-};
-void to_json(json & j, const ValueEntry & p);
-void from_json(const json & j, ValueEntry & p);
-}
-namespace datalight::protocol
-{
-struct FileSystemExchangeSinkHandle
-{
-    int partitionId = {};
-    std::shared_ptr<String> secretKey = {};
-};
-void to_json(json & j, const FileSystemExchangeSinkHandle & p);
-void from_json(const json & j, FileSystemExchangeSinkHandle & p);
-}
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
-namespace datalight::protocol
-{
-
-std::ostream & operator<<(std::ostream & os, const Duration & d);
-
-void to_json(json & j, const Duration & p);
-void from_json(const json & j, Duration & p);
-
-} // namespace facebook::trino::protocol
-namespace datalight::protocol
-{
-struct ResourceEstimates
-{
-    std::shared_ptr<Duration> executionTime = {};
-    std::shared_ptr<Duration> cpuTime = {};
-    std::shared_ptr<Long> peakMemoryBytes = {};
-};
-void to_json(json & j, const ResourceEstimates & p);
-void from_json(const json & j, ResourceEstimates & p);
-}
-namespace datalight::protocol
-{
-struct PartitioningHandle
-{
-    std::shared_ptr<CatalogName> connectorId = {};
-    std::shared_ptr<ConnectorTransactionHandle> transactionHandle = {};
-    std::shared_ptr<ConnectorPartitioningHandle> connectorHandle = {};
-};
-void to_json(json & j, const PartitioningHandle & p);
-void from_json(const json & j, PartitioningHandle & p);
-}
-namespace datalight::protocol
-{
-enum class SystemPartitioning
-{
-    SINGLE,
-    FIXED,
-    SOURCE,
-    SCALED,
-    COORDINATOR_ONLY,
-    ARBITRARY
-};
-extern void to_json(json & j, const SystemPartitioning & e);
-extern void from_json(const json & j, SystemPartitioning & e);
-}
-namespace datalight::protocol
-{
-enum class SystemPartitionFunction
-{
-    SINGLE,
-    HASH,
-    ROUND_ROBIN,
-    BROADCAST,
-    UNKNOWN
-};
-extern void to_json(json & j, const SystemPartitionFunction & e);
-extern void from_json(const json & j, SystemPartitionFunction & e);
-}
-namespace datalight::protocol
-{
-struct SystemPartitioningHandle : public ConnectorPartitioningHandle
-{
-    SystemPartitioning partitioning = {};
-    SystemPartitionFunction function = {};
-
-    SystemPartitioningHandle() noexcept;
-};
-void to_json(json & j, const SystemPartitioningHandle & p);
-void from_json(const json & j, SystemPartitioningHandle & p);
-}
-namespace datalight::protocol
-{
-struct Assignments
-{
-    Map<Symbol, Expression> assignments = {};
-};
-void to_json(json & j, const Assignments & p);
-void from_json(const json & j, Assignments & p);
-}
-namespace datalight::protocol
-{
-struct ProjectNode : public PlanNode
-{
-    std::shared_ptr<PlanNode> source = {};
-    Assignments assignments = {};
-
-    ProjectNode() noexcept;
-};
-void to_json(json & j, const ProjectNode & p);
-void from_json(const json & j, ProjectNode & p);
-}
-namespace datalight::protocol
-{
-enum class ErrorType
-{
-    USER_ERROR,
-    INTERNAL_ERROR,
-    INSUFFICIENT_RESOURCES,
-    EXTERNAL
-};
-extern void to_json(json & j, const ErrorType & e);
-extern void from_json(const json & j, ErrorType & e);
-}
-namespace datalight::protocol
-{
-struct ErrorCode
-{
-    int code = {};
-    String name = {};
-    ErrorType type = {};
-};
-void to_json(json & j, const ErrorCode & p);
-void from_json(const json & j, ErrorCode & p);
-}
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-namespace datalight::protocol
-{
-
-using HostAddress = std::string;
-
-} //
-namespace datalight::protocol
-{
-struct ErrorLocation
-{
-    int lineNumber = {};
-    int columnNumber = {};
-};
-void to_json(json & j, const ErrorLocation & p);
-void from_json(const json & j, ErrorLocation & p);
-}
-namespace datalight::protocol
-{
-struct ExecutionFailureInfo
-{
-    String type = {};
-    String message = {};
-    std::shared_ptr<ExecutionFailureInfo> cause = {};
-    List<ExecutionFailureInfo> suppressed = {};
-    List<String> stack = {};
-    ErrorLocation errorLocation = {};
-    ErrorCode errorCode = {};
-    HostAddress remoteHost = {};
-};
-void to_json(json & j, const ExecutionFailureInfo & p);
-void from_json(const json & j, ExecutionFailureInfo & p);
-}
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-namespace datalight::protocol
-{
-
-std::ostream & operator<<(std::ostream & os, const DataSize & d);
-
-void to_json(nlohmann::json & j, const DataSize & p);
-void from_json(const nlohmann::json & j, DataSize & p);
-
-} // namespace facebook::trino::protocol
-namespace datalight::protocol
-{
-enum class TaskState
-{
-    PLANNED,
-    RUNNING,
-    FLUSHING,
-    FINISHED,
-    CANCELED,
-    ABORTED,
-    FAILED
-};
-extern void to_json(json & j, const TaskState & e);
-extern void from_json(const json & j, TaskState & e);
-}
-namespace datalight::protocol
-{
-struct TaskStatus
-{
-    TaskId taskId = {};
-    String taskInstanceId = {};
-    int64_t version = {};
-    TaskState state = {};
-    URI self = {};
-    String nodeId = {};
-    List<ExecutionFailureInfo> failures = {};
-    int queuedPartitionedDrivers = {};
-    int runningPartitionedDrivers = {};
-    bool outputBufferOverutilized = {};
-    DataSize physicalWrittenDataSize = {};
-    DataSize memoryReservation = {};
-    DataSize peakMemoryReservation = {};
-    DataSize revocableMemoryReservation = {};
-    int64_t fullGcCount = {};
-    Duration fullGcTime = {};
-    int64_t dynamicFiltersVersion = {};
-    int64_t queuedPartitionedSplitsWeight = {};
-    int64_t runningPartitionedSplitsWeight = {};
-};
-void to_json(json & j, const TaskStatus & p);
-void from_json(const json & j, TaskStatus & p);
-}
-namespace datalight::protocol
-{
-struct LocalCostEstimate
-{
-    double cpuCost = {};
-    double maxMemory = {};
-    double networkCost = {};
-};
-void to_json(json & j, const LocalCostEstimate & p);
-void from_json(const json & j, LocalCostEstimate & p);
-}
-namespace datalight::protocol
-{
-struct PlanCostEstimate
-{
-    double cpuCost = {};
-    double maxMemory = {};
-    double maxMemoryWhenOutputting = {};
-    double networkCost = {};
-    LocalCostEstimate rootNodeLocalCostEstimate = {};
-};
-void to_json(json & j, const PlanCostEstimate & p);
-void from_json(const json & j, PlanCostEstimate & p);
-}
-namespace datalight::protocol
-{
-struct Domain
-{
-    std::shared_ptr<ValueSet> values = {};
-    bool nullAllowed = {};
-};
-void to_json(json & j, const Domain & p);
-void from_json(const json & j, Domain & p);
-}
-namespace datalight::protocol
-{
-struct PageBufferInfo
-{
-    int partition = {};
-    int64_t bufferedPages = {};
-    int64_t bufferedBytes = {};
-    int64_t rowsAdded = {};
-    int64_t pagesAdded = {};
-};
-void to_json(json & j, const PageBufferInfo & p);
-void from_json(const json & j, PageBufferInfo & p);
-}
-namespace datalight::protocol
-{
 struct Serializable
 {
     Type type = {};
@@ -687,13 +459,61 @@ void from_json(const json & j, Serializable & p);
 }
 namespace datalight::protocol
 {
-struct HivePartitionKey
+struct NullableValue
 {
-    String name = {};
-    String value = {};
+    Serializable serializable = {};
 };
-void to_json(json & j, const HivePartitionKey & p);
-void from_json(const json & j, HivePartitionKey & p);
+void to_json(json & j, const NullableValue & p);
+void from_json(const json & j, NullableValue & p);
+}
+namespace datalight::protocol
+{
+struct ArgumentBinding
+{
+    Expression expression = {};
+    NullableValue constant = {};
+};
+void to_json(json & j, const ArgumentBinding & p);
+void from_json(const json & j, ArgumentBinding & p);
+}
+namespace datalight::protocol
+{
+struct Partitioning
+{
+    PartitioningHandle handle = {};
+    List<ArgumentBinding> arguments = {};
+};
+void to_json(json & j, const Partitioning & p);
+void from_json(const json & j, Partitioning & p);
+}
+namespace datalight::protocol
+{
+struct PartitioningScheme
+{
+    Partitioning partitioning = {};
+    List<Symbol> outputLayout = {};
+    std::shared_ptr<Symbol> hashColumn = {};
+    bool replicateNullsAndAny = {};
+    std::shared_ptr<List<int>> bucketToPartition = {};
+};
+void to_json(json & j, const PartitioningScheme & p);
+void from_json(const json & j, PartitioningScheme & p);
+}
+namespace datalight::protocol
+{
+struct PlanFragment
+{
+    PlanFragmentId id = {};
+    std::shared_ptr<PlanNode> root = {};
+    Map<Symbol, Type> symbols = {};
+    PartitioningHandle partitioning = {};
+    List<PlanNodeId> partitionedSources = {};
+    PartitioningScheme partitioningScheme = {};
+    StatsAndCosts statsAndCosts = {};
+    std::shared_ptr<String> jsonRepresentation = {};
+};
+void to_json(json & j, const PlanFragment & p);
+void from_json(const json & j, PlanFragment & p);
 }
 namespace datalight::protocol
 {
@@ -732,82 +552,6 @@ struct HiveColumnHandle
 };
 void to_json(json & j, const HiveColumnHandle & p);
 void from_json(const json & j, HiveColumnHandle & p);
-}
-namespace datalight::protocol
-{
-struct BucketConversion
-{
-    BucketingVersion bucketingVersion = {};
-    int tableBucketCount = {};
-    int partitionBucketCount = {};
-    List<HiveColumnHandle> bucketColumnHandles = {};
-};
-void to_json(json & j, const BucketConversion & p);
-void from_json(const json & j, BucketConversion & p);
-}
-namespace datalight::protocol
-{
-struct EquatableValueSet : public ValueSet
-{
-    Type type = {};
-    bool inclusive = {};
-    List<ValueEntry> entries = {};
-
-    EquatableValueSet() noexcept;
-};
-void to_json(json & j, const EquatableValueSet & p);
-void from_json(const json & j, EquatableValueSet & p);
-}
-namespace datalight::protocol
-{
-struct OriginalFileInfo
-{
-    String name = {};
-    int64_t fileSize = {};
-};
-void to_json(json & j, const OriginalFileInfo & p);
-void from_json(const json & j, OriginalFileInfo & p);
-}
-namespace datalight::protocol
-{
-struct NodeVersion
-{
-    String version = {};
-};
-void to_json(json & j, const NodeVersion & p);
-void from_json(const json & j, NodeVersion & p);
-}
-namespace datalight::protocol
-{
-struct ServerInfo
-{
-    NodeVersion nodeVersion = {};
-    String environment = {};
-    bool coordinator = {};
-    bool starting = {};
-    std::shared_ptr<Duration> uptime = {};
-};
-void to_json(json & j, const ServerInfo & p);
-void from_json(const json & j, ServerInfo & p);
-}
-namespace datalight::protocol
-{
-struct NullableValue
-{
-    Serializable serializable = {};
-};
-void to_json(json & j, const NullableValue & p);
-void from_json(const json & j, NullableValue & p);
-}
-namespace datalight::protocol
-{
-struct ArgumentBinding
-{
-    Expression expression = {};
-    NullableValue constant = {};
-};
-void to_json(json & j, const ArgumentBinding & p);
-void from_json(const json & j, ArgumentBinding & p);
 }
 namespace datalight::protocol
 {
@@ -850,6 +594,60 @@ void from_json(const json & j, ScheduledSplit & p);
 } // namespace facebook::trino::protocol
 namespace datalight::protocol
 {
+struct MemoryAllocation
+{
+    String tag = {};
+    int64_t allocation = {};
+};
+void to_json(json & j, const MemoryAllocation & p);
+void from_json(const json & j, MemoryAllocation & p);
+}
+namespace datalight::protocol
+{
+struct DistributionSnapshot
+{
+    double count = {};
+    double total = {};
+    double p01 = {};
+    double p05 = {};
+    double p10 = {};
+    double p25 = {};
+    double p50 = {};
+    double p75 = {};
+    double p90 = {};
+    double p95 = {};
+    double p99 = {};
+    double min = {};
+    double max = {};
+    double avg = {};
+};
+void to_json(json & j, const DistributionSnapshot & p);
+void from_json(const json & j, DistributionSnapshot & p);
+}
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+namespace datalight::protocol
+{
+
+std::ostream & operator<<(std::ostream & os, const DataSize & d);
+
+void to_json(nlohmann::json & j, const DataSize & p);
+void from_json(const nlohmann::json & j, DataSize & p);
+
+} // namespace facebook::trino::protocol
+namespace datalight::protocol
+{
 enum class BlockedReason
 {
     WAITING_FOR_MEMORY
@@ -877,6 +675,30 @@ struct OperatorInfo
 };
 void to_json(json & j, const OperatorInfo & p);
 void from_json(const json & j, OperatorInfo & p);
+} // namespace facebook::trino::protocol
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+namespace datalight::protocol
+{
+
+std::ostream & operator<<(std::ostream & os, const Duration & d);
+
+void to_json(json & j, const Duration & p);
+void from_json(const json & j, Duration & p);
+
 } // namespace facebook::trino::protocol
 namespace datalight::protocol
 {
@@ -924,28 +746,6 @@ struct OperatorStats
 };
 void to_json(json & j, const OperatorStats & p);
 void from_json(const json & j, OperatorStats & p);
-}
-namespace datalight::protocol
-{
-struct DistributionSnapshot
-{
-    double count = {};
-    double total = {};
-    double p01 = {};
-    double p05 = {};
-    double p10 = {};
-    double p25 = {};
-    double p50 = {};
-    double p75 = {};
-    double p90 = {};
-    double p95 = {};
-    double p99 = {};
-    double min = {};
-    double max = {};
-    double avg = {};
-};
-void to_json(json & j, const DistributionSnapshot & p);
-void from_json(const json & j, DistributionSnapshot & p);
 }
 namespace datalight::protocol
 {
@@ -1033,112 +833,6 @@ void from_json(const json & j, PipelineStats & p);
 }
 namespace datalight::protocol
 {
-struct Partitioning
-{
-    PartitioningHandle handle = {};
-    List<ArgumentBinding> arguments = {};
-};
-void to_json(json & j, const Partitioning & p);
-void from_json(const json & j, Partitioning & p);
-}
-namespace datalight::protocol
-{
-enum class SortOrder
-{
-    ASC_NULLS_FIRST,
-    ASC_NULLS_LAST,
-    DESC_NULLS_FIRST,
-    DESC_NULLS_LAST
-};
-extern void to_json(json & j, const SortOrder & e);
-extern void from_json(const json & j, SortOrder & e);
-}
-namespace datalight::protocol
-{
-struct OrderingScheme
-{
-    List<Symbol> orderBy = {};
-    Map<Symbol, SortOrder> orderings = {};
-};
-void to_json(json & j, const OrderingScheme & p);
-void from_json(const json & j, OrderingScheme & p);
-}
-namespace datalight::protocol
-{
-struct LimitNode : public PlanNode
-{
-    std::shared_ptr<PlanNode> source = {};
-    int64_t count = {};
-    std::shared_ptr<OrderingScheme> tiesResolvingScheme = {};
-    bool partial = {};
-    List<Symbol> requiresPreSortedInputs = {};
-
-    LimitNode() noexcept;
-};
-void to_json(json & j, const LimitNode & p);
-void from_json(const json & j, LimitNode & p);
-}
-namespace datalight::protocol
-{
-struct SqlPath
-{
-    std::shared_ptr<String> rawPath = {};
-};
-void to_json(json & j, const SqlPath & p);
-void from_json(const json & j, SqlPath & p);
-}
-namespace datalight::protocol
-{
-struct SpoolingExchangeInput : public ExchangeInput
-{
-    List<ExchangeSourceHandle> exchangeSourceHandles = {};
-
-    SpoolingExchangeInput() noexcept;
-};
-void to_json(json & j, const SpoolingExchangeInput & p);
-void from_json(const json & j, SpoolingExchangeInput & p);
-}
-namespace datalight::protocol
-{
-struct HivePartitioningHandle : public ConnectorPartitioningHandle
-{
-    BucketingVersion bucketingVersion = {};
-    int bucketCount = {};
-    List<HiveType> hiveBucketTypes = {};
-    std::shared_ptr<int> maxCompatibleBucketCount = {};
-    bool usePartitionedBucketing = {};
-
-    HivePartitioningHandle() noexcept;
-};
-void to_json(json & j, const HivePartitioningHandle & p);
-void from_json(const json & j, HivePartitioningHandle & p);
-}
-namespace datalight::protocol
-{
-struct SplitAssignment
-{
-    PlanNodeId planNodeId = {};
-    List<ScheduledSplit> splits = {};
-    bool noMoreSplits = {};
-};
-void to_json(json & j, const SplitAssignment & p);
-void from_json(const json & j, SplitAssignment & p);
-}
-namespace datalight::protocol
-{
-struct SortedRangeSet : public ValueSet
-{
-    Type type = {};
-    List<bool> inclusive = {};
-    Block sortedRanges = {};
-
-    SortedRangeSet() noexcept;
-};
-void to_json(json & j, const SortedRangeSet & p);
-void from_json(const json & j, SortedRangeSet & p);
-}
-namespace datalight::protocol
-{
 struct TaskStats
 {
     DateTime createTime = {};
@@ -1189,6 +883,275 @@ void from_json(const json & j, TaskStats & p);
 }
 namespace datalight::protocol
 {
+enum class ErrorType
+{
+    USER_ERROR,
+    INTERNAL_ERROR,
+    INSUFFICIENT_RESOURCES,
+    EXTERNAL
+};
+extern void to_json(json & j, const ErrorType & e);
+extern void from_json(const json & j, ErrorType & e);
+}
+namespace datalight::protocol
+{
+struct ErrorCode
+{
+    int code = {};
+    String name = {};
+    ErrorType type = {};
+};
+void to_json(json & j, const ErrorCode & p);
+void from_json(const json & j, ErrorCode & p);
+}
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+namespace datalight::protocol
+{
+
+using HostAddress = std::string;
+
+} //
+namespace datalight::protocol
+{
+struct ExecutionFailureInfo
+{
+    String type = {};
+    String message = {};
+    std::shared_ptr<ExecutionFailureInfo> cause = {};
+    List<ExecutionFailureInfo> suppressed = {};
+    List<String> stack = {};
+    ErrorLocation errorLocation = {};
+    ErrorCode errorCode = {};
+    HostAddress remoteHost = {};
+};
+void to_json(json & j, const ExecutionFailureInfo & p);
+void from_json(const json & j, ExecutionFailureInfo & p);
+}
+namespace datalight::protocol
+{
+struct SqlPath
+{
+    std::shared_ptr<String> rawPath = {};
+};
+void to_json(json & j, const SqlPath & p);
+void from_json(const json & j, SqlPath & p);
+}
+namespace datalight::protocol
+{
+enum class SystemPartitioning
+{
+    SINGLE,
+    FIXED,
+    SOURCE,
+    SCALED,
+    COORDINATOR_ONLY,
+    ARBITRARY
+};
+extern void to_json(json & j, const SystemPartitioning & e);
+extern void from_json(const json & j, SystemPartitioning & e);
+}
+namespace datalight::protocol
+{
+enum class SystemPartitionFunction
+{
+    SINGLE,
+    HASH,
+    ROUND_ROBIN,
+    BROADCAST,
+    UNKNOWN
+};
+extern void to_json(json & j, const SystemPartitionFunction & e);
+extern void from_json(const json & j, SystemPartitionFunction & e);
+}
+namespace datalight::protocol
+{
+struct SystemPartitioningHandle : public ConnectorPartitioningHandle
+{
+    SystemPartitioning partitioning = {};
+    SystemPartitionFunction function = {};
+
+    SystemPartitioningHandle() noexcept;
+};
+void to_json(json & j, const SystemPartitioningHandle & p);
+void from_json(const json & j, SystemPartitioningHandle & p);
+}
+namespace datalight::protocol
+{
+struct Domain
+{
+    std::shared_ptr<ValueSet> values = {};
+    bool nullAllowed = {};
+};
+void to_json(json & j, const Domain & p);
+void from_json(const json & j, Domain & p);
+}
+namespace datalight::protocol
+{
+enum class BufferType
+{
+    PARTITIONED,
+    BROADCAST,
+    ARBITRARY,
+    SPOOL
+};
+extern void to_json(json & j, const BufferType & e);
+extern void from_json(const json & j, BufferType & e);
+}
+namespace datalight::protocol
+{
+struct OutputBuffers
+{
+    BufferType type = {};
+    int64_t version = {};
+    bool noMoreBufferIds = {};
+    Map<OutputBufferId, Integer> buffers = {};
+    std::shared_ptr<ExchangeSinkInstanceHandle> exchangeSinkInstanceHandle = {};
+};
+void to_json(json & j, const OutputBuffers & p);
+void from_json(const json & j, OutputBuffers & p);
+}
+namespace datalight::protocol
+{
+struct SplitAssignment
+{
+    PlanNodeId planNodeId = {};
+    List<ScheduledSplit> splits = {};
+    bool noMoreSplits = {};
+};
+void to_json(json & j, const SplitAssignment & p);
+void from_json(const json & j, SplitAssignment & p);
+}
+namespace datalight::protocol
+{
+enum class SelectedRoleType
+{
+    ROLE,
+    ALL,
+    NONE
+};
+extern void to_json(json & j, const SelectedRoleType & e);
+extern void from_json(const json & j, SelectedRoleType & e);
+}
+namespace datalight::protocol
+{
+struct SelectedRole
+{
+    SelectedRoleType type = {};
+    std::shared_ptr<String> role = {};
+};
+void to_json(json & j, const SelectedRole & p);
+void from_json(const json & j, SelectedRole & p);
+}
+namespace datalight::protocol
+{
+struct ResourceEstimates
+{
+    std::shared_ptr<Duration> executionTime = {};
+    std::shared_ptr<Duration> cpuTime = {};
+    std::shared_ptr<Long> peakMemoryBytes = {};
+};
+void to_json(json & j, const ResourceEstimates & p);
+void from_json(const json & j, ResourceEstimates & p);
+}
+namespace datalight::protocol
+{
+struct SessionRepresentation
+{
+    String queryId = {};
+    std::shared_ptr<TransactionId> transactionId = {};
+    bool clientTransactionSupport = {};
+    String user = {};
+    List<String> groups = {};
+    std::shared_ptr<String> principal = {};
+    List<String> enabledRoles = {};
+    std::shared_ptr<String> source = {};
+    std::shared_ptr<String> catalog = {};
+    std::shared_ptr<String> schema = {};
+    SqlPath path = {};
+    std::shared_ptr<String> traceToken = {};
+    TimeZoneKey timeZoneKey = {};
+    Locale locale = {};
+    std::shared_ptr<String> remoteUserAddress = {};
+    std::shared_ptr<String> userAgent = {};
+    std::shared_ptr<String> clientInfo = {};
+    List<String> clientTags = {};
+    List<String> clientCapabilities = {};
+    ResourceEstimates resourceEstimates = {};
+    Instant start = {};
+    Map<String, String> systemProperties = {};
+    Map<String, Map<String, String>> catalogProperties = {};
+    Map<String, SelectedRole> catalogRoles = {};
+    Map<String, String> preparedStatements = {};
+    String protocolName = {};
+};
+void to_json(json & j, const SessionRepresentation & p);
+void from_json(const json & j, SessionRepresentation & p);
+}
+namespace datalight::protocol
+{
+struct TaskUpdateRequest
+{
+    SessionRepresentation session = {};
+    Map<String, String> extraCredentials = {};
+    std::shared_ptr<PlanFragment> fragment = {};
+    List<SplitAssignment> splitAssignments = {};
+    OutputBuffers outputIds = {};
+    Map<DynamicFilterId, Domain> dynamicFilterDomains = {};
+};
+void to_json(json & j, const TaskUpdateRequest & p);
+void from_json(const json & j, TaskUpdateRequest & p);
+}
+namespace datalight::protocol
+{
+struct AllOrNoneValueSet : public ValueSet
+{
+    Type type = {};
+    bool all = {};
+
+    AllOrNoneValueSet() noexcept;
+};
+void to_json(json & j, const AllOrNoneValueSet & p);
+void from_json(const json & j, AllOrNoneValueSet & p);
+}
+namespace datalight::protocol
+{
+struct SpoolingExchangeInput : public ExchangeInput
+{
+    List<std::shared_ptr<ExchangeSourceHandle>> exchangeSourceHandles = {};
+
+    SpoolingExchangeInput() noexcept;
+};
+void to_json(json & j, const SpoolingExchangeInput & p);
+void from_json(const json & j, SpoolingExchangeInput & p);
+}
+namespace datalight::protocol
+{
+struct PageBufferInfo
+{
+    int partition = {};
+    int64_t bufferedPages = {};
+    int64_t bufferedBytes = {};
+    int64_t rowsAdded = {};
+    int64_t pagesAdded = {};
+};
+void to_json(json & j, const PageBufferInfo & p);
+void from_json(const json & j, PageBufferInfo & p);
+}
+namespace datalight::protocol
+{
 struct BufferInfo
 {
     OutputBufferId bufferId = {};
@@ -1199,6 +1162,264 @@ struct BufferInfo
 };
 void to_json(json & j, const BufferInfo & p);
 void from_json(const json & j, BufferInfo & p);
+}
+namespace datalight::protocol
+{
+struct DeleteDeltaInfo
+{
+    String directoryName = {};
+};
+void to_json(json & j, const DeleteDeltaInfo & p);
+void from_json(const json & j, DeleteDeltaInfo & p);
+}
+namespace datalight::protocol
+{
+struct OriginalFileInfo
+{
+    String name = {};
+    int64_t fileSize = {};
+};
+void to_json(json & j, const OriginalFileInfo & p);
+void from_json(const json & j, OriginalFileInfo & p);
+}
+namespace datalight::protocol
+{
+struct AcidInfo
+{
+    String partitionLocation = {};
+    List<DeleteDeltaInfo> deleteDeltas = {};
+    List<OriginalFileInfo> originalFiles = {};
+    int bucketId = {};
+    bool orcAcidVersionValidated = {};
+};
+void to_json(json & j, const AcidInfo & p);
+void from_json(const json & j, AcidInfo & p);
+}
+namespace datalight::protocol
+{
+struct SortedRangeSet : public ValueSet
+{
+    Type type = {};
+    List<bool> inclusive = {};
+    Block sortedRanges = {};
+
+    SortedRangeSet() noexcept;
+};
+void to_json(json & j, const SortedRangeSet & p);
+void from_json(const json & j, SortedRangeSet & p);
+}
+namespace datalight::protocol
+{
+struct FileSystemExchangeSinkHandle
+{
+    int partitionId = {};
+    std::shared_ptr<String> secretKey = {};
+};
+void to_json(json & j, const FileSystemExchangeSinkHandle & p);
+void from_json(const json & j, FileSystemExchangeSinkHandle & p);
+}
+namespace datalight::protocol
+{
+struct MemoryPoolInfo
+{
+    int64_t maxBytes = {};
+    int64_t reservedBytes = {};
+    int64_t reservedRevocableBytes = {};
+    Map<QueryId, Long> queryMemoryReservations = {};
+    Map<QueryId, List<MemoryAllocation>> queryMemoryAllocations = {};
+    Map<QueryId, Long> queryMemoryRevocableReservations = {};
+    Map<String, Long> taskMemoryReservations = {};
+    Map<String, Long> taskMemoryRevocableReservations = {};
+};
+void to_json(json & j, const MemoryPoolInfo & p);
+void from_json(const json & j, MemoryPoolInfo & p);
+}
+namespace datalight::protocol
+{
+struct MemoryInfo
+{
+    int availableProcessors = {};
+    MemoryPoolInfo pool = {};
+};
+void to_json(json & j, const MemoryInfo & p);
+void from_json(const json & j, MemoryInfo & p);
+}
+namespace datalight::protocol
+{
+struct NodeVersion
+{
+    String version = {};
+};
+void to_json(json & j, const NodeVersion & p);
+void from_json(const json & j, NodeVersion & p);
+}
+namespace datalight::protocol
+{
+struct NodeStatus
+{
+    String nodeId = {};
+    NodeVersion nodeVersion = {};
+    String environment = {};
+    bool coordinator = {};
+    Duration uptime = {};
+    String externalAddress = {};
+    String internalAddress = {};
+    MemoryInfo memoryInfo = {};
+    int processors = {};
+    double processCpuLoad = {};
+    double systemCpuLoad = {};
+    int64_t heapUsed = {};
+    int64_t heapAvailable = {};
+    int64_t nonHeapUsed = {};
+};
+void to_json(json & j, const NodeStatus & p);
+void from_json(const json & j, NodeStatus & p);
+}
+namespace datalight::protocol
+{
+struct RemoteSplit : public ConnectorSplit
+{
+    std::shared_ptr<ExchangeInput> exchangeInput = {};
+
+    RemoteSplit() noexcept;
+};
+void to_json(json & j, const RemoteSplit & p);
+void from_json(const json & j, RemoteSplit & p);
+}
+namespace datalight::protocol
+{
+struct BucketConversion
+{
+    BucketingVersion bucketingVersion = {};
+    int tableBucketCount = {};
+    int partitionBucketCount = {};
+    List<HiveColumnHandle> bucketColumnHandles = {};
+};
+void to_json(json & j, const BucketConversion & p);
+void from_json(const json & j, BucketConversion & p);
+}
+namespace datalight::protocol
+{
+struct BucketValidation
+{
+    BucketingVersion bucketingVersion = {};
+    int bucketCount = {};
+    List<HiveColumnHandle> bucketColumns = {};
+};
+void to_json(json & j, const BucketValidation & p);
+void from_json(const json & j, BucketValidation & p);
+}
+namespace datalight::protocol
+{
+struct FileSystemExchangeSinkInstanceHandle : public ExchangeSinkInstanceHandle
+{
+    FileSystemExchangeSinkHandle sinkHandle = {};
+    URI outputDirectory = {};
+    int outputPartitionCount = {};
+
+    FileSystemExchangeSinkInstanceHandle() noexcept;
+};
+void to_json(json & j, const FileSystemExchangeSinkInstanceHandle & p);
+void from_json(const json & j, FileSystemExchangeSinkInstanceHandle & p);
+}
+namespace datalight::protocol
+{
+struct EmptySplit : public ConnectorSplit
+{
+    CatalogName catalogName = {};
+
+    EmptySplit() noexcept;
+};
+void to_json(json & j, const EmptySplit & p);
+void from_json(const json & j, EmptySplit & p);
+}
+namespace datalight::protocol
+{
+struct FileStatus
+{
+    String filePath = {};
+    int64_t fileSize = {};
+};
+void to_json(json & j, const FileStatus & p);
+void from_json(const json & j, FileStatus & p);
+}
+namespace datalight::protocol
+{
+struct FileSystemExchangeSourceHandle : public ExchangeSourceHandle
+{
+    int partitionId = {};
+    List<FileStatus> files = {};
+    std::shared_ptr<String> secretKey = {};
+
+    FileSystemExchangeSourceHandle() noexcept;
+};
+void to_json(json & j, const FileSystemExchangeSourceHandle & p);
+void from_json(const json & j, FileSystemExchangeSourceHandle & p);
+}
+namespace datalight::protocol
+{
+struct ValueEntry
+{
+    Type type = {};
+    Block block = {};
+};
+void to_json(json & j, const ValueEntry & p);
+void from_json(const json & j, ValueEntry & p);
+}
+namespace datalight::protocol
+{
+struct EquatableValueSet : public ValueSet
+{
+    Type type = {};
+    bool inclusive = {};
+    List<ValueEntry> entries = {};
+
+    EquatableValueSet() noexcept;
+};
+void to_json(json & j, const EquatableValueSet & p);
+void from_json(const json & j, EquatableValueSet & p);
+}
+namespace datalight::protocol
+{
+enum class TaskState
+{
+    PLANNED,
+    RUNNING,
+    FLUSHING,
+    FINISHED,
+    CANCELED,
+    ABORTED,
+    FAILED
+};
+extern void to_json(json & j, const TaskState & e);
+extern void from_json(const json & j, TaskState & e);
+}
+namespace datalight::protocol
+{
+struct TaskStatus
+{
+    TaskId taskId = {};
+    String taskInstanceId = {};
+    int64_t version = {};
+    TaskState state = {};
+    URI self = {};
+    String nodeId = {};
+    List<ExecutionFailureInfo> failures = {};
+    int queuedPartitionedDrivers = {};
+    int runningPartitionedDrivers = {};
+    bool outputBufferOverutilized = {};
+    DataSize physicalWrittenDataSize = {};
+    DataSize memoryReservation = {};
+    DataSize peakMemoryReservation = {};
+    DataSize revocableMemoryReservation = {};
+    int64_t fullGcCount = {};
+    Duration fullGcTime = {};
+    int64_t dynamicFiltersVersion = {};
+    int64_t queuedPartitionedSplitsWeight = {};
+    int64_t runningPartitionedSplitsWeight = {};
+};
+void to_json(json & j, const TaskStatus & p);
+void from_json(const json & j, TaskStatus & p);
 }
 namespace datalight::protocol
 {
@@ -1249,16 +1470,83 @@ void from_json(const json & j, TaskInfo & p);
 }
 namespace datalight::protocol
 {
-struct SymbolStatsEstimate
+struct HivePartitionKey
 {
-    double lowValue = {};
-    double highValue = {};
-    double nullsFraction = {};
-    double averageRowSize = {};
-    double distinctValuesCount = {};
+    String name = {};
+    String value = {};
 };
-void to_json(json & j, const SymbolStatsEstimate & p);
-void from_json(const json & j, SymbolStatsEstimate & p);
+void to_json(json & j, const HivePartitionKey & p);
+void from_json(const json & j, HivePartitionKey & p);
+}
+namespace datalight::protocol
+{
+struct HiveTransactionHandle : public ConnectorTransactionHandle
+{
+    bool autoCommit = {};
+    UUID uuid = {};
+
+    HiveTransactionHandle() noexcept;
+};
+void to_json(json & j, const HiveTransactionHandle & p);
+void from_json(const json & j, HiveTransactionHandle & p);
+}
+namespace datalight::protocol
+{
+struct Assignments
+{
+    Map<Symbol, Expression> assignments = {};
+};
+void to_json(json & j, const Assignments & p);
+void from_json(const json & j, Assignments & p);
+}
+namespace datalight::protocol
+{
+struct HivePartitioningHandle : public ConnectorPartitioningHandle
+{
+    BucketingVersion bucketingVersion = {};
+    int bucketCount = {};
+    List<HiveType> hiveBucketTypes = {};
+    std::shared_ptr<int> maxCompatibleBucketCount = {};
+    bool usePartitionedBucketing = {};
+
+    HivePartitioningHandle() noexcept;
+};
+void to_json(json & j, const HivePartitioningHandle & p);
+void from_json(const json & j, HivePartitioningHandle & p);
+}
+namespace datalight::protocol
+{
+struct ProjectNode : public PlanNode
+{
+    std::shared_ptr<PlanNode> source = {};
+    Assignments assignments = {};
+
+    ProjectNode() noexcept;
+};
+void to_json(json & j, const ProjectNode & p);
+void from_json(const json & j, ProjectNode & p);
+}
+namespace datalight::protocol
+{
+enum class SortOrder
+{
+    ASC_NULLS_FIRST,
+    ASC_NULLS_LAST,
+    DESC_NULLS_FIRST,
+    DESC_NULLS_LAST
+};
+extern void to_json(json & j, const SortOrder & e);
+extern void from_json(const json & j, SortOrder & e);
+}
+namespace datalight::protocol
+{
+struct OrderingScheme
+{
+    List<Symbol> orderBy = {};
+    Map<Symbol, SortOrder> orderings = {};
+};
+void to_json(json & j, const OrderingScheme & p);
+void from_json(const json & j, OrderingScheme & p);
 }
 namespace datalight::protocol
 {
@@ -1272,36 +1560,43 @@ void from_json(const json & j, TableToPartitionMapping & p);
 }
 namespace datalight::protocol
 {
-struct DeleteDeltaInfo
+struct DirectExchangeInput : public ExchangeInput
 {
-    String directoryName = {};
+    TaskId taskId = {};
+    String location = {};
+
+    DirectExchangeInput() noexcept;
 };
-void to_json(json & j, const DeleteDeltaInfo & p);
-void from_json(const json & j, DeleteDeltaInfo & p);
+void to_json(json & j, const DirectExchangeInput & p);
+void from_json(const json & j, DirectExchangeInput & p);
 }
 namespace datalight::protocol
 {
-struct AcidInfo
+struct ServerInfo
 {
-    String partitionLocation = {};
-    List<DeleteDeltaInfo> deleteDeltas = {};
-    List<OriginalFileInfo> originalFiles = {};
-    int bucketId = {};
-    bool orcAcidVersionValidated = {};
+    NodeVersion nodeVersion = {};
+    String environment = {};
+    bool coordinator = {};
+    bool starting = {};
+    std::shared_ptr<Duration> uptime = {};
 };
-void to_json(json & j, const AcidInfo & p);
-void from_json(const json & j, AcidInfo & p);
+void to_json(json & j, const ServerInfo & p);
+void from_json(const json & j, ServerInfo & p);
 }
 namespace datalight::protocol
 {
-struct BucketValidation
+struct LimitNode : public PlanNode
 {
-    BucketingVersion bucketingVersion = {};
-    int bucketCount = {};
-    List<HiveColumnHandle> bucketColumns = {};
+    std::shared_ptr<PlanNode> source = {};
+    int64_t count = {};
+    std::shared_ptr<OrderingScheme> tiesResolvingScheme = {};
+    bool partial = {};
+    List<Symbol> requiresPreSortedInputs = {};
+
+    LimitNode() noexcept;
 };
-void to_json(json & j, const BucketValidation & p);
-void from_json(const json & j, BucketValidation & p);
+void to_json(json & j, const LimitNode & p);
+void from_json(const json & j, LimitNode & p);
 }
 namespace datalight::protocol
 {
@@ -1334,301 +1629,6 @@ struct HiveSplit : public ConnectorSplit
 };
 void to_json(json & j, const HiveSplit & p);
 void from_json(const json & j, HiveSplit & p);
-}
-namespace datalight::protocol
-{
-struct MemoryAllocation
-{
-    String tag = {};
-    int64_t allocation = {};
-};
-void to_json(json & j, const MemoryAllocation & p);
-void from_json(const json & j, MemoryAllocation & p);
-}
-namespace datalight::protocol
-{
-struct MemoryPoolInfo
-{
-    int64_t maxBytes = {};
-    int64_t reservedBytes = {};
-    int64_t reservedRevocableBytes = {};
-    Map<QueryId, Long> queryMemoryReservations = {};
-    Map<QueryId, List<MemoryAllocation>> queryMemoryAllocations = {};
-    Map<QueryId, Long> queryMemoryRevocableReservations = {};
-    Map<String, Long> taskMemoryReservations = {};
-    Map<String, Long> taskMemoryRevocableReservations = {};
-};
-void to_json(json & j, const MemoryPoolInfo & p);
-void from_json(const json & j, MemoryPoolInfo & p);
-}
-namespace datalight::protocol
-{
-struct MemoryInfo
-{
-    int availableProcessors = {};
-    MemoryPoolInfo pool = {};
-};
-void to_json(json & j, const MemoryInfo & p);
-void from_json(const json & j, MemoryInfo & p);
-}
-namespace datalight::protocol
-{
-struct NodeStatus
-{
-    String nodeId = {};
-    NodeVersion nodeVersion = {};
-    String environment = {};
-    bool coordinator = {};
-    Duration uptime = {};
-    String externalAddress = {};
-    String internalAddress = {};
-    MemoryInfo memoryInfo = {};
-    int processors = {};
-    double processCpuLoad = {};
-    double systemCpuLoad = {};
-    int64_t heapUsed = {};
-    int64_t heapAvailable = {};
-    int64_t nonHeapUsed = {};
-};
-void to_json(json & j, const NodeStatus & p);
-void from_json(const json & j, NodeStatus & p);
-}
-namespace datalight::protocol
-{
-struct DirectExchangeInput : public ExchangeInput
-{
-    TaskId taskId = {};
-    String location = {};
-
-    DirectExchangeInput() noexcept;
-};
-void to_json(json & j, const DirectExchangeInput & p);
-void from_json(const json & j, DirectExchangeInput & p);
-}
-namespace datalight::protocol
-{
-struct HiveTransactionHandle : public ConnectorTransactionHandle
-{
-    bool autoCommit = {};
-    UUID uuid = {};
-
-    HiveTransactionHandle() noexcept;
-};
-void to_json(json & j, const HiveTransactionHandle & p);
-void from_json(const json & j, HiveTransactionHandle & p);
-}
-namespace datalight::protocol
-{
-struct RemoteSplit : public ConnectorSplit
-{
-    std::shared_ptr<ExchangeInput> exchangeInput = {};
-
-    RemoteSplit() noexcept;
-};
-void to_json(json & j, const RemoteSplit & p);
-void from_json(const json & j, RemoteSplit & p);
-}
-namespace datalight::protocol
-{
-struct PartitioningScheme
-{
-    Partitioning partitioning = {};
-    List<Symbol> outputLayout = {};
-    std::shared_ptr<Symbol> hashColumn = {};
-    bool replicateNullsAndAny = {};
-    std::shared_ptr<List<int>> bucketToPartition = {};
-};
-void to_json(json & j, const PartitioningScheme & p);
-void from_json(const json & j, PartitioningScheme & p);
-}
-namespace datalight::protocol
-{
-enum class BufferType
-{
-    PARTITIONED,
-    BROADCAST,
-    ARBITRARY,
-    SPOOL
-};
-extern void to_json(json & j, const BufferType & e);
-extern void from_json(const json & j, BufferType & e);
-}
-namespace datalight::protocol
-{
-struct OutputBuffers
-{
-    BufferType type = {};
-    int64_t version = {};
-    bool noMoreBufferIds = {};
-    Map<OutputBufferId, Integer> buffers = {};
-    std::shared_ptr<ExchangeSinkInstanceHandle> exchangeSinkInstanceHandle = {};
-};
-void to_json(json & j, const OutputBuffers & p);
-void from_json(const json & j, OutputBuffers & p);
-}
-namespace datalight::protocol
-{
-struct PlanNodeStatsEstimate
-{
-    double outputRowCount = {};
-    Map<Symbol, SymbolStatsEstimate> symbolStatistics = {};
-};
-void to_json(json & j, const PlanNodeStatsEstimate & p);
-void from_json(const json & j, PlanNodeStatsEstimate & p);
-}
-namespace datalight::protocol
-{
-struct StatsAndCosts
-{
-    Map<PlanNodeId, PlanNodeStatsEstimate> stats = {};
-    Map<PlanNodeId, PlanCostEstimate> costs = {};
-};
-void to_json(json & j, const StatsAndCosts & p);
-void from_json(const json & j, StatsAndCosts & p);
-}
-namespace datalight::protocol
-{
-enum class SelectedRoleType
-{
-    ROLE,
-    ALL,
-    NONE
-};
-extern void to_json(json & j, const SelectedRoleType & e);
-extern void from_json(const json & j, SelectedRoleType & e);
-}
-namespace datalight::protocol
-{
-struct SelectedRole
-{
-    SelectedRoleType type = {};
-    std::shared_ptr<String> role = {};
-};
-void to_json(json & j, const SelectedRole & p);
-void from_json(const json & j, SelectedRole & p);
-}
-namespace datalight::protocol
-{
-struct SessionRepresentation
-{
-    String queryId = {};
-    std::shared_ptr<TransactionId> transactionId = {};
-    bool clientTransactionSupport = {};
-    String user = {};
-    List<String> groups = {};
-    std::shared_ptr<String> principal = {};
-    List<String> enabledRoles = {};
-    std::shared_ptr<String> source = {};
-    std::shared_ptr<String> catalog = {};
-    std::shared_ptr<String> schema = {};
-    SqlPath path = {};
-    std::shared_ptr<String> traceToken = {};
-    TimeZoneKey timeZoneKey = {};
-    Locale locale = {};
-    std::shared_ptr<String> remoteUserAddress = {};
-    std::shared_ptr<String> userAgent = {};
-    std::shared_ptr<String> clientInfo = {};
-    List<String> clientTags = {};
-    List<String> clientCapabilities = {};
-    ResourceEstimates resourceEstimates = {};
-    Instant start = {};
-    Map<String, String> systemProperties = {};
-    Map<String, Map<String, String>> catalogProperties = {};
-    Map<String, SelectedRole> catalogRoles = {};
-    Map<String, String> preparedStatements = {};
-    String protocolName = {};
-};
-void to_json(json & j, const SessionRepresentation & p);
-void from_json(const json & j, SessionRepresentation & p);
-}
-namespace datalight::protocol
-{
-struct FileStatus
-{
-    String filePath = {};
-    int64_t fileSize = {};
-};
-void to_json(json & j, const FileStatus & p);
-void from_json(const json & j, FileStatus & p);
-}
-namespace datalight::protocol
-{
-struct FileSystemExchangeSourceHandle : public ExchangeSourceHandle
-{
-    int partitionId = {};
-    List<FileStatus> files = {};
-    std::shared_ptr<String> secretKey = {};
-
-    FileSystemExchangeSourceHandle() noexcept;
-};
-void to_json(json & j, const FileSystemExchangeSourceHandle & p);
-void from_json(const json & j, FileSystemExchangeSourceHandle & p);
-}
-namespace datalight::protocol
-{
-struct AllOrNoneValueSet : public ValueSet
-{
-    Type type = {};
-    bool all = {};
-
-    AllOrNoneValueSet() noexcept;
-};
-void to_json(json & j, const AllOrNoneValueSet & p);
-void from_json(const json & j, AllOrNoneValueSet & p);
-}
-namespace datalight::protocol
-{
-struct PlanFragment
-{
-    PlanFragmentId id = {};
-    std::shared_ptr<PlanNode> root = {};
-    Map<Symbol, Type> symbols = {};
-    PartitioningHandle partitioning = {};
-    List<PlanNodeId> partitionedSources = {};
-    PartitioningScheme partitioningScheme = {};
-    StatsAndCosts statsAndCosts = {};
-    std::shared_ptr<String> jsonRepresentation = {};
-};
-void to_json(json & j, const PlanFragment & p);
-void from_json(const json & j, PlanFragment & p);
-}
-namespace datalight::protocol
-{
-struct EmptySplit : public ConnectorSplit
-{
-    CatalogName catalogName = {};
-
-    EmptySplit() noexcept;
-};
-void to_json(json & j, const EmptySplit & p);
-void from_json(const json & j, EmptySplit & p);
-}
-namespace datalight::protocol
-{
-struct FileSystemExchangeSinkInstanceHandle : public ExchangeSinkInstanceHandle
-{
-    FileSystemExchangeSinkHandle sinkHandle = {};
-    URI outputDirectory = {};
-    int outputPartitionCount = {};
-
-    FileSystemExchangeSinkInstanceHandle() noexcept;
-};
-void to_json(json & j, const FileSystemExchangeSinkInstanceHandle & p);
-void from_json(const json & j, FileSystemExchangeSinkInstanceHandle & p);
-}
-namespace datalight::protocol
-{
-struct TaskUpdateRequest
-{
-    SessionRepresentation session = {};
-    Map<String, String> extraCredentials = {};
-    std::shared_ptr<PlanFragment> fragment = {};
-    List<SplitAssignment> splitAssignments = {};
-    OutputBuffers outputIds = {};
-    Map<DynamicFilterId, Domain> dynamicFilterDomains = {};
-};
-void to_json(json & j, const TaskUpdateRequest & p);
-void from_json(const json & j, TaskUpdateRequest & p);
 }
 namespace datalight::protocol
 {
