@@ -2,6 +2,7 @@
 #include "SignalHandler.h"
 #include "HeartbeatService.h"
 #include "PeriodicTaskManager.h"
+#include "QueryContextManager.h"
 #include <protocol/TrinoProtocol.h>
 #include <folly/executors/CPUThreadPoolExecutor.h>
 
@@ -35,16 +36,6 @@ namespace datalight::server
         }
 
         return protocol::Duration(seconds, protocol::TimeUnit::SECONDS);
-    }
-
-    static std::shared_ptr<folly::CPUThreadPoolExecutor>& executor() {
-        static std::shared_ptr<folly::CPUThreadPoolExecutor> executor =
-            std::make_shared<folly::CPUThreadPoolExecutor>(12);
-        return executor;
-    }
-
-    folly::CPUThreadPoolExecutor* driverCPUExecutor(){
-        return executor().get();
     }
 
     void sendOkResponse(proxygen::ResponseHandler* downstream,const json& body) {

@@ -12,6 +12,8 @@
 namespace datalight::server
 {
     class SignalHandler;
+    class TaskManager;
+    class TaskResource;
     enum class NodeState { ACTIVE, INACTIVE, SHUTTING_DOWN };
     class TrinoServer
     {
