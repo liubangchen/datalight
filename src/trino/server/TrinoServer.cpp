@@ -237,8 +237,6 @@ void enableChecksum()
                 const std::vector<std::unique_ptr<folly::IOBuf>> & /*body*/,
                 proxygen::ResponseHandler * downstream)
                 {
-                    LOG(INFO) << "/v1/memory"
-                              << " ok";
                     server->reportMemoryInfo(downstream);
                 });
         httpServer_->registerGet(
@@ -255,8 +253,6 @@ void enableChecksum()
                 proxygen::ResponseHandler * downstream)
                 {
                     json infoStateJson = convertNodeState(server->nodeState());
-                    LOG(INFO) << "/v1/info/state"
-                              << " ok";
                     sendOkResponse(downstream, infoStateJson);
                 });
         httpServer_->registerGet(

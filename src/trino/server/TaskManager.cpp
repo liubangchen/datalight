@@ -38,16 +38,6 @@ namespace datalight::server
             }
         }
 
-        // Keep outstanding Promises in RequestHandler's state itself.
-        //
-        // If the promise is not fulfilled yet, resetting promiseHolder will
-        // raise a "BrokenPromise" exception.  Even though we raise
-        // "BrokenPromise" Exception, it is mostly a nop because we call
-        // onFinalization() after we set 'requestExpired' to false, which
-        // prevents thenError() to generate any error responses.
-        // Since raising the exception releases all promise's resources
-        // including eventBase, it allows the server to stop the
-        // threads successfully and shutdown gracefully.
         template <typename T>
         void keepPromiseAlive(PromiseHolderPtr<T> promiseHolder, std::shared_ptr<http::CallbackRequestHandlerState> handlerState)
         {

@@ -126,7 +126,6 @@ namespace datalight::server
         {
             return;
         }
-        LOG(INFO) << "send heartbeat......";
         try
         {
             auto newAddress = discoveryAddressLookup_();

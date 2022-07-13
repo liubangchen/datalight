@@ -82,6 +82,7 @@ namespace datalight::server
             R"(/v1/task/(.+)/results/(.+))",
             [&](proxygen::HTTPMessage* message,
                 const std::vector<std::string>& pathMatch) {
+                LOG(INFO) <<"abortResults";
                 return abortResults(message, pathMatch);
             });
 
@@ -89,6 +90,7 @@ namespace datalight::server
             R"(/v1/task/(.+)/results/([0-9]+)/([0-9]+)/acknowledge)",
             [&](proxygen::HTTPMessage* message,
                 const std::vector<std::string>& pathMatch) {
+                LOG(INFO) <<"acknowledgeResults";
                 return acknowledgeResults(message, pathMatch);
             });
 
@@ -96,6 +98,7 @@ namespace datalight::server
             R"(/v1/task/(.+))",
             [&](proxygen::HTTPMessage* message,
                 const std::vector<std::string>& pathMatch) {
+                LOG(INFO) <<"createResults";
                 return createOrUpdateTask(message, pathMatch);
             });
 
@@ -103,6 +106,7 @@ namespace datalight::server
             R"(/v1/task/(.+))",
             [&](proxygen::HTTPMessage* message,
                 const std::vector<std::string>& pathMatch) {
+                LOG(INFO) <<"deleteResults";
                 return deleteTask(message, pathMatch);
             });
 
@@ -110,6 +114,7 @@ namespace datalight::server
             R"(/v1/task/(.+)/status)",
             [&](proxygen::HTTPMessage* message,
                 const std::vector<std::string>& pathMatch) {
+                LOG(INFO) <<"getTaskStatus";
                 return getTaskStatus(message, pathMatch);
             });
 
@@ -124,6 +129,7 @@ namespace datalight::server
             R"(/v1/task/(.+)/results/([0-9]+)/([0-9]+))",
             [&](proxygen::HTTPMessage* message,
                 const std::vector<std::string>& pathMatch) {
+                LOG(INFO) <<"getResults";
                 return getResults(message, pathMatch);
             });
 
@@ -131,6 +137,7 @@ namespace datalight::server
             R"(/v1/task/(.+))",
             [&](proxygen::HTTPMessage* message,
                 const std::vector<std::string>& pathMatch) {
+                LOG(INFO) <<"getTaskInfo";
                 return getTaskInfo(message, pathMatch);
             });
 
@@ -138,6 +145,7 @@ namespace datalight::server
             R"(/v1/task/(.+)/remote-source/(.+))",
             [&](proxygen::HTTPMessage* message,
                 const std::vector<std::string>& pathMatch) {
+                LOG(INFO) <<"removeRemoteSource";
                 return removeRemoteSource(message, pathMatch);
             });
     }
