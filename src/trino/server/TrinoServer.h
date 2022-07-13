@@ -7,6 +7,7 @@
 #include <folly/Synchronized.h>
 #include <folly/executors/IOThreadPoolExecutor.h>
 #include <protocol/TrinoProtocol.h>
+#include <velox/exec/Task.h>
 #include "CPUMon.h"
 
 namespace datalight::server
@@ -18,7 +19,7 @@ namespace datalight::server
     class TrinoServer
     {
     public:
-    explicit TrinoServer();
+        explicit TrinoServer(const std::string& configDirectoryPath);
         virtual ~TrinoServer();
         void run();
         void stop();
@@ -29,6 +30,10 @@ namespace datalight::server
             nodeState_ = nodeState;
         }
     protected:
+        virtual std::function<folly::SocketAddress()> discoveryAddressLookup();
+
+        virtual std::shared_ptr<facebook::velox::exec::TaskListener> getTaskListiner();
+
         void reportMemoryInfo(proxygen::ResponseHandler* downstream);
 
         void reportServerInfo(proxygen::ResponseHandler* downstream);
@@ -37,12 +42,20 @@ namespace datalight::server
 
         void populateMemAndCPUInfo();
     protected:
-        std::string nodeId_;
+        const std::string configDirectoryPath_;
         CPUMon cpuMon_;
         std::atomic<NodeState> nodeState_{NodeState::ACTIVE};
         std::unique_ptr<http::HttpServer> httpServer_;
+        std::unique_ptr<TaskManager> taskManager_;
+        std::unique_ptr<TaskResource> taskResource_;
         std::unique_ptr<SignalHandler> signalHandler_;
         folly::Synchronized<std::unique_ptr<protocol::MemoryInfo>> memoryInfo_;
         std::chrono::steady_clock::time_point start_;
+
+        std::string environment_;
+        std::string nodeVersion_;
+        std::string nodeId_;
+        std::string address_;
+        std::string nodeLocation_;
     };
 }

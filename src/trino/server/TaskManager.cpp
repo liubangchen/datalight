@@ -752,18 +752,18 @@ void TaskManager::removeRemoteSource(const TaskId & taskId, const TaskId & remot
 {
 }
 
-std::shared_ptr<PrestoTask> TaskManager::findOrCreateTask(const TaskId & taskId)
+std::shared_ptr<TrinoTask> TaskManager::findOrCreateTask(const TaskId & taskId)
 {
     auto taskMap = taskMap_.wlock();
     return findOrCreateTaskLocked(*taskMap, taskId);
 }
 
-std::shared_ptr<PrestoTask> TaskManager::findOrCreateTaskLocked(TaskMap & taskMap, const TaskId & taskId)
+std::shared_ptr<TrinoTask> TaskManager::findOrCreateTaskLocked(TaskMap & taskMap, const TaskId & taskId)
 {
     auto it = taskMap.find(taskId);
     if (it == taskMap.cend())
     {
-        auto prestoTask = std::make_shared<PrestoTask>(taskId);
+        auto prestoTask = std::make_shared<TrinoTask>(taskId);
         prestoTask->info.stats.createTime = util::toISOTimestamp(velox::getCurrentTimeMs());
         prestoTask->info.needsPlan = true;
         //prestoTask->info.metadataUpdates.connectorId = "unused";

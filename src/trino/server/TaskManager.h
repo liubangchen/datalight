@@ -100,9 +100,9 @@ public:
     static constexpr folly::StringPiece kSessionTimezone{"session_timezone"};
 
 private:
-    std::shared_ptr<PrestoTask> findOrCreateTask(const protocol::TaskId & taskId);
+    std::shared_ptr<TrinoTask> findOrCreateTask(const protocol::TaskId & taskId);
 
-    std::shared_ptr<PrestoTask> findOrCreateTaskLocked(TaskMap & taskMap, const protocol::TaskId & taskId);
+    std::shared_ptr<TrinoTask> findOrCreateTaskLocked(TaskMap & taskMap, const protocol::TaskId & taskId);
 
     std::string baseUri_;
     std::shared_ptr<velox::exec::PartitionedOutputBufferManager> bufferManager_;

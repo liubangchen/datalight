@@ -12,6 +12,7 @@ include_directories(SYSTEM ${PROJECT_SOURCE_DIR}/src/trino)
 
 add_subdirectory(http)
 add_subdirectory(protocol)
+add_subdirectory(config)
 add_subdirectory(common)
 add_subdirectory(types)
 add_subdirectory(server)
@@ -20,8 +21,6 @@ add_executable(trino-server TrinoMain.cpp)
 target_link_libraries(
   trino-server
   glog
-  folly
   gflags
-  velox_common_base
   datalight_server
 )

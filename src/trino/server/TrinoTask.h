@@ -48,9 +48,9 @@ namespace datalight::server{
         protocol::DataSize maxSize;
     };
 
-    struct PrestoTask {
+    struct TrinoTask {
         const types::TrinoTaskId id;
-        std::shared_ptr<velox::exec::Task> task;
+        std::shared_ptr<facebook::velox::exec::Task> task;
         bool taskStarted = false;
         uint64_t lastHeartbeatMs{0};
         mutable std::mutex mutex;
@@ -72,7 +72,7 @@ namespace datalight::server{
         // Info request. May arrive before there is a Task.
         PromiseHolderWeakPtr<std::unique_ptr<protocol::TaskInfo>> infoRequest;
 
-        explicit PrestoTask(const std::string& taskId);
+        explicit TrinoTask(const std::string& taskId);
 
         /// Updates when this task was touched last time.
         void updateHeartbeatLocked();
@@ -100,6 +100,6 @@ namespace datalight::server{
     };
 
     using TaskMap =
-        std::unordered_map<protocol::TaskId, std::shared_ptr<PrestoTask>>;
+        std::unordered_map<protocol::TaskId, std::shared_ptr<TrinoTask>>;
 
 }

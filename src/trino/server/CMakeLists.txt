@@ -20,4 +20,6 @@ target_link_libraries(
   hashlibrary
   trino_protocol
   trino_common
+  trino_config
+  folly
 )
