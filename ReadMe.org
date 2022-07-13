@@ -24,3 +24,8 @@
     find . -name CMakeCache.txt -exec rm {} \;
     cmake ../
   #+END_SRC
+- 执行
+
+  #+BEGIN_SRC shell
+    bin/trino-server -etc_dir ./etc -logtostdout true
+  #+END_SRC

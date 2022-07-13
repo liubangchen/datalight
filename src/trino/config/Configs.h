@@ -57,7 +57,7 @@ namespace datalight::config {
 /// Provides access to system properties defined in config.properties file.
     class SystemConfig : public ConfigBase {
     public:
-        static constexpr std::string_view kPrestoVersion{"presto.version"};
+        static constexpr std::string_view kPrestoVersion{"trino.version"};
         static constexpr std::string_view kHttpServerHttpPort{
             "http-server.http.port"};
         static constexpr std::string_view kDiscoveryUri{"discovery.uri"};
@@ -80,7 +80,7 @@ namespace datalight::config {
 
         int httpServerHttpPort() const;
 
-        std::string prestoVersion() const;
+        std::string trinoVersion() const;
 
         std::string discoveryUri() const;
 

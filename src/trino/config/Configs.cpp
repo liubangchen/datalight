@@ -33,7 +33,7 @@ namespace datalight::config
         return requiredProperty<int>(std::string(kHttpServerHttpPort));
     }
 
-    std::string SystemConfig::prestoVersion() const {
+    std::string SystemConfig::trinoVersion() const {
         return requiredProperty(std::string(kPrestoVersion));
     }
 

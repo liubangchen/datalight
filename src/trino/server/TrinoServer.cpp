@@ -150,7 +150,6 @@ void enableChecksum()
                 {},
             }};
         protocol::MemoryAllocation ma{"e", 23423};
-        //LOG(INFO) <<"populateMemAndCPUInfo..."<<json(memoryInfo).dump();
         cpuMon_.update();
         **memoryInfo_.wlock() = std::move(memoryInfo);
     }
@@ -191,11 +190,8 @@ void enableChecksum()
 
     void TrinoServer::run()
     {
-        HeartbeatService hbService;
-        hbService.start();
-
         auto executor = std::make_shared<folly::IOThreadPoolExecutor>(
-            FLAGS_num_io_threads, std::make_shared<folly::NamedThreadFactory>("PrestoWorkerNetwork"));
+            FLAGS_num_io_threads, std::make_shared<folly::NamedThreadFactory>("TrinoWorkerNetwork"));
         folly::setUnsafeMutableGlobalIOExecutor(executor);
 
         auto systemConfig = config::SystemConfig::instance();
@@ -204,7 +200,7 @@ void enableChecksum()
         nodeConfig->initialize(configDirectoryPath_ + "/node.properties");
 
         auto servicePort = systemConfig->httpServerHttpPort();
-        nodeVersion_ = systemConfig->prestoVersion();
+        nodeVersion_ = systemConfig->trinoVersion();
         int httpExecThreads = systemConfig->httpExecThreads();
         environment_ = nodeConfig->nodeEnvironment();
         nodeId_ = nodeConfig->nodeId();
@@ -217,7 +213,20 @@ void enableChecksum()
 
         folly::SocketAddress socketAddress;
         socketAddress.setFromLocalPort(servicePort);
-        LOG(INFO) << fmt::format("STARTUP: Starting server at {}:{} ({})", socketAddress.getIPAddress().str(), servicePort, "0.0.0.0");
+        LOG(INFO) << fmt::format("STARTUP: Starting server at {}:{} ({})", socketAddress.getIPAddress().str(), servicePort, address_);
+
+        std::vector<std::string> catalogNames;
+        catalogNames.push_back("hive");
+        HeartbeatService hbService(address_,
+                                   servicePort,
+                                   discoveryAddressLookup(),
+                                   nodeVersion_,
+                                   environment_,
+                                   nodeId_,
+                                   nodeLocation_,
+                                   catalogNames,
+                                   30'000 );
+        hbService.start();
 
         httpServer_ = std::make_unique<http::HttpServer>(socketAddress, httpExecThreads);
 
