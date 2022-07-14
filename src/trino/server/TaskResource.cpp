@@ -4,7 +4,7 @@
 //#include "presto_cpp/main/thrift/ProtocolToThrift.h"
 //#include "presto_cpp/main/thrift/ThriftIO.h"
 //#include "presto_cpp/main/thrift/gen-cpp2/PrestoThrift.h"
-//#include "presto_cpp/main/types/PrestoToVeloxQueryPlan.h"
+#include "types/TrinoToVeloxQueryPlan.h"
 #include "protocol/TrinoProtocol.h"
 #include "velox/common/time/Timer.h"
 #include "velox/type/tz/TimeZoneMap.h"
@@ -98,7 +98,7 @@ namespace datalight::server
             R"(/v1/task/(.+))",
             [&](proxygen::HTTPMessage* message,
                 const std::vector<std::string>& pathMatch) {
-                LOG(INFO) <<"createResults";
+                LOG(INFO) <<"createOrUpdateTask";
                 return createOrUpdateTask(message, pathMatch);
             });
 
@@ -208,21 +208,17 @@ namespace datalight::server
                     oss << std::string((const char*)buf->data(), buf->length());
                 }
                 std::string updateJson = oss.str();
-
+                LOG(INFO)<<"createOrUpdateTask "<<updateJson ;
                 std::unique_ptr<protocol::TaskInfo> taskInfo;
                 try {
                     protocol::TaskUpdateRequest taskUpdateRequest =
                         json::parse(updateJson);
                     velox::core::PlanFragment planFragment;
                     if (taskUpdateRequest.fragment) {
-                        /**
-                        auto fragment =
-                            velox::encoding::Base64::decode(*taskUpdateRequest.fragment);
-                        protocol::PlanFragment prestoPlan = json::parse(fragment);
-                        VeloxQueryPlanConverter converter(pool_.get());
-                        planFragment = converter.toVeloxQueryPlan(
-                            prestoPlan, taskUpdateRequest.tableWriteInfo, taskId);
-                        **/
+                        //protocol::PlanFragment prestoPlan = json::parse(fragment);
+                        //velox::VeloxQueryPlanConverter converter(pool_.get());
+                        //planFragment = converter.toVeloxQueryPlan(
+                        //    prestoPlan, taskUpdateRequest.tableWriteInfo, taskId);
                     }
                     const auto& session = taskUpdateRequest.session;
                     auto configs = std::unordered_map<std::string, std::string>(

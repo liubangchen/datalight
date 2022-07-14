@@ -11,11 +11,21 @@
 # limitations under the License.
 
 EnumMap:
+  AggregationNode:
+    Step: AggregationNodeStep
+
   LimitNode:
     Step: LimitNodeStep
 
   SelectedRole:
     Type: SelectedRoleType
+
+  ExchangeNode:
+    Type: ExchangeNodeType
+    Scope: ExchangeNodeScope
+
+  JoinNode:
+    Type: JoinNodeType
 
 ExtraFields:
   PlanNode:
@@ -25,52 +35,76 @@ AddToOutput:
   - NodeState
 
 AbstractClasses:
+  ColumnHandle:
+    super: JsonEncodedSubclass
+    comparable: true
+    subclasses:
+      - { name: HiveColumnHandle, key: hive }
+
+  ConnectorTableHandle:
+    super: JsonEncodedSubclass
+    subclasses:
+      - { name: HiveTableHandle, key: hive }
+
   ConnectorSplit:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: HiveSplit,            key: hive }
-      - { name: RemoteSplit,          key: $remote }
-      - { name: EmptySplit,           key: $empty }
+      - { name: HiveSplit, key: hive }
+      - { name: RemoteSplit, key: $remote }
+      - { name: EmptySplit, key: $empty }
 
   ConnectorPartitioningHandle:
     super: JsonEncodedSubclass
     subclasses:
       - { name: SystemPartitioningHandle, key: $remote }
-      - { name: HivePartitioningHandle,   key: hive }
+      - { name: HivePartitioningHandle, key: hive }
 
   ConnectorTransactionHandle:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: HiveTransactionHandle,    key: hive }
+      - { name: HiveTransactionHandle, key: hive }
 
   ExchangeInput:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: SpoolingExchangeInput,            key: spooling }
-      - { name: DirectExchangeInput,              key: direct }
+      - { name: SpoolingExchangeInput, key: spooling }
+      - { name: DirectExchangeInput, key: direct }
 
   ExchangeSourceHandle:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: FileSystemExchangeSourceHandle,    key: filesystem }
+      - { name: FileSystemExchangeSourceHandle, key: filesystem }
 
   ValueSet:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: EquatableValueSet,          key: equatable }
-      - { name: SortedRangeSet,             key: sortable }
-      - { name: AllOrNoneValueSet,          key: allOrNone }
+      - { name: EquatableValueSet, key: equatable }
+      - { name: SortedRangeSet, key: sortable }
+      - { name: AllOrNoneValueSet, key: allOrNone }
 
   ExchangeSinkInstanceHandle:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: FileSystemExchangeSinkInstanceHandle,    key: filesystem }
+      - { name: FileSystemExchangeSinkInstanceHandle, key: filesystem }
 
   PlanNode:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: ProjectNode,              key: .ProjectNode }
-      - { name: LimitNode,                key: .LimitNode }
+      - { name: ProjectNode, key: .ProjectNode }
+      - { name: LimitNode, key: .LimitNode }
+      - { name: AggregationNode, key: .AggregationNode }
+      - { name: ExchangeNode, key: io.trino.sql.planner.plan.ExchangeNode }
+      - {
+          name: RemoteSourceNode,
+          key: io.trino.sql.planner.plan.RemoteSourceNode,
+        }
+      - { name: GroupIdNode, key: io.trino.sql.planner.plan.GroupIdNode }
+      - { name: FilterNode, key: .FilterNode }
+      - { name: OutputNode, key: io.trino.sql.planner.plan.OutputNode }
+      - { name: JoinNode, key: io.trino.sql.planner.plan.JoinNode }
+      - { name: ValuesNode, key: .ValuesNode }
+      - { name: TableScanNode, key: .TableScanNode }
+      - { name: DistinctLimitNode, key: .DistinctLimitNode }
 
 JavaClasses:
   - core/trino-main/src/main/java/io/trino/server/NodeStatus.java
@@ -79,6 +113,11 @@ JavaClasses:
   - core/trino-spi/src/main/java/io/trino/spi/memory/MemoryPoolInfo.java
   - core/trino-spi/src/main/java/io/trino/spi/memory/MemoryAllocation.java
   - core/trino-main/src/main/java/io/trino/metadata/NodeState.java
+  - core/trino-main/src/main/java/io/trino/metadata/ResolvedFunction.java
+  - core/trino-main/src/main/java/io/trino/metadata/TableHandle.java
+  - core/trino-main/src/main/java/io/trino/metadata/BoundSignature.java
+  - core/trino-main/src/main/java/io/trino/metadata/FunctionNullability.java
+  - core/trino-spi/src/main/java/io/trino/spi/connector/ConnectorTableHandle.java
   - core/trino-main/src/main/java/io/trino/execution/TaskInfo.java
   - core/trino-main/src/main/java/io/trino/execution/TaskStatus.java
   - core/trino-main/src/main/java/io/trino/execution/TaskState.java
@@ -86,6 +125,8 @@ JavaClasses:
   - client/trino-client/src/main/java/io/trino/client/ErrorLocation.java
   - core/trino-spi/src/main/java/io/trino/spi/ErrorCode.java
   - core/trino-spi/src/main/java/io/trino/spi/ErrorType.java
+  - core/trino-spi/src/main/java/io/trino/spi/function/FunctionKind.java
+  - core/trino-spi/src/main/java/io/trino/spi/connector/ColumnHandle.java
   - core/trino-main/src/main/java/io/trino/execution/buffer/OutputBufferInfo.java
   - core/trino-main/src/main/java/io/trino/execution/buffer/BufferState.java
   - core/trino-main/src/main/java/io/trino/execution/buffer/BufferInfo.java
@@ -102,6 +143,16 @@ JavaClasses:
   - core/trino-main/src/main/java/io/trino/sql/planner/PlanFragment.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/ProjectNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/LimitNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/ExchangeNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/RemoteSourceNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/FilterNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/OutputNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/ValuesNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/TableScanNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/AggregationNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/GroupIdNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/DistinctLimitNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/JoinNode.java
   - client/trino-client/src/main/java/io/trino/client/ServerInfo.java
   - core/trino-main/src/main/java/io/trino/execution/ScheduledSplit.java
   - core/trino-main/src/main/java/io/trino/metadata/Split.java
@@ -128,6 +179,7 @@ JavaClasses:
   - core/trino-spi/src/main/java/io/trino/spi/security/SelectedRole.java
   - core/trino-main/src/main/java/io/trino/sql/planner/PartitioningHandle.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HivePartitioningHandle.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveTableHandle.java
   - core/trino-spi/src/main/java/io/trino/spi/connector/ConnectorTransactionHandle.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveTransactionHandle.java
   - core/trino-main/src/main/java/io/trino/sql/planner/PartitioningScheme.java
@@ -138,9 +190,14 @@ JavaClasses:
   - core/trino-main/src/main/java/io/trino/cost/PlanCostEstimate.java
   - core/trino-main/src/main/java/io/trino/cost/SymbolStatsEstimate.java
   - core/trino-main/src/main/java/io/trino/cost/LocalCostEstimate.java
+  - core/trino-main/src/main/java/io/trino/cost/PlanNodeStatsAndCostSummary.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveSplit.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HivePartitionKey.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveBucketHandle.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/TableToPartitionMapping.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/AcidInfo.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveColumnHandle.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/metastore/SortingColumn.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveColumnProjectionInfo.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/acid/AcidTransaction.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveUpdateProcessor.java

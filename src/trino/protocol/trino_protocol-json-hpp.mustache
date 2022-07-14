@@ -78,6 +78,7 @@ class ParseError : public Exception {
 using String = std::string;
 using Integer = int;
 using Long = int64_t;
+using Boolean = bool;
 using boolean = bool;
 
 template <typename T> using List = std::vector<T>;
@@ -101,6 +102,9 @@ using SqlFunctionId = std::string;
 using QualifiedObjectName = std::string;
 using TypeSignature = std::string;
 
+using AcidOperation = int8_t;
+using FunctionId = std::string;
+using RetryPolicy = int8_t;
 using ConnectorId = std::string;
 using MemoryPoolId = std::string;
 using OutputBufferId = std::string;
