@@ -142,7 +142,6 @@ JavaClasses:
   - core/trino-main/src/main/java/io/trino/server/NodeStatus.java
   - client/trino-client/src/main/java/io/trino/client/NodeVersion.java
   - core/trino-main/src/main/java/io/trino/memory/MemoryInfo.java
-  - core/trino-spi/src/main/java/io/trino/spi/statistics/TableStatisticType.java
   - core/trino-spi/src/main/java/io/trino/spi/statistics/ColumnStatisticType.java
   - core/trino-spi/src/main/java/io/trino/spi/statistics/ColumnStatisticMetadata.java
   - core/trino-spi/src/main/java/io/trino/spi/memory/MemoryPoolInfo.java
