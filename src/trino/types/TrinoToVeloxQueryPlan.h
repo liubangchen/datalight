@@ -9,7 +9,6 @@
 #include "velox/type/Variant.h"
 
 using namespace facebook;
-
 namespace datalight::types
 {
     class VeloxQueryPlanConverter {

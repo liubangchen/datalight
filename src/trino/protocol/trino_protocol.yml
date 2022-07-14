@@ -35,6 +35,21 @@ AddToOutput:
   - NodeState
 
 AbstractClasses:
+  ConnectorOutputTableHandle:
+    super: JsonEncodedSubclass
+    subclasses:
+      - { name: HiveOutputTableHandle, key: hive }
+
+  ConnectorInsertTableHandle:
+    super: JsonEncodedSubclass
+    subclasses:
+      - { name: HiveInsertTableHandle, key: hive }
+
+  ConnectorTableExecuteHandle:
+    super: JsonEncodedSubclass
+    subclasses:
+      - { name: HiveTableExecuteHandle, key: hive }
+
   ColumnHandle:
     super: JsonEncodedSubclass
     comparable: true
@@ -87,6 +102,19 @@ AbstractClasses:
     subclasses:
       - { name: FileSystemExchangeSinkInstanceHandle, key: filesystem }
 
+  WriterTarget:
+    super: JsonEncodedSubclass
+    subclasses:
+      - { name: CreateHandle, key: CreateHandle }
+      - { name: InsertHandle, key: InsertHandle }
+      - { name: DeleteHandle, key: DeleteHandle }
+      - { name: UpdateTarget, key: UpdateTarget }
+      - { name: TableExecuteTarget, key: TableExecuteTarget }
+      - {
+          name: RefreshMaterializedViewTarget,
+          key: RefreshMaterializedViewTarget,
+        }
+
   PlanNode:
     super: JsonEncodedSubclass
     subclasses:
@@ -105,19 +133,29 @@ AbstractClasses:
       - { name: ValuesNode, key: .ValuesNode }
       - { name: TableScanNode, key: .TableScanNode }
       - { name: DistinctLimitNode, key: .DistinctLimitNode }
+      - {
+          name: TableWriterNode,
+          key: io.trino.sql.planner.plan.TableWriterNode,
+        }
 
 JavaClasses:
   - core/trino-main/src/main/java/io/trino/server/NodeStatus.java
   - client/trino-client/src/main/java/io/trino/client/NodeVersion.java
   - core/trino-main/src/main/java/io/trino/memory/MemoryInfo.java
+  - core/trino-spi/src/main/java/io/trino/spi/statistics/TableStatisticType.java
+  - core/trino-spi/src/main/java/io/trino/spi/statistics/ColumnStatisticType.java
+  - core/trino-spi/src/main/java/io/trino/spi/statistics/ColumnStatisticMetadata.java
   - core/trino-spi/src/main/java/io/trino/spi/memory/MemoryPoolInfo.java
   - core/trino-spi/src/main/java/io/trino/spi/memory/MemoryAllocation.java
   - core/trino-main/src/main/java/io/trino/metadata/NodeState.java
   - core/trino-main/src/main/java/io/trino/metadata/ResolvedFunction.java
   - core/trino-main/src/main/java/io/trino/metadata/TableHandle.java
   - core/trino-main/src/main/java/io/trino/metadata/BoundSignature.java
+  - core/trino-main/src/main/java/io/trino/metadata/OutputTableHandle.java
   - core/trino-main/src/main/java/io/trino/metadata/FunctionNullability.java
+  - core/trino-main/src/main/java/io/trino/metadata/InsertTableHandle.java
   - core/trino-spi/src/main/java/io/trino/spi/connector/ConnectorTableHandle.java
+  - core/trino-spi/src/main/java/io/trino/spi/connector/SchemaTableName.java
   - core/trino-main/src/main/java/io/trino/execution/TaskInfo.java
   - core/trino-main/src/main/java/io/trino/execution/TaskStatus.java
   - core/trino-main/src/main/java/io/trino/execution/TaskState.java
@@ -140,6 +178,10 @@ JavaClasses:
   - core/trino-main/src/main/java/io/trino/SessionRepresentation.java
   - core/trino-main/src/main/java/io/trino/sql/SqlPath.java
   - core/trino-spi/src/main/java/io/trino/spi/session/ResourceEstimates.java
+  - core/trino-main/src/main/java/io/trino/metadata/InsertTableHandle.java
+  - core/trino-main/src/main/java/io/trino/metadata/TableExecuteHandle.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/StatisticAggregations.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/TableWriterNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/PlanFragment.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/ProjectNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/LimitNode.java
@@ -153,6 +195,8 @@ JavaClasses:
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/GroupIdNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/DistinctLimitNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/JoinNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/SortNode.java
+  - core/trino-main/src/main/java/io/trino/sql/planner/plan/TopNNode.java
   - client/trino-client/src/main/java/io/trino/client/ServerInfo.java
   - core/trino-main/src/main/java/io/trino/execution/ScheduledSplit.java
   - core/trino-main/src/main/java/io/trino/metadata/Split.java
@@ -201,3 +245,15 @@ JavaClasses:
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveColumnProjectionInfo.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/acid/AcidTransaction.java
   - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveUpdateProcessor.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/util/HiveBucketing.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveInsertTableHandle.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveTableExecuteHandle.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/metastore/HivePageSinkMetadata.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/LocationHandle.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveBucketProperty.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/HiveOutputTableHandle.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/metastore/HivePageSinkMetadata.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/metastore/Table.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/metastore/Column.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/metastore/Storage.java
+  - plugin/trino-hive/src/main/java/io/trino/plugin/hive/metastore/StorageFormat.java

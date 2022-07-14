@@ -173,6 +173,7 @@ def special(filepath, current_class, key, classes, depends):
             depends[current_class].update([other])
 
 
+
 def process_file(filepath, config, lang, subclasses, classes, depends):
     filename = util.get_filename(filepath)
 
