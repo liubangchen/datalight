@@ -105,9 +105,9 @@ AbstractClasses:
   WriterTarget:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: CreateHandle, key: CreateHandle }
-      - { name: InsertHandle, key: InsertHandle }
-      - { name: DeleteHandle, key: DeleteHandle }
+      - { name: CreateTarget, key: CreateTarget }
+      - { name: InsertTarget, key: InsertTarget }
+      - { name: DeleteTarget, key: DeleteTarget }
       - { name: UpdateTarget, key: UpdateTarget }
       - { name: TableExecuteTarget, key: TableExecuteTarget }
       - {
@@ -153,7 +153,6 @@ JavaClasses:
   - core/trino-main/src/main/java/io/trino/metadata/OutputTableHandle.java
   - core/trino-main/src/main/java/io/trino/metadata/FunctionNullability.java
   - core/trino-main/src/main/java/io/trino/metadata/InsertTableHandle.java
-  - core/trino-spi/src/main/java/io/trino/spi/connector/ConnectorTableHandle.java
   - core/trino-spi/src/main/java/io/trino/spi/connector/SchemaTableName.java
   - core/trino-main/src/main/java/io/trino/execution/TaskInfo.java
   - core/trino-main/src/main/java/io/trino/execution/TaskStatus.java

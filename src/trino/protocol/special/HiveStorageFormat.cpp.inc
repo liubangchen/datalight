@@ -13,37 +13,38 @@
  */
 namespace datalight::protocol {
 
-    void to_json(json& j, const std::shared_ptr<ConnectorTableHandle>& p) {
-        if (p == nullptr) {
-            return;
-        }
-        String type = p->_type;
+void to_json(json& j, const HiveStorageFormat& p) {
+  throw ParseError("Not implemented");
+}
 
-        if (getConnectorKey(type) == "hive") {
-            j = *std::static_pointer_cast<HiveTableHandle>(p);
-            return;
-        }
+static const std::pair<HiveStorageFormat, json> HiveStorageFormat_enum_table[] =
+    { // NOLINT: cert-err58-cpp
+        {HiveStorageFormat::ORC, "ORC"},
+        {HiveStorageFormat::DWRF, "DWRF"},
+        {HiveStorageFormat::PARQUET, "PARQUET"},
+        {HiveStorageFormat::AVRO, "AVRO"},
+        {HiveStorageFormat::RCBINARY, "RCBINARY"},
+        {HiveStorageFormat::RCTEXT, "RCTEXT"},
+        {HiveStorageFormat::SEQUENCEFILE, "SEQUENCEFILE"},
+        {HiveStorageFormat::JSON, "JSON"},
+        {HiveStorageFormat::TEXTFILE, "TEXTFILE"},
+        {HiveStorageFormat::CSV, "CSV"},
+        {HiveStorageFormat::PAGEFILE, "PAGEFILE"}};
 
-        throw TypeError(type + " no abstract type ConnectorTableHandle");
-    }
-
-    void from_json(const json& j, std::shared_ptr<ConnectorTableHandle>& p) {
-        String type;
-        try {
-            type = p->getSubclassKey(j);
-        } catch (json::parse_error& e) {
-            throw ParseError(
-                std::string(e.what()) + " ConnectorTableHandle  ConnectorTableHandle");
-        }
-
-        if (getConnectorKey(type) == "hive") {
-            auto k = std::make_shared<HiveTableHandle>();
-            j.get_to(*k);
-            p = k;
-            return;
-        }
-
-        throw TypeError(type + " no abstract type ConnectorTableHandle");
-    }
+void from_json(const json& j, HiveStorageFormat& e) {
+  static_assert(
+      std::is_enum<HiveStorageFormat>::value,
+      "HiveStorageFormat must be an enum!");
+  const auto* it = std::find_if(
+      std::begin(HiveStorageFormat_enum_table),
+      std::end(HiveStorageFormat_enum_table),
+      [&j](const std::pair<HiveStorageFormat, json>& ej_pair) -> bool {
+        return ej_pair.second == j;
+      });
+  e = ((it != std::end(HiveStorageFormat_enum_table))
+           ? it
+           : std::begin(HiveStorageFormat_enum_table))
+          ->first;
+}
 
 }
