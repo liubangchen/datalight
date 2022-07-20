@@ -399,60 +399,60 @@ endif()
 # Check if header files exist
 list(
   APPEND FILES_TO_CHECK
-  ${LIBEVENT_SOURCE_DIR}/fcntl.h
-  ${LIBEVENT_SOURCE_DIR}/inttypes.h
-  ${LIBEVENT_SOURCE_DIR}/memory.h
-  ${LIBEVENT_SOURCE_DIR}/signal.h
-  ${LIBEVENT_SOURCE_DIR}/stdarg.h
-  ${LIBEVENT_SOURCE_DIR}/stddef.h
-  ${LIBEVENT_SOURCE_DIR}/stdint.h
-  ${LIBEVENT_SOURCE_DIR}/stdlib.h
-  ${LIBEVENT_SOURCE_DIR}/string.h
-  ${LIBEVENT_SOURCE_DIR}/errno.h
-  ${LIBEVENT_SOURCE_DIR}/unistd.h
-  ${LIBEVENT_SOURCE_DIR}/time.h
-  ${LIBEVENT_SOURCE_DIR}/sys/types.h
-  ${LIBEVENT_SOURCE_DIR}/sys/stat.h
-  ${LIBEVENT_SOURCE_DIR}/sys/time.h
-  ${LIBEVENT_SOURCE_DIR}/sys/param.h
-)
+  fcntl.h
+  inttypes.h
+  memory.h
+  signal.h
+  stdarg.h
+  stddef.h
+  stdint.h
+  stdlib.h
+  string.h
+  errno.h
+  unistd.h
+  time.h
+  sys/types.h
+  sys/stat.h
+  sys/time.h
+  sys/param.h
+  )
 if(WIN32)
   list(
     APPEND FILES_TO_CHECK
-    ${LIBEVENT_SOURCE_DIR}/io.h
-    ${LIBEVENT_SOURCE_DIR}/winsock2.h
-    ${LIBEVENT_SOURCE_DIR}/ws2tcpip.h
-    ${LIBEVENT_SOURCE_DIR}/afunix.h
-  )
+    io.h
+    winsock2.h
+    ws2tcpip.h
+    afunix.h
+    )
 else()
   list(
     APPEND FILES_TO_CHECK
-    ${LIBEVENT_SOURCE_DIR}/netdb.h
-    ${LIBEVENT_SOURCE_DIR}/dlfcn.h
-    ${LIBEVENT_SOURCE_DIR}/arpa/inet.h
-    ${LIBEVENT_SOURCE_DIR}/poll.h
-    ${LIBEVENT_SOURCE_DIR}/port.h
-    ${LIBEVENT_SOURCE_DIR}/sys/socket.h
-    ${LIBEVENT_SOURCE_DIR}/sys/random.h
-    ${LIBEVENT_SOURCE_DIR}/sys/un.h
-    ${LIBEVENT_SOURCE_DIR}/sys/devpoll.h
-    ${LIBEVENT_SOURCE_DIR}/sys/epoll.h
-    ${LIBEVENT_SOURCE_DIR}/sys/eventfd.h
-    ${LIBEVENT_SOURCE_DIR}/sys/event.h
-    ${LIBEVENT_SOURCE_DIR}/sys/ioctl.h
-    ${LIBEVENT_SOURCE_DIR}/sys/mman.h
-    ${LIBEVENT_SOURCE_DIR}/sys/queue.h
-    ${LIBEVENT_SOURCE_DIR}/sys/select.h
-    ${LIBEVENT_SOURCE_DIR}/sys/sendfile.h
-    ${LIBEVENT_SOURCE_DIR}/sys/uio.h
-    ${LIBEVENT_SOURCE_DIR}/sys/wait.h
-    ${LIBEVENT_SOURCE_DIR}/sys/resource.h
-    ${LIBEVENT_SOURCE_DIR}/sys/timerfd.h
-    ${LIBEVENT_SOURCE_DIR}/netinet/in.h
-    ${LIBEVENT_SOURCE_DIR}/netinet/in6.h
-    ${LIBEVENT_SOURCE_DIR}/netinet/tcp.h
-    ${LIBEVENT_SOURCE_DIR}/ifaddrs.h
-  )
+    netdb.h
+    dlfcn.h
+    arpa/inet.h
+    poll.h
+    port.h
+    sys/socket.h
+    sys/random.h
+    sys/un.h
+    sys/devpoll.h
+    sys/epoll.h
+    sys/eventfd.h
+    sys/event.h
+    sys/ioctl.h
+    sys/mman.h
+    sys/queue.h
+    sys/select.h
+    sys/sendfile.h
+    sys/uio.h
+    sys/wait.h
+    sys/resource.h
+    sys/timerfd.h
+    netinet/in.h
+    netinet/in6.h
+    netinet/tcp.h
+    ifaddrs.h
+    )
 endif()
 
 if(NOT "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux")
@@ -798,7 +798,13 @@ if(EVENT__HAVE_STRUCT_SOCKADDR_STORAGE)
 endif()
 
 check_type_size("struct linger" EVENT__HAVE_STRUCT_LINGER)
-
+set(EVENT__HAVE_STRUCT_IN6_ADDR 1)
+set(EVENT__HAVE_SA_FAMILY_T 1)
+set(EVENT__HAVE_STRUCT_SOCKADDR_IN6 1)
+set(EVENT__HAVE_STRUCT_SOCKADDR_STORAGE 1)
+set(EVENT__HAVE_GETTIMEOFDAY 1)
+set(EVENT__HAVE_STRSEP 1)
+set(EVENT__HAVE_STRTOK_R 1)
 # Group the source files.
 set(
   HDR_PRIVATE

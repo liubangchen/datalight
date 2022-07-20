@@ -5,9 +5,9 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
 set(FB_LIB_VERSION "v2022.05.30.00")
 
 #####################################################################start icu4c
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  add_subdirectory(liburing-cmake)
-endif()
+#if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+#  add_subdirectory(liburing-cmake)
+#endif()
 #####################################################################end
 
 #####################################################################start hash lib
