@@ -32,7 +32,7 @@ namespace datalight::server
     protected:
         virtual std::function<folly::SocketAddress()> discoveryAddressLookup();
 
-        virtual std::shared_ptr<facebook::velox::exec::TaskListener> getTaskListiner();
+        virtual std::shared_ptr<facebook::velox::exec::TaskListener> getTaskListener();
 
         void reportMemoryInfo(proxygen::ResponseHandler* downstream);
 

@@ -124,7 +124,7 @@ void enableChecksum()
         return [uri]() { return folly::SocketAddress(uri.hostname(), uri.port(), true); };
     }
 
-    std::shared_ptr<exec::TaskListener> TrinoServer::getTaskListiner()
+    std::shared_ptr<exec::TaskListener> TrinoServer::getTaskListener()
     {
         return nullptr;
     }
@@ -285,7 +285,7 @@ void enableChecksum()
 
         if (systemConfig->enableVeloxTaskLogging())
         {
-            if (auto listener = getTaskListiner())
+            if (auto listener = getTaskListener())
             {
                 exec::registerTaskListener(listener);
             }
