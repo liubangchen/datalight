@@ -269,11 +269,13 @@ list(
 )
 
 if(NOT MSVC)
-  set_property(
-    SOURCE
-    ${FOLLY_DIR}/memcpy.S
-    APPEND PROPERTY COMPILE_OPTIONS "-x" "assembler-with-cpp"
-  )
+  #set_property(
+  #  SOURCE
+  #  ${FOLLY_DIR}/memcpy.S
+  #  APPEND PROPERTY COMPILE_OPTIONS "-S" "-x" "assembler-with-cpp"
+  #)
+  enable_language(ASM)
+  set(ASM_OPTIONS "-x assembler-with-cpp")
   list(
     APPEND folly_base_files
     ${FOLLY_DIR}/memcpy.S
@@ -348,13 +350,6 @@ if(APPLE)
   target_link_libraries(
     folly
     c++abi
-  )
-  target_compile_options(
-    folly
-    PUBLIC
-    -S
-    -mllvm
-    --x86-asm-syntax=intel
   )
 endif()
 
