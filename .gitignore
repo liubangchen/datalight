@@ -182,3 +182,5 @@ website/package-lock.json
 /contrib/utfcpp
 /contrib/nlohmannjson
 /etc
+
+.dir-locals.el

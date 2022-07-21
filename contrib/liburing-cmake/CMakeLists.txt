@@ -26,6 +26,7 @@ target_compile_definitions(
   uring
   PRIVATE
   -DLIBURING_INTERNAL
+  -DAT_FDCWD=-100
 )
 target_compile_options(
   uring
