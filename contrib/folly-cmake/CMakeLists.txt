@@ -286,7 +286,7 @@ add_library(
   ${CMAKE_CURRENT_BINARY_DIR}/folly/folly-config.h
 )
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
   target_compile_options(
     folly
     PUBLIC

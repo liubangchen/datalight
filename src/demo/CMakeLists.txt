@@ -45,7 +45,7 @@ target_link_libraries(
   velox_memory
   folly
 )
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "x86_64")
   target_compile_options(
     veloxdemo
     PRIVATE
@@ -55,15 +55,22 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     -mavx
     -mf16c
     -mlzcnt
+    -msse2
   )
   target_link_libraries(
     veloxdemo
     PRIVATE
-    rt
     folly
   )
 endif()
 
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_link_libraries(
+    veloxdemo
+    PRIVATE
+    rt
+  )
+endif()
 add_executable(echo-server EchoServer.cpp)
 target_link_libraries(
   echo-server
