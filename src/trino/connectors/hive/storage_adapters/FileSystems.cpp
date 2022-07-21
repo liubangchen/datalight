@@ -11,16 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#pragma once
 
-namespace datalight::trino::http {
+#include "connectors/hive/storage_adapters/FileSystems.h"
 
-const int kHttpOk = 200;
-const int kHttpAccepted = 202;
-const int kHttpNoContent = 204;
-const int kHttpNotFound = 404;
-const int kHttpInternalServerError = 500;
+#ifdef TRINO_ENABLE_S3
+#include "velox/connectors/hive/storage_adapters/s3fs/S3FileSystem.h" // @manual
+#endif
 
-const char kMimeTypeApplicationJson[] = "application/json";
-const char kMimeTypeApplicationThrift[] = "application/x-thrift+binary";
-} // namespace datalight::trino::http
+namespace datalight::trino {
+
+void registerOptionalHiveStorageAdapters() {
+#ifdef PRESTO_ENABLE_S3
+  velox::filesystems::registerS3FileSystem();
+#endif
+}
+
+} // namespace datalight::trino
