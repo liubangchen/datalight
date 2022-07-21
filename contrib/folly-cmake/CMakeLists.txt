@@ -269,13 +269,21 @@ list(
 )
 
 if(NOT MSVC)
-  #set_property(
-  #  SOURCE
-  #  ${FOLLY_DIR}/memcpy.S
-  #  APPEND PROPERTY COMPILE_OPTIONS "-S" "-x" "assembler-with-cpp"
-  #)
-  enable_language(ASM)
-  set(ASM_OPTIONS "-x assembler-with-cpp")
+  set(
+    ASM_OPTIONS
+    "-x"
+    "assembler-with-cpp"
+  )
+
+  if(COMPILER_CLANG)
+    list(APPEND ASM_OPTIONS "-S")
+  endif()
+  set_property(
+    SOURCE
+    ${FOLLY_DIR}/memcpy.S
+    APPEND PROPERTY COMPILE_OPTIONS ${ASM_OPTIONS}
+  )
+
   list(
     APPEND folly_base_files
     ${FOLLY_DIR}/memcpy.S
