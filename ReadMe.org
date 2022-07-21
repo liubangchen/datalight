@@ -7,6 +7,16 @@
 ** 开发环境配置
 在cmake ../ 后在编译目录下会生成compile_commands.json,将compile_commands.json移动到工程根目录，开发IDE可根据个人喜好进行配置，比如ccls+emacs, vscode和compile_commands.json配置请
 参考[[https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference][这里]]
+*  硬件环境检查
+代码使用了向量化框架，需要检查cpu支持那种类型的向量化指令
+
+#+BEGIN_SRC shell
+  #MACOS
+  sysctl -a | grep cpu.feat
+  #Linux
+  lscpu
+#+END_SRC
+
 * 依赖管理
 所有依赖均通过源码进行依赖，不通过静态库或者动态库进行依赖
 
