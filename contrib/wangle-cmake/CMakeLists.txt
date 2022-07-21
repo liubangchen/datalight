@@ -100,7 +100,11 @@ target_include_directories(
   PRIVATE
   ${WANGLE_SOURCE_DIR}
 )
-
+target_compile_options(
+  wangle
+  PUBLIC
+  -Woverloaded-virtual
+)
 target_include_directories(
   wangle
   PUBLIC
