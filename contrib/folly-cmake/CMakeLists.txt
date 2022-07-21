@@ -349,6 +349,13 @@ if(APPLE)
     folly
     c++abi
   )
+  target_compile_options(
+    folly
+    PUBLIC
+    -S
+    -mllvm
+    --x86-asm-syntax=intel
+  )
 endif()
 
 target_include_directories(
