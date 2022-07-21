@@ -1,5 +1,6 @@
 #+startup: showall
-
+* 依赖库提示
+- folly fizz wangle  proxygen 的基线版本建议选择v2022.05.30.00
 * 开发环境配置
 - 本工程依赖绝大多数依赖均采用源码依赖的方式(统一规范)，为避免每次cmake ../ 都会拉取依赖，可采用如下方式清理cmake的cache
   1. mkdir build & cd build & cmake ../ 这个时候第一执行的时候会自动clone依赖的类库
