@@ -34,3 +34,12 @@ target_compile_options(
   "-Wno-nullability-completeness"
   "-Wno-implicit-const-int-float-conversion"
 )
+
+if(COMPILER_CLANG)
+  target_compile_options(
+    proxygen
+    PRIVATE
+    "-Wno-deprecated-register"
+    "-Wno-error=register"
+  )
+endif()
