@@ -16,8 +16,8 @@
 #include <folly/SocketAddress.h>
 #include <folly/Synchronized.h>
 #include <folly/executors/IOThreadPoolExecutor.h>
-#include <velox/exec/Task.h>
 #include <velox/common/memory/MappedMemory.h>
+#include <velox/exec/Task.h>
 
 #include "server/CPUMon.h"
 

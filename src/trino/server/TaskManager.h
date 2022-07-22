@@ -14,13 +14,13 @@
 #pragma once
 
 #include <folly/Synchronized.h>
-#include <memory>
 #include <velox/exec/PartitionedOutputBufferManager.h>
+#include <memory>
 
-#include "server/TrinoTask.h"
-#include "server/QueryContextManager.h"
 #include "http/HttpServer.h"
 #include "protocol/TrinoProtocol.h"
+#include "server/QueryContextManager.h"
+#include "server/TrinoTask.h"
 
 namespace datalight::trino {
 

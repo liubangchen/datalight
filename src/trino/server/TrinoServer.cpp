@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "TrinoServer.h"
+#include "server/TrinoServer.h"
 
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/ip/host_name.hpp>
@@ -35,13 +35,13 @@
 #include "common/Counters.h"
 #include "connectors/hive/storage_adapters/FileSystems.h"
 #include "http/HttpServer.h"
+#include "protocol//Connectors.h"
 #include "protocol/TrinoProtocol.h"
 #include "server/Announcer.h"
-#include "server/SignalHandler.h"
-#include "server/TrinoExchangeSource.h"
 #include "server/PeriodicTaskManager.h"
+#include "server/SignalHandler.h"
 #include "server/TaskResource.h"
-#include "protocol//Connectors.h"
+#include "server/TrinoExchangeSource.h"
 
 #ifdef PRESTO_ENABLE_PARQUET
 #include "velox/dwio/parquet/RegisterParquetReader.h" // @manual

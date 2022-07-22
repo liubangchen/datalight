@@ -13,8 +13,8 @@
  */
 #pragma once
 
-#include <memory>
 #include <velox/exec/Task.h>
+#include <memory>
 
 #include "protocol/TrinoProtocol.h"
 #include "types/TrinoTaskId.h"

@@ -15,8 +15,8 @@
 
 #include <velox/common/memory/Memory.h>
 
-#include "server/TaskManager.h"
 #include "http/HttpServer.h"
+#include "server/TaskManager.h"
 
 namespace datalight::trino {
 

@@ -15,9 +15,9 @@
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
-#include <velox/core/PlanNode.h>
 #include <velox/common/base/StatsReporter.h>
 #include <velox/common/time/Timer.h>
+#include <velox/core/PlanNode.h>
 #include <velox/exec/Exchange.h>
 #include <velox/serializers/PrestoSerializer.h>
 

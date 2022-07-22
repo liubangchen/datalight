@@ -13,16 +13,14 @@
  */
 #include "server/TaskResource.h"
 
+#include <nlohmann/json.hpp>
 #include <velox/common/time/Timer.h>
+#include <velox/common/encode/Base64.h>
 #include <velox/type/tz/TimeZoneMap.h>
 
 #include "common/Exception.h"
-#include "nlohmann/json.hpp"
-#include "presto_cpp/main/thrift/ProtocolToThrift.h"
-#include "presto_cpp/main/thrift/ThriftIO.h"
-#include "presto_cpp/main/thrift/gen-cpp2/PrestoThrift.h"
-#include "types/TrinoToVeloxQueryPlan.h"
 #include "protocol/TrinoProtocol.h"
+#include "types/TrinoToVeloxQueryPlan.h"
 
 namespace datalight::trino {
 

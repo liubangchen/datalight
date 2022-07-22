@@ -16,7 +16,7 @@
 
 #include "velox/type/Type.h"
 
-#include "presto_cpp/main/types/antlr/TypeSignatureBaseVisitor.h"
+#include "types/antlr/TypeSignatureBaseVisitor.h"
 
 namespace facebook {
 namespace presto {

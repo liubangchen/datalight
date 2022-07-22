@@ -20,7 +20,6 @@
 #include "common/Exception.h"
 #include "common/Utils.h"
 
-
 using namespace facebook::velox;
 
 namespace datalight::trino {
