@@ -18,12 +18,6 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/lexical_cast.hpp>
 #include <glog/logging.h>
-
-#include "presto_cpp/main/PeriodicTaskManager.h"
-
-#include "presto_cpp/main/TaskResource.h"
-
-#include "presto_cpp/presto_protocol/Connectors.h"
 #include "velox/common/base/StatsReporter.h"
 #include "velox/common/caching/SsdCache.h"
 #include "velox/common/file/FileSystems.h"
@@ -45,6 +39,9 @@
 #include "server/Announcer.h"
 #include "server/SignalHandler.h"
 #include "server/TrinoExchangeSource.h"
+#include "server/PeriodicTaskManager.h"
+#include "server/TaskResource.h"
+#include "protocol//Connectors.h"
 
 #ifdef PRESTO_ENABLE_PARQUET
 #include "velox/dwio/parquet/RegisterParquetReader.h" // @manual

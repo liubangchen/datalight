@@ -11,19 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "common/Utils.h"
+#pragma once
 
-#include <fmt/format.h>
+#include <velox/exec/Split.h>
 
-namespace datalight::trino::util {
+#include "protocol/TrinoProtocol.h"
 
-protocol::DateTime toISOTimestamp(uint64_t timeMilli) {
-  char buf[80];
-  time_t timeSecond = timeMilli / 1000;
-  tm gmtTime;
-  gmtime_r(&timeSecond, &gmtTime);
-  strftime(buf, sizeof buf, "%FT%T", &gmtTime);
-  return fmt::format("{}.{:03d}Z", buf, timeMilli % 1000);
-}
+namespace datalight::trino {
 
-} // namespace datalight::trino::util
+// Creates and returns exec::Split (with connector::ConnectorSplit inside) based
+// on the given protocol split.
+facebook::velox::exec::Split toVeloxSplit(
+    const protocol::ScheduledSplit& scheduledSplit);
+
+} // namespace datalight::trino

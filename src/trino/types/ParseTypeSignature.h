@@ -11,19 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "common/Utils.h"
+#pragma once
 
-#include <fmt/format.h>
+#include <velox/type/Type.h>
 
-namespace datalight::trino::util {
-
-protocol::DateTime toISOTimestamp(uint64_t timeMilli) {
-  char buf[80];
-  time_t timeSecond = timeMilli / 1000;
-  tm gmtTime;
-  gmtime_r(&timeSecond, &gmtTime);
-  strftime(buf, sizeof buf, "%FT%T", &gmtTime);
-  return fmt::format("{}.{:03d}Z", buf, timeMilli % 1000);
-}
-
-} // namespace datalight::trino::util
+namespace datalight::trino {
+facebook::velox::TypePtr parseTypeSignature(const std::string& signature);
+} // namespace facebook::presto

@@ -11,19 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "common/Utils.h"
 
-#include <fmt/format.h>
+#include <boost/algorithm/string.hpp>
+#include "presto_cpp/main/types/TypeSignatureTypeConverter.h"
 
-namespace datalight::trino::util {
+// Generated from TypeSignature.g4 by ANTLR 4.9.3
 
-protocol::DateTime toISOTimestamp(uint64_t timeMilli) {
-  char buf[80];
-  time_t timeSecond = timeMilli / 1000;
-  tm gmtTime;
-  gmtime_r(&timeSecond, &gmtTime);
-  strftime(buf, sizeof buf, "%FT%T", &gmtTime);
-  return fmt::format("{}.{:03d}Z", buf, timeMilli % 1000);
-}
+#include "TypeSignatureBaseVisitor.h"
 
-} // namespace datalight::trino::util
+using namespace facebook::presto::type;
