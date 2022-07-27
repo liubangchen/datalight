@@ -1,7 +1,7 @@
 
 #include "Duration.h"
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
     Duration::Duration(const std::string& duration) {
         static const RE2 kPattern(R"(^\s*(\d+(?:\.\d+)?)\s*([a-zA-Z]+)\s*$)");

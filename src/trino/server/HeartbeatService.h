@@ -3,7 +3,7 @@
 #include <folly/io/async/EventBaseThread.h>
 #include <http/HttpClient.h>
 
-namespace datalight::server
+namespace datalight::trino
 {
     class HeartbeatService
     {

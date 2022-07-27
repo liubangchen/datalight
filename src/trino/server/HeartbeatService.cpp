@@ -9,7 +9,7 @@
 #include <nlohmann/json.hpp>
 #include <proxygen/httpserver/RequestHandler.h>
 
-namespace datalight::server
+namespace datalight::trino
 {
     using min = std::chrono::minutes;
 

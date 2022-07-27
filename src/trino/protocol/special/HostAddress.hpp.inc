@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
 using HostAddress = std::string;
 

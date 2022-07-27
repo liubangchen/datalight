@@ -19,6 +19,8 @@
 #include "protocol/TrinoProtocol.h"
 #include "types/TrinoTaskId.h"
 
+using namespace facebook;
+
 namespace datalight::trino {
 
 template <typename T>
@@ -63,50 +65,50 @@ struct ResultRequest {
 };
 
 struct PrestoTask {
-  const PrestoTaskId id;
-  std::shared_ptr<velox::exec::Task> task;
-  bool taskStarted = false;
-  uint64_t lastHeartbeatMs{0};
-  mutable std::mutex mutex;
+    const TrinoTaskId id;
+    std::shared_ptr<velox::exec::Task> task;
+    bool taskStarted = false;
+    uint64_t lastHeartbeatMs{0};
+    mutable std::mutex mutex;
 
-  // Error before task is created or when task is being created.
-  std::exception_ptr error = nullptr;
+    // Error before task is created or when task is being created.
+    std::exception_ptr error = nullptr;
 
-  // Contains state info but is never returned.
-  protocol::TaskInfo info;
+    // Contains state info but is never returned.
+    protocol::TaskInfo info;
 
-  // Pending result requests keyed on buffer ID. May arrive before 'task' is
-  // created. May be accessed on different threads outside of 'mutex', hence
-  // shared_ptr to define lifetime.
-  std::unordered_map<int64_t, std::shared_ptr<ResultRequest>> resultRequests;
+    // Pending result requests keyed on buffer ID. May arrive before 'task' is
+    // created. May be accessed on different threads outside of 'mutex', hence
+    // shared_ptr to define lifetime.
+    std::unordered_map<int64_t, std::shared_ptr<ResultRequest>> resultRequests;
 
-  // Pending status request. May arrive before there is a Task.
-  PromiseHolderWeakPtr<std::unique_ptr<protocol::TaskStatus>> statusRequest;
+    // Pending status request. May arrive before there is a Task.
+    PromiseHolderWeakPtr<std::unique_ptr<protocol::TaskStatus>> statusRequest;
 
-  // Info request. May arrive before there is a Task.
-  PromiseHolderWeakPtr<std::unique_ptr<protocol::TaskInfo>> infoRequest;
+    // Info request. May arrive before there is a Task.
+    PromiseHolderWeakPtr<std::unique_ptr<protocol::TaskInfo>> infoRequest;
 
-  explicit PrestoTask(const std::string& taskId);
+    explicit PrestoTask(const std::string& taskId);
 
-  /// Updates when this task was touched last time.
-  void updateHeartbeatLocked();
+    /// Updates when this task was touched last time.
+    void updateHeartbeatLocked();
 
-  /// Returns time (ms) since the task was touched last time (last heartbeat).
-  /// Returns zero, if never (shouldn't happen).
-  uint64_t timeSinceLastHeartbeatMs() const;
+    /// Returns time (ms) since the task was touched last time (last heartbeat).
+    /// Returns zero, if never (shouldn't happen).
+    uint64_t timeSinceLastHeartbeatMs() const;
 
-  protocol::TaskStatus updateStatus() {
-    std::lock_guard<std::mutex> l(mutex);
-    return updateStatusLocked();
-  }
+    protocol::TaskStatus updateStatus() {
+        std::lock_guard<std::mutex> l(mutex);
+        return updateStatusLocked();
+    }
 
-  protocol::TaskInfo updateInfo() {
-    std::lock_guard<std::mutex> l(mutex);
-    return updateInfoLocked();
-  }
+    protocol::TaskInfo updateInfo() {
+        std::lock_guard<std::mutex> l(mutex);
+        return updateInfoLocked();
+    }
 
-  // Turn the task numbers (per state) into a string.
-  static std::string taskNumbersToString(
+    // Turn the task numbers (per state) into a string.
+    static std::string taskNumbersToString(
       const std::array<size_t, 5>& taskNumbers);
 
   protocol::TaskStatus updateStatusLocked();

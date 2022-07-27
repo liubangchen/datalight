@@ -14,7 +14,7 @@
 #pragma once
 #include "velox/vector/BaseVector.h"
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
 // Deserializes base64-encoded string created by
 // presto-common/src/main/java/com/facebook/presto/common/block/BlockEncodingManager.java

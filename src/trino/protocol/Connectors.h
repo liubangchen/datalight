@@ -15,7 +15,7 @@
 
 #include <string>
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
 // There are two concepts connector name and catalog name.
 // Catalog name is inferred from the catalog file name. For

@@ -15,8 +15,8 @@
 
 using namespace facebook::velox;
 
-using datalight::protocol::QueryId;
-using datalight::protocol::TaskId;
+using datalight::trino::protocol::QueryId;
+using datalight::trino::protocol::TaskId;
 
 DEFINE_int32(
     num_query_threads,

@@ -57,7 +57,7 @@ class TaskManager {
   std::unique_ptr<protocol::TaskInfo> createOrUpdateTask(
       const protocol::TaskId& taskId,
       facebook::velox::core::PlanFragment planFragment,
-      const std::vector<protocol::TaskSource>& sources,
+      // const std::vector<protocol::TaskSource>& sources,
       const protocol::OutputBuffers& outputBuffers,
       std::unordered_map<std::string, std::string>&& configStrings,
       std::unordered_map<

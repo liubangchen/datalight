@@ -18,7 +18,7 @@
 #include "velox/vector/ComplexVector.h"
 #include "velox/vector/FlatVector.h"
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
     namespace {
 
         static const char* kLongArray = "LONG_ARRAY";

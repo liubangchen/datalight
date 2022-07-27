@@ -13,7 +13,7 @@
  */
 
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
 std::ostream& operator<<(std::ostream& os, const Duration& d);
 

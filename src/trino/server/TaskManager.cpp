@@ -33,8 +33,8 @@ DEFINE_int32(
 
 using namespace facebook::velox;
 
-using datalight::protocol::TaskId;
-using datalight::protocol::TaskInfo;
+using datalight::trino::protocol::TaskId;
+using datalight::trino::protocol::TaskInfo;
 
 namespace datalight::trino {
 
@@ -180,7 +180,7 @@ std::unique_ptr<TaskInfo> TaskManager::createOrUpdateErrorTask(
 std::unique_ptr<TaskInfo> TaskManager::createOrUpdateTask(
     const TaskId& taskId,
     core::PlanFragment planFragment,
-    const std::vector<protocol::TaskSource>& sources,
+    //const std::vector<protocol::TaskSource>& sources,
     const protocol::OutputBuffers& outputBuffers,
     std::unordered_map<std::string, std::string>&& configStrings,
     std::unordered_map<
@@ -273,7 +273,7 @@ std::unique_ptr<TaskInfo> TaskManager::createOrUpdateTask(
     execTask->updateBroadcastOutputBuffers(
         outputBuffers.buffers.size(), outputBuffers.noMoreBufferIds);
   }
-
+  /**
   for (const auto& source : sources) {
     // Add all splits from the source to the task.
     LOG(INFO) << "Adding " << source.splits.size() << " splits to " << taskId
@@ -303,7 +303,7 @@ std::unique_ptr<TaskInfo> TaskManager::createOrUpdateTask(
       execTask->noMoreSplits(source.planNodeId);
     }
   }
-
+  **/
   // 'prestoTask' will exist by virtue of shared_ptr but may for example have
   // been aborted.
   auto info = prestoTask->updateInfoLocked(); // Presto task is locked above.
@@ -753,7 +753,7 @@ std::shared_ptr<PrestoTask> TaskManager::findOrCreateTaskLocked(
     prestoTask->info.stats.createTime =
         util::toISOTimestamp(facebook::velox::getCurrentTimeMs());
     prestoTask->info.needsPlan = true;
-    prestoTask->info.metadataUpdates.connectorId = "unused";
+    //prestoTask->info.metadataUpdates.connectorId = "unused";
 
     struct uuid_split {
       int64_t lo;
@@ -767,15 +767,15 @@ std::shared_ptr<PrestoTask> TaskManager::findOrCreateTaskLocked(
     uuid_parse uuid;
     uuid.uuid = boost::uuids::random_generator()();
 
-    prestoTask->info.taskStatus.taskInstanceIdLeastSignificantBits =
-        uuid.split.lo;
-    prestoTask->info.taskStatus.taskInstanceIdMostSignificantBits =
-        uuid.split.hi;
+    //prestoTask->info.taskStatus.taskInstanceIdLeastSignificantBits =
+    //    uuid.split.lo;
+    //prestoTask->info.taskStatus.taskInstanceIdMostSignificantBits =
+    //     uuid.split.hi;
 
     prestoTask->info.taskStatus.state = protocol::TaskState::RUNNING;
     prestoTask->info.taskStatus.self =
         fmt::format("{}/v1/task/{}", baseUri_, taskId);
-    prestoTask->info.taskStatus.outputBufferUtilization = 1;
+    // prestoTask->info.taskStatus.outputBufferUtilization = 1;
     prestoTask->updateHeartbeatLocked();
     ++prestoTask->info.taskStatus.version;
 

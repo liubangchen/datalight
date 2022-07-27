@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
     template <typename T>
         struct pointerDerefCompare {
@@ -43,37 +43,37 @@ namespace datalight::protocol {
 namespace nlohmann {
 
     template <typename T>
-        struct adl_serializer<datalight::protocol::ColumnDomain<T>> {
+        struct adl_serializer<datalight::trino::protocol::ColumnDomain<T>> {
         static void to_json(
             json& j,
-            const datalight::protocol::ColumnDomain<T>& p) {
-            datalight::protocol::to_json_key(
+            const datalight::trino::protocol::ColumnDomain<T>& p) {
+            datalight::trino::protocol::to_json_key(
                 j, "column", p.column, "ColumnDomain", "T", "column");
-            datalight::protocol::to_json_key(
+            datalight::trino::protocol::to_json_key(
                 j, "domain", p.domain, "ColumnDomain", "Domain", "domain");
         }
 
         static void from_json(
             const json& j,
-            datalight::protocol::ColumnDomain<T>& p) {
-            datalight::protocol::from_json_key(
+            datalight::trino::protocol::ColumnDomain<T>& p) {
+            datalight::trino::protocol::from_json_key(
                 j, "column", p.column, "ColumnDomain", "T", "column");
-            datalight::protocol::from_json_key(
+            datalight::trino::protocol::from_json_key(
                 j, "domain", p.domain, "ColumnDomain", "Domain", "domain");
         }
     };
 
     template <typename T>
-        struct adl_serializer<datalight::protocol::TupleDomain<T>> {
+        struct adl_serializer<datalight::trino::protocol::TupleDomain<T>> {
         static void to_json(
             json& j,
-            const datalight::protocol::TupleDomain<T>& tup) {
-            datalight::protocol::List<
-                datalight::protocol::ColumnDomain<T>>
+            const datalight::trino::protocol::TupleDomain<T>& tup) {
+            datalight::trino::protocol::List<
+                datalight::trino::protocol::ColumnDomain<T>>
                 list;
             if (tup.domains != nullptr) {
                 for (auto& el : *tup.domains) {
-                    datalight::protocol::ColumnDomain<T> domain;
+                    datalight::trino::protocol::ColumnDomain<T> domain;
                     domain.column = el.first;
                     domain.domain = el.second;
                     list.push_back(domain);
@@ -85,17 +85,17 @@ namespace nlohmann {
 
         static void from_json(
             const json& j,
-            datalight::protocol::TupleDomain<T>& tup) {
+            datalight::trino::protocol::TupleDomain<T>& tup) {
             if (j.count("columnDomains") != 0U) {
-                std::shared_ptr<datalight::protocol::
-                    Map<T, datalight::protocol::Domain>>
+                std::shared_ptr<datalight::trino::protocol::
+                    Map<T, datalight::trino::protocol::Domain>>
                     map = std::make_shared<
-                    std::map<T, datalight::protocol::Domain>>();
+                    std::map<T, datalight::trino::protocol::Domain>>();
 
-                datalight::protocol::List<
-                    datalight::protocol::ColumnDomain<T>>
+                datalight::trino::protocol::List<
+                    datalight::trino::protocol::ColumnDomain<T>>
                     list = j.at("columnDomains");
-                for (const datalight::protocol::ColumnDomain<T>& value : list) {
+                for (const datalight::trino::protocol::ColumnDomain<T>& value : list) {
                     map->insert(std::make_pair(T(value.column), value.domain));
                 }
                 tup.domains = map;
@@ -105,16 +105,16 @@ namespace nlohmann {
 
     template <typename T>
         struct adl_serializer<
-        datalight::protocol::TupleDomain<std::shared_ptr<T>>> {
+        datalight::trino::protocol::TupleDomain<std::shared_ptr<T>>> {
         static void to_json(
             json& j,
-            const datalight::protocol::TupleDomain<std::shared_ptr<T>>& tup) {
-            datalight::protocol::List<
-                datalight::protocol::ColumnDomain<std::shared_ptr<T>>>
+            const datalight::trino::protocol::TupleDomain<std::shared_ptr<T>>& tup) {
+            datalight::trino::protocol::List<
+                datalight::trino::protocol::ColumnDomain<std::shared_ptr<T>>>
                 list;
             if (tup.domains != nullptr) {
                 for (auto& el : *tup.domains) {
-                    datalight::protocol::ColumnDomain<std::shared_ptr<T>> domain;
+                    datalight::trino::protocol::ColumnDomain<std::shared_ptr<T>> domain;
                     domain.column = el.first;
                     domain.domain = el.second;
                     list.push_back(domain);
@@ -126,17 +126,17 @@ namespace nlohmann {
 
         static void from_json(
             const json& j,
-            datalight::protocol::TupleDomain<std::shared_ptr<T>>& tup) {
+            datalight::trino::protocol::TupleDomain<std::shared_ptr<T>>& tup) {
             if (j.count("columnDomains") != 0U) {
                 auto map = std::make_shared<std::map<
                     std::shared_ptr<T>,
-                    datalight::protocol::Domain,
-                    datalight::protocol::pointerDerefCompare<T>>>();
+                    datalight::trino::protocol::Domain,
+                    datalight::trino::protocol::pointerDerefCompare<T>>>();
 
-                datalight::protocol::List<
-                    datalight::protocol::ColumnDomain<std::shared_ptr<T>>>
+                datalight::trino::protocol::List<
+                    datalight::trino::protocol::ColumnDomain<std::shared_ptr<T>>>
                     list = j.at("columnDomains");
-                for (const datalight::protocol::ColumnDomain<std::shared_ptr<T>>&
+                for (const datalight::trino::protocol::ColumnDomain<std::shared_ptr<T>>&
                          value : list) {
                     map->insert(
                         std::make_pair(std::shared_ptr<T>(value.column), value.domain));

@@ -14,7 +14,7 @@
 
 // dependency KeyedSubclass
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
 std::string JsonEncodedSubclass::getSubclassKey(nlohmann::json j) {
   return j["@type"];

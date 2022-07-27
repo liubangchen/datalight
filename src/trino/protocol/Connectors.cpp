@@ -15,7 +15,7 @@
 #include <unordered_map>
 #include "velox/common/base/Exceptions.h"
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
     namespace {
 

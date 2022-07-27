@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 struct OperatorInfo {};
 void to_json(json& j, const OperatorInfo& p);
 void from_json(const json& j, OperatorInfo& p);

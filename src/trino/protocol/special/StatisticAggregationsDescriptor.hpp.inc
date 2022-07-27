@@ -1,4 +1,4 @@
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
     struct ColumnStatisticMetadata;
     template <typename T>
         struct StatisticAggregationsDescriptor {
@@ -11,17 +11,17 @@ namespace datalight::protocol {
 
 namespace nlohmann {
 
-       template <typename T>  struct adl_serializer<datalight::protocol::StatisticAggregationsDescriptor<T>> {
+       template <typename T>  struct adl_serializer<datalight::trino::protocol::StatisticAggregationsDescriptor<T>> {
 
         static void to_json(
             json& j,
-            const datalight::protocol:: StatisticAggregationsDescriptor<T>& p) {
+            const datalight::trino::protocol:: StatisticAggregationsDescriptor<T>& p) {
 
         }
 
         static void from_json(
             const json& j,
-            datalight::protocol:: StatisticAggregationsDescriptor<T>& p) {
+            datalight::trino::protocol:: StatisticAggregationsDescriptor<T>& p) {
 
         }
        };

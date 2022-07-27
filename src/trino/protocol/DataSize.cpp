@@ -14,7 +14,7 @@
 #include "DataSize.h"
 #include <math.h>
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
     DataSize::DataSize(const std::string& string) {
         static const RE2 kPattern(R"(^\s*(\d+(?:\.\d+)?)\s*([a-zA-Z]+)\s*$)");

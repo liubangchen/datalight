@@ -1,4 +1,4 @@
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 void to_json(json& j, const std::shared_ptr<ConnectorTableHandle>& p) {
   if (p == nullptr) {
     return;

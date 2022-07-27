@@ -38,7 +38,7 @@
 
 using nlohmann::json;
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
 extern const char* const PRESTO_PAGES_MIME_TYPE;
 
@@ -207,30 +207,30 @@ template <typename T> void from_json(const json &j, std::shared_ptr<T> &p) {
 	j.get_to(*p);
 }
 
-template <typename V> struct adl_serializer<datalight::protocol::Map<int, V>> {
-	static void to_json(json &j, const datalight::protocol::Map<int, V> &p) {
+template <typename V> struct adl_serializer<datalight::trino::protocol::Map<int, V>> {
+	static void to_json(json &j, const datalight::trino::protocol::Map<int, V> &p) {
 		j = json::object();
 		for (auto &el : p) {
 			j[std::to_string(el.first)] = el.second;
 		}
 	}
 
-	static void from_json(const json &j, datalight::protocol::Map<int, V> &p) {
+	static void from_json(const json &j, datalight::trino::protocol::Map<int, V> &p) {
 		for (auto &el : j.items()) {
 			p.insert(std::pair<int, V>(std::stoi(el.key()), el.value().get<V>()));
 		}
 	}
 };
 
-template <typename K, typename V> struct adl_serializer<datalight::protocol::Map<K, V>> {
-	static void to_json(json &j, const datalight::protocol::Map<K, V> &p) {
+template <typename K, typename V> struct adl_serializer<datalight::trino::protocol::Map<K, V>> {
+	static void to_json(json &j, const datalight::trino::protocol::Map<K, V> &p) {
 		j = json::object();
 		for (auto &el : p) {
 			j[json_map_key(el.first)] = el.second;
 		}
 	}
 
-	static void from_json(const json &j, datalight::protocol::Map<K, V> &p) {
+	static void from_json(const json &j, datalight::trino::protocol::Map<K, V> &p) {
 		for (auto &el : j.items()) {
 			p.insert(std::pair<K, V>(K(el.key()), el.value().get<V>()));
 		}
@@ -243,7 +243,7 @@ template <typename K, typename V> struct adl_serializer<datalight::protocol::Map
 //
 {{#.}}
 {{#abstract}}
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
     struct {{&class_name}} : public {{&super_class}} {
         {{#fields}}
         {{#field_local}}{{#optional}}std::shared_ptr<{{/optional}}{{&field_text}}{{#optional}}>{{/optional}} {{&field_name}} = {};{{/field_local}}
@@ -266,7 +266,7 @@ namespace datalight::protocol {
 {{/hinc}}
 {{^hinc}}
 {{#struct}}
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
     struct {{class_name}} {{#super_class}}: public {{super_class}}{{/super_class}}{
         {{#fields}}
         {{#field_local}}{{#optional}}std::shared_ptr<{{/optional}}{{&field_text}}{{#optional}}>{{/optional}} {{&field_name}} = {};{{/field_local}}
@@ -281,7 +281,7 @@ namespace datalight::protocol {
 }
 {{/struct}}
 {{#enum}}
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
     enum class {{class_name}} {
         {{#elements}}
         {{&element}}{{^_last}},{{/_last}}

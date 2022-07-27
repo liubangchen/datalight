@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
 void to_json(json& j, const Duration& p) {
   j = p.toString();

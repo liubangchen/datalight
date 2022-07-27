@@ -35,7 +35,7 @@ std::string json_map_key(std::string p) {
 }
 } // namespace nlohmann
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
 const char* const PRESTO_PAGES_MIME_TYPE = "application/x-presto-pages";
 
@@ -60,7 +60,7 @@ const char* const PRESTO_ABORT_TASK_URL_PARAM = "abort";
 {{/cinc}}
 {{^cinc}}
 {{#struct}}
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
     {{#super_class}}
     {{&class_name}}::{{&class_name}}() noexcept {
         _type = "{{json_key}}";
@@ -88,7 +88,7 @@ namespace datalight::protocol {
 }
 {{/struct}}
 {{#enum}}
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
     //Loosly copied this here from NLOHMANN_JSON_SERIALIZE_ENUM()
 
     // NOLINTNEXTLINE: cppcoreguidelines-avoid-c-arrays
@@ -121,7 +121,7 @@ namespace datalight::protocol {
 }
 {{/enum}}
 {{#abstract}}
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
     void to_json(json& j, const std::shared_ptr<{{&class_name}}>& p) {
         if ( p == nullptr ) {
             return;

@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
 void to_json(nlohmann::json& j, const DataSize& p) {
   j = p.toString();

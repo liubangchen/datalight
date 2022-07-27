@@ -14,7 +14,7 @@
 #pragma once
 #include <re2/re2.h>
 
-namespace datalight::protocol {
+namespace datalight::trino::protocol {
 
     enum class DataUnit { BYTE, KILOBYTE, MEGABYTE, GIGABYTE, TERABYTE, PETABYTE };
 
