@@ -16,11 +16,13 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <hash-library/sha256.h>
+#include <jwt/jwt.h>
 #include <nlohmann/json.hpp>
-
 #include "http/HttpClient.h"
 
 namespace datalight::trino {
+using min = std::chrono::minutes;
 namespace {
 
 std::string announcementBody(
@@ -47,7 +49,7 @@ std::string announcementBody(
       {"location", nodeLocation},
       {"services",
        {{{"id", id},
-         {"type", "presto"},
+         {"type", "trino"},
          {"properties",
           {{"node_version", nodeVersion},
            {"coordinator", false},
@@ -59,8 +61,20 @@ std::string announcementBody(
 proxygen::HTTPMessage announcementRequest(
     const std::string& address,
     int port,
+    const std::string& environment,
     const std::string& nodeId,
     const std::string& body) {
+  hashlibrary::SHA256 sha256;
+  sha256.add(environment.c_str(), environment.size());
+  unsigned char sbuf[hashlibrary::SHA256::HashBytes];
+  sha256.getHash(sbuf);
+  std::string hash_key(sbuf, sbuf + sizeof sbuf / sizeof sbuf[0]);
+  const auto time = jwt::date::clock::now();
+  auto token = jwt::create()
+                   .set_subject(nodeId)
+                   .set_expires_at(time + min{5})
+                   .sign(jwt::algorithm::hs256(hash_key));
+
   proxygen::HTTPMessage request;
   request.setMethod(proxygen::HTTPMethod::PUT);
   request.setURL(fmt::format("/v1/announcement/{}", nodeId));
@@ -68,6 +82,7 @@ proxygen::HTTPMessage announcementRequest(
       proxygen::HTTP_HEADER_HOST, fmt::format("{}:{}", address, port));
   request.getHeaders().set(
       proxygen::HTTP_HEADER_CONTENT_TYPE, "application/json");
+  request.getHeaders().rawSet("X-Trino-Internal-Bearer", token);
   request.getHeaders().set(
       proxygen::HTTP_HEADER_CONTENT_LENGTH, std::to_string(body.size()));
   return request;
@@ -93,8 +108,12 @@ Announcer::Announcer(
           environment,
           nodeLocation,
           connectorIds)),
-      announcementRequest_(
-          announcementRequest(address, port, nodeId, announcementBody_)),
+      announcementRequest_(announcementRequest(
+          address,
+          port,
+          environment,
+          nodeId,
+          announcementBody_)),
       eventBaseThread_(false /*autostart*/) {}
 
 Announcer::~Announcer() {
