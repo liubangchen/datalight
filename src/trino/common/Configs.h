@@ -13,11 +13,11 @@
  */
 #pragma once
 
+#include <velox/core/Context.h>
 #include <chrono>
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <velox/core/Context.h>
 
 namespace datalight::trino {
 
@@ -73,7 +73,7 @@ class ConfigBase {
 /// Provides access to system properties defined in config.properties file.
 class SystemConfig : public ConfigBase {
  public:
-  static constexpr std::string_view kPrestoVersion{"presto.version"};
+  static constexpr std::string_view kTrinoVersion{"trino.version"};
   static constexpr std::string_view kHttpServerHttpPort{
       "http-server.http.port"};
   static constexpr std::string_view kDiscoveryUri{"discovery.uri"};
@@ -111,7 +111,7 @@ class SystemConfig : public ConfigBase {
 
   int httpServerHttpPort() const;
 
-  std::string prestoVersion() const;
+  std::string trinoVersion() const;
 
   std::string discoveryUri() const;
 

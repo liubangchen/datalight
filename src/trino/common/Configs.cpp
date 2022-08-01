@@ -44,8 +44,8 @@ int SystemConfig::httpServerHttpPort() const {
   return requiredProperty<int>(std::string(kHttpServerHttpPort));
 }
 
-std::string SystemConfig::prestoVersion() const {
-  return requiredProperty(std::string(kPrestoVersion));
+std::string SystemConfig::trinoVersion() const {
+  return requiredProperty(std::string(kTrinoVersion));
 }
 
 std::string SystemConfig::discoveryUri() const {

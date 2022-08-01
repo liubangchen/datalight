@@ -135,7 +135,7 @@ void TrinoServer::run() {
     systemConfig->initialize(configDirectoryPath_ + "/config.properties");
     nodeConfig->initialize(configDirectoryPath_ + "/node.properties");
     servicePort = systemConfig->httpServerHttpPort();
-    nodeVersion_ = systemConfig->prestoVersion();
+    nodeVersion_ = systemConfig->trinoVersion();
     httpExecThreads = systemConfig->httpExecThreads();
     environment_ = nodeConfig->nodeEnvironment();
     nodeId_ = nodeConfig->nodeId();

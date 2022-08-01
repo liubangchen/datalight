@@ -9,7 +9,6 @@ DEFINE_string(etc_dir, ".", "etc directory for presto configuration");
 
 int main(int argc, char* argv[]) {
   folly::init(&argc, &argv);
-
   datalight::trino::TrinoServer server(FLAGS_etc_dir);
   server.run();
   LOG(INFO) << "SHUTDOWN: Exiting main()";
