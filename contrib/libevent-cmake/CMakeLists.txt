@@ -415,7 +415,7 @@ list(
   sys/stat.h
   sys/time.h
   sys/param.h
-  )
+)
 if(WIN32)
   list(
     APPEND FILES_TO_CHECK
@@ -423,7 +423,7 @@ if(WIN32)
     winsock2.h
     ws2tcpip.h
     afunix.h
-    )
+  )
 else()
   list(
     APPEND FILES_TO_CHECK
@@ -452,7 +452,7 @@ else()
     netinet/in6.h
     netinet/tcp.h
     ifaddrs.h
-    )
+  )
 endif()
 
 if(NOT "${CMAKE_HOST_SYSTEM_NAME}" STREQUAL "Linux")
@@ -805,6 +805,13 @@ set(EVENT__HAVE_STRUCT_SOCKADDR_STORAGE 1)
 set(EVENT__HAVE_GETTIMEOFDAY 1)
 set(EVENT__HAVE_STRSEP 1)
 set(EVENT__HAVE_STRTOK_R 1)
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  set(EVENT__HAVE_POLL 1)
+  set(EVENT__HAVE_EPOLL 1)
+endif()
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+  set(EVENT__HAVE_KQUEUE 1)
+endif()
 # Group the source files.
 set(
   HDR_PRIVATE
