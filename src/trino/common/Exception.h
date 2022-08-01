@@ -22,8 +22,8 @@ namespace std {
 class exception;
 }
 
-namespace datalight::protocol {
-struct ExecutionFailureInfo;
+namespace datalight::trino::protocol {
+    struct ExecutionFailureInfo;
 struct ErrorCode;
 } // namespace protocol
 

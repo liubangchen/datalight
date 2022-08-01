@@ -462,19 +462,19 @@ void TrinoServer::populateMemAndCPUInfo() {
   const int64_t nodeMemoryGb =
       systemConfig->systemMemoryGb() - cacheRamCapacityGb_;
   protocol::MemoryInfo memoryInfo{
-      {double(nodeMemoryGb), protocol::DataUnit::GIGABYTE}};
+      16,{}};
 
   // Fill the only memory pool info (general)
-  auto& poolInfo = memoryInfo.pools["general"];
+  //auto& poolInfo = memoryInfo.pool["general"];
   auto* pool = taskResource_->getPool();
 
   // Fill global pool fields.
-  poolInfo.maxBytes = nodeMemoryGb * 1024 * 1024 * 1204;
+  //poolInfo.maxBytes = nodeMemoryGb * 1024 * 1024 * 1204;
   // TODO(sperhsin): If 'current bytes' is the same as we get by summing up all
   // child contexts below, then use the one we sum up, rather than call
   // 'getCurrentBytes'.
-  poolInfo.reservedBytes = pool->getCurrentBytes();
-  poolInfo.reservedRevocableBytes = 0;
+  //poolInfo.reservedBytes = pool->getCurrentBytes();
+  //poolInfo.reservedRevocableBytes = 0;
 
   // Fill basic per-query fields.
   const auto* queryCtxMgr = taskManager_->getQueryContextManager();
@@ -482,11 +482,11 @@ void TrinoServer::populateMemAndCPUInfo() {
   queryCtxMgr->visitAllContexts([&](const protocol::QueryId& queryId,
                                     const velox::core::QueryCtx* queryCtx) {
     const protocol::Long bytes = queryCtx->pool()->getCurrentBytes();
-    poolInfo.queryMemoryReservations.insert({queryId, bytes});
+    //poolInfo.queryMemoryReservations.insert({queryId, bytes});
     // TODO(spershin): Might want to see what Java exports and export similar
     // info (like child memory pools).
-    poolInfo.queryMemoryAllocations.insert(
-        {queryId, {protocol::MemoryAllocation{"total", bytes}}});
+    //poolInfo.queryMemoryAllocations.insert(
+    //    {queryId, {protocol::MemoryAllocation{"total", bytes}}});
     ++numContexts;
   });
   REPORT_ADD_STAT_VALUE(kCounterNumQueryContexts, numContexts);

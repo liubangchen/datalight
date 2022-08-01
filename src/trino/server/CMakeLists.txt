@@ -10,9 +10,17 @@ target_link_libraries(
   velox_type_tz
   velox_serialization
   velox_encode
+  velox_dwio_common
+  velox_dwio_dwrf_proto
   velox_dwio_common_exception
   velox_functions_lib
   velox_hive_partition_function
+  velox_functions_prestosql
+  velox_aggregates
+  velox_hive_connector
+  velox_presto_serializer
+  velox_dwio_dwrf_reader
+  trino_adapters
   datalight_http
   nlohmann_json
   ssl
@@ -20,6 +28,5 @@ target_link_libraries(
   hashlibrary
   trino_protocol
   trino_common
-  trino_config
   folly
 )

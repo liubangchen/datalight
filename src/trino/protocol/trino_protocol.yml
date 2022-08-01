@@ -28,6 +28,9 @@ EnumMap:
     Type: JoinNodeType
 
 ExtraFields:
+  #  RowExpression:
+  #    std::shared_ptr<SourceLocation>: sourceLocation
+
   PlanNode:
     PlanNodeId: id
 
@@ -138,6 +141,15 @@ AbstractClasses:
           key: io.trino.sql.planner.plan.TableWriterNode,
         }
 
+#  RowExpression:
+#    super: JsonEncodedSubclass
+#    subclasses:
+#      - { name: CallExpression, key: call }
+#      - { name: ConstantExpression, key: constant }
+#      - { name: SpecialFormExpression, key: special }
+#      - { name: LambdaDefinitionExpression, key: lambda }
+#      - { name: VariableReferenceExpression, key: variable }
+
 JavaClasses:
   - core/trino-main/src/main/java/io/trino/server/NodeStatus.java
   - client/trino-client/src/main/java/io/trino/client/NodeVersion.java
@@ -172,6 +184,7 @@ JavaClasses:
   - core/trino-main/src/main/java/io/trino/operator/PipelineStats.java
   - core/trino-main/src/main/java/io/trino/operator/OperatorStats.java
   - core/trino-main/src/main/java/io/trino/operator/DriverStats.java
+  - core/trino-main/src/main/java/io/trino/operator/TableWriterOperator.java
   - core/trino-main/src/main/java/io/trino/server/TaskUpdateRequest.java
   - core/trino-main/src/main/java/io/trino/SessionRepresentation.java
   - core/trino-main/src/main/java/io/trino/sql/SqlPath.java
@@ -192,6 +205,12 @@ JavaClasses:
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/AggregationNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/GroupIdNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/DistinctLimitNode.java
+  - core/trino-main/src/main/java/io/trino/sql/relational/ConstantExpression.java
+  - core/trino-main/src/main/java/io/trino/sql/relational/VariableReferenceExpression.java
+  - core/trino-main/src/main/java/io/trino/sql/relational/LambdaDefinitionExpression.java
+  - core/trino-main/src/main/java/io/trino/sql/relational/VariableReferenceExpression.java
+  - core/trino-main/src/main/java/io/trino/sql/relational/CallExpression.java
+  - core/trino-main/src/main/java/io/trino/sql/relational/SpecialForm.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/JoinNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/SortNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/TopNNode.java

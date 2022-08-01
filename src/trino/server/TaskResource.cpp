@@ -226,12 +226,14 @@ proxygen::RequestHandler* TaskResource::createOrUpdateTask(
               json::parse(updateJson);
           velox::core::PlanFragment planFragment;
           if (taskUpdateRequest.fragment) {
+              /**
             auto fragment =
                 velox::encoding::Base64::decode(*taskUpdateRequest.fragment);
             protocol::PlanFragment prestoPlan = json::parse(fragment);
             VeloxQueryPlanConverter converter(pool_.get());
             planFragment = converter.toVeloxQueryPlan(
                 prestoPlan, taskUpdateRequest.tableWriteInfo, taskId);
+              **/
           }
           const auto& session = taskUpdateRequest.session;
           auto configs = std::unordered_map<std::string, std::string>(
@@ -258,7 +260,7 @@ proxygen::RequestHandler* TaskResource::createOrUpdateTask(
           taskInfo = taskManager_.createOrUpdateTask(
               taskId,
               std::move(planFragment),
-              taskUpdateRequest.sources,
+              //taskUpdateRequest.sources,
               taskUpdateRequest.outputIds,
               std::move(configs),
               std::move(connectorConfigs));
@@ -396,10 +398,10 @@ proxygen::RequestHandler* TaskResource::getTaskStatus(
                              std::unique_ptr<protocol::TaskStatus> taskStatus) {
                 if (!handlerState->requestExpired()) {
                   if (useThrift) {
-                    thrift::TaskStatus thriftTaskStatus;
-                    toThrift(*taskStatus, thriftTaskStatus);
-                    sendOkThriftResponse(
-                        downstream, thriftWrite(thriftTaskStatus));
+                      //thrift::TaskStatus thriftTaskStatus;
+                      //toThrift(*taskStatus, thriftTaskStatus);
+                      //sendOkThriftResponse(
+                      // downstream, thriftWrite(thriftTaskStatus));
                   } else {
                     json taskStatusJson = *taskStatus;
                     sendOkResponse(downstream, taskStatusJson);

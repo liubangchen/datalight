@@ -14,6 +14,7 @@ add_subdirectory(http)
 add_subdirectory(protocol)
 add_subdirectory(common)
 add_subdirectory(types)
+add_subdirectory(connectors)
 add_subdirectory(server)
 add_executable(trino-server TrinoMain.cpp)
 

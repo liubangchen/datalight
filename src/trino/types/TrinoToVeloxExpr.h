@@ -26,6 +26,7 @@ class VeloxExprConverter {
  public:
   explicit VeloxExprConverter(facebook::velox::memory::MemoryPool* pool) : pool_(pool) {}
 
+    /**
   std::shared_ptr<const ConstantTypedExpr> toVeloxExpr(
       std::shared_ptr<protocol::ConstantExpression> pexpr) const;
 
@@ -62,7 +63,7 @@ class VeloxExprConverter {
 
   std::optional<std::shared_ptr<const ITypedExpr>> tryConvertDate(
       const protocol::CallExpression& pexpr) const;
-
+    **/
   facebook::velox::memory::MemoryPool* pool_;
 };
 
