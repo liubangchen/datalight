@@ -18,51 +18,51 @@
 
 #include "types/antlr/TypeSignatureBaseVisitor.h"
 
-namespace facebook {
-namespace presto {
-using namespace type;
+namespace datalight {
+    namespace trino {
+        using namespace type;
+        class TypeSignatureTypeConverter : TypeSignatureBaseVisitor {
+            virtual antlrcpp::Any visitStart(
+                TypeSignatureParser::StartContext* ctx) override;
+            virtual antlrcpp::Any visitNamed_type(
+                TypeSignatureParser::Named_typeContext* ctx) override;
+            virtual antlrcpp::Any visitType_spec(
+                TypeSignatureParser::Type_specContext* ctx) override;
+            virtual antlrcpp::Any visitType(
+                TypeSignatureParser::TypeContext* ctx) override;
+            virtual antlrcpp::Any visitSimple_type(
+                TypeSignatureParser::Simple_typeContext* ctx) override;
+            virtual antlrcpp::Any visitDecimal_type(
+                TypeSignatureParser::Decimal_typeContext* ctx) override;
+            virtual antlrcpp::Any visitVariable_type(
+                TypeSignatureParser::Variable_typeContext* ctx) override;
+            virtual antlrcpp::Any visitType_list(
+                TypeSignatureParser::Type_listContext* ctx) override;
+            virtual antlrcpp::Any visitRow_type(
+                TypeSignatureParser::Row_typeContext* ctx) override;
+            virtual antlrcpp::Any visitMap_type(
+                TypeSignatureParser::Map_typeContext* ctx) override;
+            virtual antlrcpp::Any visitArray_type(
+                TypeSignatureParser::Array_typeContext* ctx) override;
+            virtual antlrcpp::Any visitIdentifier(
+                TypeSignatureParser::IdentifierContext* ctx) override;
 
-class TypeSignatureTypeConverter : TypeSignatureBaseVisitor {
-  virtual antlrcpp::Any visitStart(
-      TypeSignatureParser::StartContext* ctx) override;
-  virtual antlrcpp::Any visitNamed_type(
-      TypeSignatureParser::Named_typeContext* ctx) override;
-  virtual antlrcpp::Any visitType_spec(
-      TypeSignatureParser::Type_specContext* ctx) override;
-  virtual antlrcpp::Any visitType(
-      TypeSignatureParser::TypeContext* ctx) override;
-  virtual antlrcpp::Any visitSimple_type(
-      TypeSignatureParser::Simple_typeContext* ctx) override;
-  virtual antlrcpp::Any visitDecimal_type(
-      TypeSignatureParser::Decimal_typeContext* ctx) override;
-  virtual antlrcpp::Any visitVariable_type(
-      TypeSignatureParser::Variable_typeContext* ctx) override;
-  virtual antlrcpp::Any visitType_list(
-      TypeSignatureParser::Type_listContext* ctx) override;
-  virtual antlrcpp::Any visitRow_type(
-      TypeSignatureParser::Row_typeContext* ctx) override;
-  virtual antlrcpp::Any visitMap_type(
-      TypeSignatureParser::Map_typeContext* ctx) override;
-  virtual antlrcpp::Any visitArray_type(
-      TypeSignatureParser::Array_typeContext* ctx) override;
-  virtual antlrcpp::Any visitIdentifier(
-      TypeSignatureParser::IdentifierContext* ctx) override;
+        public:
+            static std::shared_ptr<const facebook::velox::Type> parse(
+                const std::string& text);
+        };
 
- public:
-  static std::shared_ptr<const velox::Type> parse(const std::string& text);
-};
+        struct NamedType {
+            std::string name;
+            facebook::velox::TypePtr type;
+        };
 
-struct NamedType {
-  std::string name;
-  velox::TypePtr type;
-};
+        facebook::velox::TypePtr typeFromString(const std::string& typeName);
+        facebook::velox::TypePtr rowFromNamedTypes(const std::vector<NamedType>& named);
+        facebook::velox::TypePtr mapFromKeyValueType(
+            facebook::velox::TypePtr keyType,
+            facebook::velox::TypePtr valueType);
+        facebook::velox::TypePtr arrayFromType(facebook::velox::TypePtr valueType);
 
-velox::TypePtr typeFromString(const std::string& typeName);
-velox::TypePtr rowFromNamedTypes(const std::vector<NamedType>& named);
-velox::TypePtr mapFromKeyValueType(
-    velox::TypePtr keyType,
-    velox::TypePtr valueType);
-velox::TypePtr arrayFromType(velox::TypePtr valueType);
-
-} // namespace presto
-} // namespace facebook
+    } // namespace trino
+} // namespace datalight

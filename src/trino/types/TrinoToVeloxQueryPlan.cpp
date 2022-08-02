@@ -50,7 +50,7 @@ std::vector<std::string> getNames(const protocol::Assignments& assignments) {
   names.reserve(assignments.assignments.size());
 
   for (const auto& assignment : assignments.assignments) {
-    names.emplace_back(assignment.first.name);
+      //names.emplace_back(assignment.first.name);
   }
 
   return names;

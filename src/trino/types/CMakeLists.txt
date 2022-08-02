@@ -10,20 +10,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 add_library(
-  presto_type_converter OBJECT
-  TypeSignatureTypeConverter.cpp antlr/TypeSignatureLexer.cpp
-  antlr/TypeSignatureParser.cpp)
+  trino_type_converter
+  OBJECT
+  TypeSignatureTypeConverter.cpp
+  antlr/TypeSignatureLexer.cpp
+  antlr/TypeSignatureParser.cpp
+)
 
-target_link_libraries(presto_type_converter velox_type)
+target_link_libraries(
+  trino_type_converter
+  velox_type
+  antlr4_static
+)
 
-add_library(presto_types OBJECT TrinoToVeloxQueryPlan.cpp
-        TrinoToVeloxExpr.cpp TrinoToVeloxSplit.cpp)
-add_dependencies(presto_types presto_type_converter velox_type
-                 velox_dwio_dwrf_proto)
-
-target_link_libraries(presto_types presto_type_converter
-                      velox_hive_partition_function)
-
-if(PRESTO_ENABLE_TESTING)
-  add_subdirectory(tests)
-endif()
+#add_library(
+#  trino_types
+#  OBJECT
+#  TrinoToVeloxQueryPlan.cpp
+#  TrinoToVeloxExpr.cpp
+#  TrinoToVeloxSplit.cpp
+#)
+#
+#target_link_libraries(
+#  trino_types
+#  velox_type
+#  trino_type_converter
+#  trino_protocol
+#  velox_dwio_dwrf_proto
+#  velox_hive_partition_function
+#)

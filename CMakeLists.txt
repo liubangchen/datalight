@@ -1,5 +1,28 @@
 cmake_minimum_required(VERSION 3.21)
 
+foreach(
+  policy
+  CMP0023
+  CMP0042
+  CMP0048 # CMake 3.0
+  CMP0074 # CMake 3.12
+  CMP0077
+  CMP0079
+)
+  if(POLICY ${policy})
+    cmake_policy(SET ${policy} NEW)
+  endif()
+endforeach()
+
+# set default policy
+foreach(
+  default_policy_var_name
+  CMAKE_POLICY_DEFAULT_CMP0077
+  CMAKE_POLICY_DEFAULT_CMP0022
+)
+  set(${default_policy_var_name} NEW)
+endforeach()
+
 project(datalight LANGUAGES C CXX ASM)
 set(CMAKE_MACOSX_RPATH 1)
 

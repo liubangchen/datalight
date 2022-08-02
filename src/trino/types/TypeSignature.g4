@@ -2,8 +2,8 @@ grammar TypeSignature;
 
 @parser::header {
     #include <boost/algorithm/string.hpp>
-    #include "presto_cpp/main/types/TypeSignatureTypeConverter.h"
-}
+    #include "types/TypeSignatureTypeConverter.h"
+      }
 
 @parser::declarations {
     #define Token()         (getCurrentToken()->getText())
