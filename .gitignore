@@ -5,7 +5,6 @@
 
 # vim cache files
 *.swp
-.dir-locals.el
 
 # auto generated files
 *.logrt
