@@ -23,19 +23,19 @@ target_link_libraries(
   antlr4_static
 )
 
-#add_library(
-#  trino_types
-#  OBJECT
-#  TrinoToVeloxQueryPlan.cpp
-#  TrinoToVeloxExpr.cpp
-#  TrinoToVeloxSplit.cpp
-#)
-#
-#target_link_libraries(
-#  trino_types
-#  velox_type
-#  trino_type_converter
-#  trino_protocol
-#  velox_dwio_dwrf_proto
-#  velox_hive_partition_function
-#)
+add_library(
+  trino_types
+  OBJECT
+  TrinoToVeloxQueryPlan.cpp
+  #  TrinoToVeloxExpr.cpp
+  #  TrinoToVeloxSplit.cpp
+)
+
+target_link_libraries(
+  trino_types
+  velox_type
+  trino_type_converter
+  trino_protocol
+  velox_dwio_dwrf_proto
+  velox_hive_partition_function
+)
