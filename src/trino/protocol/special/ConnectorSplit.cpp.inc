@@ -18,7 +18,7 @@ void to_json(json& j, const std::shared_ptr<ConnectorSplit>& p) {
   }
   String type = p->_type;
 
-  if (type == "$remote") {
+  if (type == "system:io.trino.split.RemoteSplit") {
     j = *std::static_pointer_cast<RemoteSplit>(p);
     return;
   }
@@ -42,7 +42,7 @@ void from_json(const json& j, std::shared_ptr<ConnectorSplit>& p) {
     throw ParseError(std::string(e.what()) + " ConnectorSplit");
   }
 
-  if (type == "$remote") {
+  if (type == "system:io.trino.split.RemoteSplit") {
     auto k = std::make_shared<RemoteSplit>();
     j.get_to(*k);
     p = k;

@@ -68,7 +68,7 @@ AbstractClasses:
     super: JsonEncodedSubclass
     subclasses:
       - { name: HiveSplit, key: hive }
-      - { name: RemoteSplit, key: $remote }
+      - { name: RemoteSplit, key: system:io.trino.split.RemoteSplit }
       - { name: EmptySplit, key: $empty }
 
   ConnectorPartitioningHandle:
