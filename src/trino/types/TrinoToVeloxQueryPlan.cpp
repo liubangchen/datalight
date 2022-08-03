@@ -43,6 +43,7 @@ velox::core::PlanFragment VeloxQueryPlanConverter::toVeloxQueryPlan(
     const protocol::PlanFragment& fragment,
     const protocol::TaskId& taskId) {
   velox::core::PlanFragment planFragment;
+  LOG(INFO) <<"test......";
   VELOX_UNSUPPORTED("Unsupported partitioning handle: {}", "test");
   return planFragment;
 }

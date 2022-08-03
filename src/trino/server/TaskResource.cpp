@@ -219,13 +219,13 @@ proxygen::RequestHandler* TaskResource::createOrUpdateTask(
           oss << std::string((const char*)buf->data(), buf->length());
         }
         std::string updateJson = oss.str();
-
         std::unique_ptr<protocol::TaskInfo> taskInfo;
         try {
           protocol::TaskUpdateRequest taskUpdateRequest =
               json::parse(updateJson);
           velox::core::PlanFragment planFragment;
           if (taskUpdateRequest.fragment) {
+              LOG(INFO) <<"............";
               auto trinoPlan = taskUpdateRequest.fragment;
               VeloxQueryPlanConverter converter(pool_.get());
             planFragment = converter.toVeloxQueryPlan(
@@ -261,13 +261,13 @@ proxygen::RequestHandler* TaskResource::createOrUpdateTask(
               std::move(configs),
               std::move(connectorConfigs));
         } catch (const velox::VeloxException& e) {
-          // Creating an empty task, putting errors inside so that next status
-          // fetch from coordinator will catch the error and well categorize it.
-          taskInfo = taskManager_.createOrUpdateErrorTask(
-              taskId, std::current_exception());
+            LOG(ERROR)<<"get velox::VeloxException "<<e.message();
+            taskInfo = taskManager_.createOrUpdateErrorTask(
+                taskId, std::current_exception());
         } catch (const std::exception& e) {
-          sendErrorResponse(downstream, e.what());
-          return;
+            LOG(ERROR)<<"get std::exception "<<e.what();
+            sendErrorResponse(downstream, e.what());
+            return;
         }
 
         json taskInfoJson = *taskInfo;

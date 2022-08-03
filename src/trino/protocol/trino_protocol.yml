@@ -74,7 +74,10 @@ AbstractClasses:
   ConnectorPartitioningHandle:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: SystemPartitioningHandle, key: $remote }
+      - {
+          name: SystemPartitioningHandle,
+          key: system:io.trino.sql.planner.SystemPartitioningHandle,
+        }
       - { name: HivePartitioningHandle, key: hive }
 
   ConnectorTransactionHandle:
@@ -121,14 +124,13 @@ AbstractClasses:
   PlanNode:
     super: JsonEncodedSubclass
     subclasses:
-      - { name: ProjectNode, key: .ProjectNode }
+      - { name: ExchangeNode, key: exchange }
+      - { name: SortNode, key: sort }
+      - { name: RemoteSourceNode, key: remoteSource }
+
+      ###########################################
       - { name: LimitNode, key: .LimitNode }
       - { name: AggregationNode, key: .AggregationNode }
-      - { name: ExchangeNode, key: io.trino.sql.planner.plan.ExchangeNode }
-      - {
-          name: RemoteSourceNode,
-          key: io.trino.sql.planner.plan.RemoteSourceNode,
-        }
       - { name: GroupIdNode, key: io.trino.sql.planner.plan.GroupIdNode }
       - { name: FilterNode, key: .FilterNode }
       - { name: OutputNode, key: io.trino.sql.planner.plan.OutputNode }

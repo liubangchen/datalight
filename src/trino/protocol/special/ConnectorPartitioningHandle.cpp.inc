@@ -18,7 +18,7 @@ void to_json(json& j, const std::shared_ptr<ConnectorPartitioningHandle>& p) {
   }
   String type = p->_type;
 
-  if (type == "$remote") {
+  if (type == "system:io.trino.sql.planner.SystemPartitioningHandle") {
     j = *std::static_pointer_cast<SystemPartitioningHandle>(p);
     return;
   }
@@ -38,7 +38,7 @@ void from_json(const json& j, std::shared_ptr<ConnectorPartitioningHandle>& p) {
     throw ParseError(std::string(e.what()) + " ConnectorPartitioningHandle");
   }
 
-  if (type == "$remote") {
+  if (type == "system:io.trino.sql.planner.SystemPartitioningHandle") {
     auto k = std::make_shared<SystemPartitioningHandle>();
     j.get_to(*k);
     p = k;
