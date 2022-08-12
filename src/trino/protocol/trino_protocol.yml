@@ -28,8 +28,8 @@ EnumMap:
     Type: JoinNodeType
 
 ExtraFields:
-  #  RowExpression:
-  #    std::shared_ptr<SourceLocation>: sourceLocation
+  RowExpression:
+    std::shared_ptr<SourceLocation>: sourceLocation
 
   PlanNode:
     PlanNodeId: id
@@ -211,7 +211,6 @@ JavaClasses:
   - core/trino-main/src/main/java/io/trino/sql/relational/VariableReferenceExpression.java
   - core/trino-main/src/main/java/io/trino/sql/relational/LambdaDefinitionExpression.java
   - core/trino-main/src/main/java/io/trino/sql/relational/VariableReferenceExpression.java
-  - core/trino-main/src/main/java/io/trino/sql/relational/CallExpression.java
   - core/trino-main/src/main/java/io/trino/sql/relational/SpecialForm.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/JoinNode.java
   - core/trino-main/src/main/java/io/trino/sql/planner/plan/SortNode.java

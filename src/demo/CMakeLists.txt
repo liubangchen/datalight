@@ -40,6 +40,7 @@ target_link_libraries(
   velox_type
   velox_vector
   velox_exec
+  velox_vector_test_lib
   velox_exec_test_util
   velox_hive_connector
   velox_memory
