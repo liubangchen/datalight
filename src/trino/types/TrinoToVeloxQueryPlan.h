@@ -32,13 +32,100 @@ class VeloxQueryPlanConverter {
   explicit VeloxQueryPlanConverter(velox::memory::MemoryPool* pool)
       : pool_(pool), exprConverter_(pool) {}
 
-    velox::core::PlanFragment toVeloxQueryPlan(
+  velox::core::PlanFragment toVeloxQueryPlan(
       const protocol::PlanFragment& fragment,
       const protocol::TaskId& taskId);
 
-private:
-    velox::memory::MemoryPool* pool_;
-    VeloxExprConverter exprConverter_;
+  std::shared_ptr<const velox::core::PlanNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::PlanNode>& node,
+      const protocol::TaskId& taskId);
+
+ private:
+  std::shared_ptr<const velox::core::PlanNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::ExchangeNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::ExchangeNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::RemoteSourceNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::PlanNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::FilterNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::PlanNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::OutputNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::ProjectNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::ProjectNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::ValuesNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::ValuesNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::TableScanNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::TableScanNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::AggregationNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::AggregationNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::GroupIdNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::GroupIdNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::PlanNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::DistinctLimitNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::PlanNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::JoinNode>& node,
+      const protocol::TaskId& taskId);
+  /**
+      std::shared_ptr<const velox::core::PlanNode> toVeloxQueryPlan(
+          const std::shared_ptr<const protocol::MergeJoinNode>& node,
+          const protocol::TaskId& taskId);
+  **/
+  std::shared_ptr<const velox::core::TopNNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::TopNNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::LimitNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::LimitNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::OrderByNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::SortNode>& node,
+      const protocol::TaskId& taskId);
+
+  std::shared_ptr<const velox::core::TableWriteNode> toVeloxQueryPlan(
+      const std::shared_ptr<const protocol::TableWriterNode>& node,
+      const protocol::TaskId& taskId);
+  /**
+      std::shared_ptr<const velox::core::UnnestNode> toVeloxQueryPlan(
+          const std::shared_ptr<const protocol::UnnestNode>& node,
+          const protocol::TaskId& taskId);
+
+      std::shared_ptr<const velox::core::EnforceSingleRowNode> toVeloxQueryPlan(
+          const std::shared_ptr<const protocol::EnforceSingleRowNode>& node,
+          const protocol::TaskId& taskId);
+
+      std::shared_ptr<const velox::core::AssignUniqueIdNode> toVeloxQueryPlan(
+          const std::shared_ptr<const protocol::AssignUniqueId>& node,
+          const protocol::TaskId& taskId);
+
+      std::vector<std::shared_ptr<const FieldAccessTypedExpr>> toVeloxExprs(
+          const std::vector<protocol::VariableReferenceExpression>& variables);
+  **/
+  std::shared_ptr<const velox::core::ProjectNode> tryConvertOffsetLimit(
+      const std::shared_ptr<const protocol::ProjectNode>& node,
+      const protocol::TaskId& taskId);
+
+  velox::memory::MemoryPool* pool_;
+  VeloxExprConverter exprConverter_;
 };
 
 } // namespace datalight::trino
