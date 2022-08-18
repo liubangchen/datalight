@@ -43,6 +43,151 @@ namespace datalight::trino {
         return TypeSignatureTypeConverter::parse(typeString);
     }
 
+
+    std::vector<column_index_t> toChannels(
+        const RowTypePtr& type,
+        const std::vector<std::shared_ptr<const core::FieldAccessTypedExpr>>&
+        fields) {
+        std::vector<column_index_t> channels;
+        channels.reserve(fields.size());
+        for (const auto& field : fields) {
+            auto channel = type->getChildIdx(field->name());
+            channels.emplace_back(channel);
+        }
+        return channels;
+    }
+
+    column_index_t exprToChannel(
+        const core::ITypedExpr* expr,
+        const TypePtr& type) {
+        if (auto field = dynamic_cast<const core::FieldAccessTypedExpr*>(expr)) {
+            return type->as<TypeKind::ROW>().getChildIdx(field->name());
+        }
+        if (dynamic_cast<const core::ConstantTypedExpr*>(expr)) {
+            return kConstantChannel;
+        }
+        VELOX_CHECK(false, "Expression must be field access or constant");
+        return 0; // not reached.
+    }
+
+// Stores partitioned output channels.
+// For each 'kConstantChannel', there is an entry in 'constValues'.
+    struct PartitionedOutputChannels {
+        std::vector<column_index_t> channels;
+        // Each vector holding a single value for a constant channel.
+        std::vector<VectorPtr> constValues;
+    };
+
+    PartitionedOutputChannels toChannels(
+        const RowTypePtr& rowType,
+        const std::vector<std::shared_ptr<const core::ITypedExpr>>& exprs,
+        memory::MemoryPool* pool) {
+        PartitionedOutputChannels output;
+        output.channels.reserve(exprs.size());
+        for (const auto& expr : exprs) {
+            auto channel = exprToChannel(expr.get(), rowType);
+            output.channels.push_back(channel);
+
+            // For constant channels create a base vector, add single value to it from
+            // our variant and add it to the list of constant expressions.
+            if (channel == kConstantChannel) {
+                output.constValues.emplace_back(
+                    velox::BaseVector::create(expr->type(), 1, pool));
+                auto constExpr =
+                    std::dynamic_pointer_cast<const core::ConstantTypedExpr>(expr);
+//                setCellFromVariant(output.constValues.back(), 0, constExpr->value());
+            }
+        }
+        return output;
+    }
+
+    template <TypeKind KIND>
+    void setCellFromVariantByKind(
+        const VectorPtr& column,
+        vector_size_t row,
+        const velox::variant& value) {
+        using T = typename TypeTraits<KIND>::NativeType;
+
+        auto flatVector = column->as<FlatVector<T>>();
+        flatVector->set(row, value.value<T>());
+    }
+
+    template <>
+    void setCellFromVariantByKind<TypeKind::VARBINARY>(
+        const VectorPtr& /*column*/,
+        vector_size_t /*row*/,
+        const velox::variant& value) {
+        throw std::invalid_argument("Return of VARBINARY data is not supported");
+    }
+
+    template <>
+    void setCellFromVariantByKind<TypeKind::VARCHAR>(
+        const VectorPtr& column,
+        vector_size_t row,
+        const velox::variant& value) {
+        auto values = column->as<FlatVector<StringView>>();
+        values->set(row, StringView(value.value<Varchar>()));
+    }
+
+    void setCellFromVariant(
+        const RowVectorPtr& data,
+        vector_size_t row,
+        vector_size_t column,
+        const velox::variant& value) {
+        auto columnVector = data->childAt(column);
+        if (value.isNull()) {
+            columnVector->setNull(row, true);
+            return;
+        }
+        VELOX_DYNAMIC_SCALAR_TYPE_DISPATCH(
+            setCellFromVariantByKind,
+            columnVector->typeKind(),
+            columnVector,
+            row,
+            value);
+    }
+
+    void setCellFromVariant(
+        const VectorPtr& data,
+        vector_size_t row,
+        const velox::variant& value) {
+        if (value.isNull()) {
+            data->setNull(row, true);
+            return;
+        }
+        VELOX_DYNAMIC_SCALAR_TYPE_DISPATCH(
+            setCellFromVariantByKind, data->typeKind(), data, row, value);
+    }
+
+    void setCellFromConstantVector(
+        const RowVectorPtr& data,
+        vector_size_t row,
+        vector_size_t column,
+        VectorPtr valueVector) {
+        auto columnVector = data->childAt(column);
+        if (valueVector->isNullAt(0)) {
+            // This is a constant vector and will have only one element.
+            columnVector->setNull(row, true);
+            return;
+        }
+        switch (valueVector->typeKind()) {
+        case TypeKind::SHORT_DECIMAL: {
+            auto flatVector = columnVector->as<FlatVector<velox::UnscaledShortDecimal>>();
+            flatVector->set(
+                row,
+                valueVector->as<ConstantVector<velox::UnscaledShortDecimal>>()->valueAt(0));
+        } break;
+        case TypeKind::LONG_DECIMAL: {
+            auto flatVector = columnVector->as<FlatVector<velox::UnscaledLongDecimal>>();
+            flatVector->set(
+                row,
+                valueVector->as<ConstantVector<velox::UnscaledLongDecimal>>()->valueAt(0));
+        } break;
+        default:
+            VELOX_UNSUPPORTED();
+        }
+    }
+
     template <typename T>
     std::string toJsonString(const T& value) {
         return ((json)value).dump();
@@ -280,23 +425,24 @@ namespace datalight::trino {
     VeloxQueryPlanConverter::toVeloxQueryPlan(
         const std::shared_ptr<const protocol::RemoteSourceNode>& node,
         const protocol::TaskId& taskId) {
+        /**
+           auto rowType = toRowType(node->outputVariables);
+           if (node->orderingScheme) {
+           std::vector<std::shared_ptr<const FieldAccessTypedExpr>> sortingKeys;
+           std::vector<SortOrder> sortingOrders;
+           sortingKeys.reserve(node->orderingScheme->orderBy.size());
+           sortingOrders.reserve(node->orderingScheme->orderBy.size());
 
-        auto rowType = toRowType(node->outputVariables);
-        if (node->orderingScheme) {
-            std::vector<std::shared_ptr<const FieldAccessTypedExpr>> sortingKeys;
-            std::vector<SortOrder> sortingOrders;
-            sortingKeys.reserve(node->orderingScheme->orderBy.size());
-            sortingOrders.reserve(node->orderingScheme->orderBy.size());
-
-            for (const auto& orderBy : node->orderingScheme->orderBy) {
-                sortingKeys.emplace_back(exprConverter_.toVeloxExpr(orderBy.variable));
-                sortingOrders.emplace_back(toVeloxSortOrder(orderBy.sortOrder));
-            }
-            return std::make_shared<velox::core::MergeExchangeNode>(
-                node->id, rowType, sortingKeys, sortingOrders);
-        }
-        return std::make_shared<velox::core::ExchangeNode>(node->id, rowType);
-
+           for (const auto& orderBy : node->orderingScheme->orderBy) {
+           sortingKeys.emplace_back(exprConverter_.toVeloxExpr(orderBy.variable));
+           sortingOrders.emplace_back(toVeloxSortOrder(orderBy.sortOrder));
+           }
+           return std::make_shared<velox::core::MergeExchangeNode>(
+           node->id, rowType, sortingKeys, sortingOrders);
+           }
+        **/
+        //return std::make_shared<velox::core::ExchangeNode>(node->id, rowType);
+        return nullptr;
     }
 
     std::shared_ptr<const velox::core::PlanNode>
@@ -421,8 +567,15 @@ namespace datalight::trino {
         auto partitioningHandle =
             partitioningScheme.partitioning.handle.connectorHandle;
 
-        auto partitioningKeys = "";
+        std::vector<std::shared_ptr<const core::FieldAccessTypedExpr>> fields;
+        auto partitioningKeys = fields;
         //    toTypedExprs(partitioningScheme.partitioning.arguments, exprConverter_);
+        auto sourceNode = toVeloxQueryPlan(fragment.root, taskId);
+        auto inputType = sourceNode->outputType();
+
+        //PartitionedOutputChannels keyChannels =
+        //    toChannels(inputType, partitioningKeys, pool_);
+        auto outputType = nullptr;//toRowType(partitioningScheme.outputLayout);
 
         if (auto systemPartitioningHandle =
             std::dynamic_pointer_cast<protocol::SystemPartitioningHandle>(
@@ -434,14 +587,15 @@ namespace datalight::trino {
                     protocol::SystemPartitionFunction::SINGLE,
                     "Unsupported partitioning function: {}",
                     toJsonString(systemPartitioningHandle->function));
-                // planFragment.planNode =
-                //     PartitionedOutputNode::single("root", outputType, sourceNode);
+                planFragment.planNode =
+                          PartitionedOutputNode::single("root", outputType, sourceNode);
+                LOG(INFO) << "SINGLE....";
                 return planFragment;
             case protocol::SystemPartitioning::FIXED: {
                 switch (systemPartitioningHandle->function) {
                 case protocol::SystemPartitionFunction::ROUND_ROBIN: {
                     auto numPartitions = partitioningScheme.bucketToPartition->size();
-
+                    LOG(INFO) << "FIXED....";
                     if (numPartitions == 1) {
                         // planFragment.planNode =
                         //     PartitionedOutputNode::single("root", outputType,
@@ -468,7 +622,7 @@ namespace datalight::trino {
                 }
                 case protocol::SystemPartitionFunction::HASH: {
                     auto numPartitions = partitioningScheme.bucketToPartition->size();
-
+                    LOG(INFO) << "HASH....";
                     if (numPartitions == 1) {
                         // planFragment.planNode =
                         //     PartitionedOutputNode::single("root", outputType,
@@ -500,6 +654,7 @@ namespace datalight::trino {
                 case protocol::SystemPartitionFunction::BROADCAST: {
                     // planFragment.planNode = PartitionedOutputNode::broadcast(
                     //     "root", 1, outputType, sourceNode);
+                    LOG(INFO) << "BROADCAST....";
                     return planFragment;
                 }
                 default:
