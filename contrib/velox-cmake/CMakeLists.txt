@@ -152,7 +152,7 @@ endif()
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(
     KNOWN_COMPILER_SPECIFIC_WARNINGS
-    "-Wno-range-loop-analysis -Wno-mismatched-tags -Wno-deprecated-register -Wno-error=register"
+    "-Wno-range-loop-analysis -Wno-mismatched-tags -Wno-deprecated-register -Wno-error=register -Wincompatible-pointer-types -Wcompare-distinct-pointer-types"
   )
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(
