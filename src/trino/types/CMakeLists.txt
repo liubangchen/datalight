@@ -11,7 +11,7 @@
 # limitations under the License.
 add_library(
   trino_type_converter
-  OBJECT
+  STATIC
   TypeSignatureTypeConverter.cpp
   antlr/TypeSignatureLexer.cpp
   antlr/TypeSignatureParser.cpp
@@ -25,7 +25,7 @@ target_link_libraries(
 
 add_library(
   trino_types
-  OBJECT
+  STATIC
   TrinoToVeloxQueryPlan.cpp
   #  TrinoToVeloxExpr.cpp
   #  TrinoToVeloxSplit.cpp

@@ -39,6 +39,10 @@ using namespace facebook::velox;
 
 namespace datalight::trino {
 
+    std::shared_ptr<const velox::Type> stringToType(const std::string& typeString) {
+        return TypeSignatureTypeConverter::parse(typeString);
+    }
+
     template <typename T>
     std::string toJsonString(const T& value) {
         return ((json)value).dump();
@@ -86,6 +90,27 @@ namespace datalight::trino {
     bool isRoundRobinPartition(
         const std::shared_ptr<const protocol::ExchangeNode>& node) {
         return isFixedPartition(node, protocol::SystemPartitionFunction::ROUND_ROBIN);
+    }
+
+    std::shared_ptr<const RowType> toRowType(
+        const protocol::Map<protocol::Symbol, protocol::Type>& symbols,
+        const protocol::List<protocol::String>& columns,
+        const protocol::List<protocol::Symbol> outputs) {
+        std::vector<std::string> names;
+        std::vector<velox::TypePtr> types;
+        names.reserve(columns.size());
+        types.reserve(outputs.size());
+
+        for (const auto& variable : outputs) {
+            names.emplace_back(variable);
+            auto trino_type = symbols.at(variable);
+            //if(!trino_type){
+            //    VELOX_USER_FAIL("unknow  symbol type [{}]", variable);
+            //}
+            types.emplace_back(stringToType(trino_type));
+        }
+
+        return ROW(std::move(names), std::move(types));
     }
 
     std::shared_ptr<const velox::core::PlanNode>
@@ -255,7 +280,23 @@ namespace datalight::trino {
     VeloxQueryPlanConverter::toVeloxQueryPlan(
         const std::shared_ptr<const protocol::RemoteSourceNode>& node,
         const protocol::TaskId& taskId) {
-        return nullptr;
+
+        auto rowType = toRowType(node->outputVariables);
+        if (node->orderingScheme) {
+            std::vector<std::shared_ptr<const FieldAccessTypedExpr>> sortingKeys;
+            std::vector<SortOrder> sortingOrders;
+            sortingKeys.reserve(node->orderingScheme->orderBy.size());
+            sortingOrders.reserve(node->orderingScheme->orderBy.size());
+
+            for (const auto& orderBy : node->orderingScheme->orderBy) {
+                sortingKeys.emplace_back(exprConverter_.toVeloxExpr(orderBy.variable));
+                sortingOrders.emplace_back(toVeloxSortOrder(orderBy.sortOrder));
+            }
+            return std::make_shared<velox::core::MergeExchangeNode>(
+                node->id, rowType, sortingKeys, sortingOrders);
+        }
+        return std::make_shared<velox::core::ExchangeNode>(node->id, rowType);
+
     }
 
     std::shared_ptr<const velox::core::PlanNode>
@@ -267,9 +308,13 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::PlanNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::OutputNode>& node,
         const protocol::TaskId& taskId) {
-        return nullptr;
+        return PartitionedOutputNode::single(
+            node->id,
+            toRowType(fragment.symbols, node->columns, node->outputs),
+            toVeloxQueryPlan(node->source, taskId));
     }
 
     std::shared_ptr<const velox::core::ProjectNode>
@@ -356,7 +401,6 @@ namespace datalight::trino {
         return nullptr;
     }
 
-
     velox::core::PlanFragment VeloxQueryPlanConverter::toVeloxQueryPlan(
         const protocol::PlanFragment& fragment,
         const protocol::TaskId& taskId) {
@@ -368,7 +412,8 @@ namespace datalight::trino {
 
         if (auto output = std::dynamic_pointer_cast<const protocol::OutputNode>(
                 fragment.root)) {
-            planFragment.planNode = toVeloxQueryPlan(output, taskId);
+            planFragment.planNode = toVeloxQueryPlan(fragment, output, taskId);
+            LOG(INFO) << "output node....";
             return planFragment;
         }
 

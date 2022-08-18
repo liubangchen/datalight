@@ -54,6 +54,7 @@ class VeloxQueryPlanConverter {
       const protocol::TaskId& taskId);
 
   std::shared_ptr<const velox::core::PlanNode> toVeloxQueryPlan(
+      const protocol::PlanFragment& fragment,
       const std::shared_ptr<const protocol::OutputNode>& node,
       const protocol::TaskId& taskId);
 

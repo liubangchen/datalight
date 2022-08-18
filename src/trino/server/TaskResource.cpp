@@ -219,6 +219,7 @@ proxygen::RequestHandler* TaskResource::createOrUpdateTask(
           oss << std::string((const char*)buf->data(), buf->length());
         }
         std::string updateJson = oss.str();
+        LOG(INFO) <<updateJson;
         std::unique_ptr<protocol::TaskInfo> taskInfo;
         try {
           protocol::TaskUpdateRequest taskUpdateRequest =
