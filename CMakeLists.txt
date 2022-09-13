@@ -8,6 +8,7 @@ foreach(
   CMP0074 # CMake 3.12
   CMP0077
   CMP0079
+  CMP0135
 )
   if(POLICY ${policy})
     cmake_policy(SET ${policy} NEW)

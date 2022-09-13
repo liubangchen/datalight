@@ -12,6 +12,7 @@ if(NOT libevent_POPULATED)
   message(STATUS "Fetching libevent - done")
   set(LIBEVENT_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/libevent)
 endif()
+message("libevent lib path: ${LIBEVENT_SOURCE_DIR}")
 
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
@@ -36,7 +37,7 @@ set(
   "Set library type to SHARED/STATIC/BOTH (default SHARED for MSVC, otherwise BOTH)"
 )
 
-list(APPEND CMAKE_MODULE_PATH "${LIBEVENT_SOURCE_DIR}/cmake/")
+list(APPEND CMAKE_MODULE_PATH "${LIBEVENT_SOURCE_DIR}/cmake")
 string(REGEX MATCH "SunOS" SOLARIS "${CMAKE_SYSTEM_NAME}")
 
 
