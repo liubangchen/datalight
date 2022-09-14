@@ -276,7 +276,7 @@ if(NOT MSVC)
   )
 
   if(COMPILER_CLANG)
-    list(APPEND ASM_OPTIONS "-S")
+    #list(APPEND ASM_OPTIONS "-S")
   endif()
   set_property(
     SOURCE
