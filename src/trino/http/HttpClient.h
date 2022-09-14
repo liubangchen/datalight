@@ -17,94 +17,118 @@
 #include <proxygen/lib/http/HTTPConnector.h>
 #include <proxygen/lib/http/connpool/SessionPool.h>
 #include <proxygen/lib/http/session/HTTPUpstreamSession.h>
+#include <velox/common/memory/MappedMemory.h>
 
 #include "http/HttpConstants.h"
 
+using namespace facebook;
+
 namespace datalight::trino::http {
 
-struct HttpResponse {
-  std::unique_ptr<proxygen::HTTPMessage> headers;
-  std::vector<std::unique_ptr<folly::IOBuf>> bodyChain;
+    class HttpResponse {
+    public:
+        explicit HttpResponse(std::unique_ptr<proxygen::HTTPMessage> headers)
+            : headers_(std::move(headers)),
+              mappedMemory_(velox::memory::MappedMemory::getInstance()) {}
 
-  explicit HttpResponse(std::unique_ptr<proxygen::HTTPMessage> _headers)
-      : headers(std::move(_headers)) {}
+        ~HttpResponse();
 
-  std::string dumpBodyChain() const {
-    std::string responseBody;
-    if (!bodyChain.empty()) {
-      std::ostringstream oss;
-      for (auto& buf : bodyChain) {
-        oss << std::string((const char*)buf->data(), buf->length());
-      }
-      responseBody = oss.str();
-    }
-    return responseBody;
-  }
-};
+        proxygen::HTTPMessage* FOLLY_NONNULL headers() {
+            return headers_.get();
+        }
+
+        // Appends payload to the body of this HttpResponse.
+        void append(std::unique_ptr<folly::IOBuf>&& iobuf);
+
+        // Returns true if the body of this HttpResponse is empty.
+        bool empty() const {
+            return bodyChain_.empty();
+        }
+
+        // Consumes the response body. The caller is responsible for freeing the
+        // backed memory of this IOBuf from MappedMemory. Otherwise it could lead to
+        // memory leak.
+        std::vector<std::unique_ptr<folly::IOBuf>> consumeBody() {
+            return std::move(bodyChain_);
+        }
+
+        velox::memory::MappedMemory* FOLLY_NONNULL mappedMemory() {
+            return mappedMemory_;
+        }
+
+        std::string dumpBodyChain() const;
+
+    private:
+        const std::unique_ptr<proxygen::HTTPMessage> headers_;
+        velox::memory::MappedMemory* FOLLY_NONNULL const mappedMemory_;
+
+        std::vector<std::unique_ptr<folly::IOBuf>> bodyChain_;
+    };
 
 // HttpClient uses proxygen::SessionPool which must be destructed on the
 // EventBase thread. Hence, the destructor of HttpClient must run on the
 // EventBase thread as well. Consider running HttpClient's destructor
 // via EventBase::runOnDestruction.
-class HttpClient {
- public:
-  HttpClient(
-      folly::EventBase* eventBase,
-      const folly::SocketAddress& address,
-      std::chrono::milliseconds timeout);
+    class HttpClient {
+    public:
+        HttpClient(
+            folly::EventBase* FOLLY_NONNULL eventBase,
+            const folly::SocketAddress& address,
+            std::chrono::milliseconds timeout);
 
-  ~HttpClient();
+        ~HttpClient();
 
-  // TODO Avoid copy by using IOBuf for body
-  folly::SemiFuture<std::unique_ptr<HttpResponse>> sendRequest(
-      const proxygen::HTTPMessage& request,
-      const std::string& body = "");
+        // TODO Avoid copy by using IOBuf for body
+        folly::SemiFuture<std::unique_ptr<HttpResponse>> sendRequest(
+            const proxygen::HTTPMessage& request,
+            const std::string& body = "");
 
- private:
-  folly::EventBase* eventBase_;
-  const folly::SocketAddress address_;
-  const folly::HHWheelTimer::UniquePtr timer_;
-  std::unique_ptr<proxygen::SessionPool> sessionPool_;
-};
+    private:
+        folly::EventBase* FOLLY_NONNULL eventBase_;
+        const folly::SocketAddress address_;
+        const folly::HHWheelTimer::UniquePtr timer_;
+        std::unique_ptr<proxygen::SessionPool> sessionPool_;
+    };
 
-class RequestBuilder {
- public:
-  RequestBuilder() {
-    headers_.setHTTPVersion(1, 1);
-  }
+    class RequestBuilder {
+    public:
+        RequestBuilder() {
+            headers_.setHTTPVersion(1, 1);
+        }
 
-  RequestBuilder& method(proxygen::HTTPMethod method) {
-    headers_.setMethod(method);
-    return *this;
-  }
+        RequestBuilder& method(proxygen::HTTPMethod method) {
+            headers_.setMethod(method);
+            return *this;
+        }
 
-  RequestBuilder& url(const std::string& url) {
-    headers_.setURL(url);
-    return *this;
-  }
+        RequestBuilder& url(const std::string& url) {
+            headers_.setURL(url);
+            return *this;
+        }
 
-  RequestBuilder& header(
-      proxygen::HTTPHeaderCode code,
-      const std::string& value) {
-    headers_.getHeaders().set(code, value);
-    return *this;
-  }
+        RequestBuilder& header(
+            proxygen::HTTPHeaderCode code,
+            const std::string& value) {
+            headers_.getHeaders().set(code, value);
+            return *this;
+        }
 
-  RequestBuilder& header(const std::string& header, const std::string& value) {
-    headers_.getHeaders().set(header, value);
-    return *this;
-  }
+        RequestBuilder& header(const std::string& header, const std::string& value) {
+            headers_.getHeaders().set(header, value);
+            return *this;
+        }
 
-  folly::SemiFuture<std::unique_ptr<HttpResponse>> send(
-      HttpClient* client,
-      const std::string& body = "") {
-    header(proxygen::HTTP_HEADER_CONTENT_LENGTH, std::to_string(body.size()));
-    headers_.ensureHostHeader();
-    return client->sendRequest(headers_, body);
-  }
+        folly::SemiFuture<std::unique_ptr<HttpResponse>> send(
+            HttpClient* FOLLY_NONNULL client,
+            const std::string& body = "") {
+            header(proxygen::HTTP_HEADER_CONTENT_LENGTH, std::to_string(body.size()));
+            headers_.ensureHostHeader();
+            return client->sendRequest(headers_, body);
+        }
 
- private:
-  proxygen::HTTPMessage headers_;
-};
+    private:
+        proxygen::HTTPMessage headers_;
+    };
+
 
 } // namespace datalight::trino::http

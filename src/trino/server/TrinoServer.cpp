@@ -230,7 +230,7 @@ void TrinoServer::run() {
   }
 
   facebook::velox::exec::ExchangeSource::registerFactory(
-      PrestoExchangeSource::createExchangeSource);
+      TrinoExchangeSource::createExchangeSource);
 
   velox::dwrf::registerDwrfReaderFactory();
 #ifdef PRESTO_ENABLE_PARQUET

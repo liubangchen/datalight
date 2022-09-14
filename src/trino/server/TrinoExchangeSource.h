@@ -13,51 +13,59 @@
  */
 #pragma once
 
+#pragma once
+
 #include <folly/Uri.h>
-#include <velox/exec/Exchange.h>
 
 #include "http/HttpClient.h"
+#include "velox/common/memory/Memory.h"
+#include "velox/exec/Exchange.h"
+
+using namespace facebook;
 
 namespace datalight::trino {
-class PrestoExchangeSource : public facebook::velox::exec::ExchangeSource {
- public:
-  PrestoExchangeSource(
-      const folly::Uri& baseUri,
-      int destination,
-      std::shared_ptr<facebook::velox::exec::ExchangeQueue> queue);
+    class TrinoExchangeSource : public velox::exec::ExchangeSource {
+    public:
+        TrinoExchangeSource(
+            const folly::Uri& baseUri,
+            int destination,
+            std::shared_ptr<velox::exec::ExchangeQueue> queue,
+            velox::memory::MemoryPool* pool);
 
-  bool shouldRequestLocked() override;
+        bool shouldRequestLocked() override;
 
-  static std::unique_ptr<ExchangeSource> createExchangeSource(
-      const std::string& url,
-      int destination,
-      std::shared_ptr<facebook::velox::exec::ExchangeQueue> queue);
+        static std::unique_ptr<ExchangeSource> createExchangeSource(
+            const std::string& url,
+            int destination,
+            std::shared_ptr<velox::exec::ExchangeQueue> queue,
+            velox::memory::MemoryPool* pool);
 
- private:
-  void request() override;
+        void close() override;
 
-  void close() override {
-    closed_.store(true);
-  }
+    private:
+        void request() override;
 
-  void doRequest();
+        void doRequest();
 
-  void processDataResponse(std::unique_ptr<http::HttpResponse> response);
+        void processDataResponse(std::unique_ptr<http::HttpResponse> response);
 
-  void processDataError(const std::string& path, const std::string& error);
+        void processDataError(const std::string& path, const std::string& error);
 
-  void acknowledgeResults(int64_t ackSequence);
+        void acknowledgeResults(int64_t ackSequence);
 
-  void abortResults();
+        void abortResults();
 
-  // Returns a shared ptr owning the current object.
-  std::shared_ptr<PrestoExchangeSource> getSelfPtr();
+        // Returns a shared ptr owning the current object.
+        std::shared_ptr<TrinoExchangeSource> getSelfPtr();
 
-  const std::string basePath_;
-  const std::string host_;
-  const uint16_t port_;
-  std::unique_ptr<http::HttpClient> httpClient_;
-  int failedAttempts_;
-  std::atomic_bool closed_{false};
-};
-} // namespace datalight::trino
+        const std::string basePath_;
+        const std::string host_;
+        const uint16_t port_;
+        std::unique_ptr<http::HttpClient> httpClient_;
+        int failedAttempts_;
+        std::atomic_bool closed_{false};
+        // A boolean indicating whether abortResults() call was issued and was
+        // successfully processed by the remote server.
+        std::atomic_bool abortResultsSucceeded_{false};
+    };
+}

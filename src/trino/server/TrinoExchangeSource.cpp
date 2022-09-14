@@ -26,6 +26,7 @@
 using namespace facebook::velox;
 
 namespace datalight::trino {
+
 namespace {
 
 std::string extractTaskId(const std::string& path) {
@@ -51,11 +52,12 @@ void onFinalFailure(
 }
 } // namespace
 
-PrestoExchangeSource::PrestoExchangeSource(
+TrinoExchangeSource::TrinoExchangeSource(
     const folly::Uri& baseUri,
     int destination,
-    std::shared_ptr<exec::ExchangeQueue> queue)
-    : ExchangeSource(extractTaskId(baseUri.path()), destination, queue),
+    std::shared_ptr<exec::ExchangeQueue> queue,
+    memory::MemoryPool* pool)
+    : ExchangeSource(extractTaskId(baseUri.path()), destination, queue, pool),
       basePath_(baseUri.path()),
       host_(baseUri.host()),
       port_(baseUri.port()) {
@@ -65,7 +67,7 @@ PrestoExchangeSource::PrestoExchangeSource(
       eventBase, address, std::chrono::milliseconds(10'000));
 }
 
-bool PrestoExchangeSource::shouldRequestLocked() {
+bool TrinoExchangeSource::shouldRequestLocked() {
   if (atEnd_) {
     return false;
   }
@@ -74,15 +76,15 @@ bool PrestoExchangeSource::shouldRequestLocked() {
   return !pending;
 }
 
-void PrestoExchangeSource::request() {
+void TrinoExchangeSource::request() {
   failedAttempts_ = 0;
   doRequest();
 }
 
-void PrestoExchangeSource::doRequest() {
+void TrinoExchangeSource::doRequest() {
   if (closed_.load()) {
     std::lock_guard<std::mutex> l(queue_->mutex());
-    queue_->setErrorLocked("PrestoExchangeSource closed");
+    queue_->setErrorLocked("TrinoExchangeSource closed");
     return;
   }
   auto path = fmt::format("{}/{}", basePath_, sequence_);
@@ -95,38 +97,37 @@ void PrestoExchangeSource::doRequest() {
       .send(httpClient_.get())
       .via(driverCPUExecutor())
       .thenValue([path, self](std::unique_ptr<http::HttpResponse> response) {
-        auto* headers = response->headers.get();
-        if (headers->getStatusCode() != http::kHttpOk &&
-            headers->getStatusCode() != http::kHttpNoContent) {
-          self->processDataError(
-              path,
-              fmt::format(
-                  "Received HTTP {} {}",
-                  headers->getStatusCode(),
-                  headers->getStatusMessage()));
-        } else {
-          self->processDataResponse(std::move(response));
-        }
+          auto* headers = response->headers();
+          if (headers->getStatusCode() != http::kHttpOk &&
+              headers->getStatusCode() != http::kHttpNoContent) {
+              self->processDataError(
+                  path,
+                  fmt::format(
+                      "Received HTTP {} {}",
+                      headers->getStatusCode(),
+                      headers->getStatusMessage()));
+          } else {
+              self->processDataResponse(std::move(response));
+          }
       })
       .thenError(
           folly::tag_t<std::exception>{},
           [path, self](const std::exception& e) {
-            self->processDataError(path, e.what());
+              self->processDataError(path, e.what());
           });
 };
 
-void PrestoExchangeSource::processDataResponse(
+void TrinoExchangeSource::processDataResponse(
     std::unique_ptr<http::HttpResponse> response) {
-  auto* headers = response->headers.get();
-  auto& bodyChain = response->bodyChain;
-  VELOX_CHECK(
-      !headers->getIsChunked(),
-      "Chunked http transferring encoding is not supported.")
-  uint64_t contentLength =
-      atol(headers->getHeaders()
-               .getSingleOrEmpty(proxygen::HTTP_HEADER_CONTENT_LENGTH)
-               .c_str());
-  VLOG(1) << "Fetched data for " << basePath_ << "/" << sequence_ << ": "
+    auto* headers = response->headers();
+    VELOX_CHECK(
+        !headers->getIsChunked(),
+        "Chunked http transferring encoding is not supported.")
+        uint64_t contentLength =
+        atol(headers->getHeaders()
+             .getSingleOrEmpty(proxygen::HTTP_HEADER_CONTENT_LENGTH)
+             .c_str());
+    VLOG(1) << "Fetched data for " << basePath_ << "/" << sequence_ << ": "
           << contentLength << " bytes";
 
   auto complete = headers->getHeaders()
@@ -143,22 +144,29 @@ void PrestoExchangeSource::processDataResponse(
                .c_str());
 
   std::unique_ptr<exec::SerializedPage> page;
-  bool empty = bodyChain.empty();
   std::unique_ptr<folly::IOBuf> singleChain;
+  bool empty = response->empty();
   if (!empty) {
-    for (auto i = 0; i < bodyChain.size(); ++i) {
-      auto& buf = bodyChain[i];
-      if (!buf->isManaged()) {
-        LOG(FATAL) << "Expecting managed IOBufs from exchange";
-      }
+    auto iobufs = response->consumeBody();
+    for (auto& buf : iobufs) {
       if (!singleChain) {
         singleChain = std::move(buf);
       } else {
         singleChain->prev()->appendChain(std::move(buf));
       }
     }
-    page =
-        std::make_unique<exec::SerializedPage>(std::move(singleChain), pool_);
+    page = std::make_unique<exec::SerializedPage>(
+        std::move(singleChain),
+        pool_,
+        [mappedMemory = response->mappedMemory()](folly::IOBuf& iobuf) {
+          // Free the backed memory from MappedMemory on page dtor
+          folly::IOBuf* start = &iobuf;
+          auto curr = start;
+          do {
+            mappedMemory->freeBytes(curr->writableData(), curr->length());
+            curr = curr->next();
+          } while (curr != start);
+        });
   }
 
   {
@@ -189,13 +197,13 @@ void PrestoExchangeSource::processDataResponse(
       // Acknowledge results for non-empty content.
       acknowledgeResults(ackSequence);
     } else {
-      // Rerequest results for incomplete results with no pages.
+        // Rerequest results for incomplete results with no pages.
       request();
     }
   }
 }
 
-void PrestoExchangeSource::processDataError(
+void TrinoExchangeSource::processDataError(
     const std::string& path,
     const std::string& error) {
   failedAttempts_++;
@@ -217,7 +225,7 @@ void PrestoExchangeSource::processDataError(
       queue_);
 }
 
-void PrestoExchangeSource::acknowledgeResults(int64_t ackSequence) {
+void TrinoExchangeSource::acknowledgeResults(int64_t ackSequence) {
   auto ackPath = fmt::format("{}/{}/acknowledge", basePath_, ackSequence);
   VLOG(1) << "Sending ack " << ackPath;
   auto self = getSelfPtr();
@@ -228,16 +236,16 @@ void PrestoExchangeSource::acknowledgeResults(int64_t ackSequence) {
       .send(httpClient_.get())
       .via(driverCPUExecutor())
       .thenValue([self](std::unique_ptr<http::HttpResponse> response) {
-        VLOG(1) << "Ack " << response->headers->getStatusCode();
+        VLOG(1) << "Ack " << response->headers()->getStatusCode();
       })
       .thenError(
           folly::tag_t<std::exception>{}, [self](const std::exception& e) {
             // Acks are optional. No need to fail the query.
-            VLOG(1) << "Ack failed: " << e.what();
+              VLOG(1) << "Ack failed: " << e.what();
           });
 }
 
-void PrestoExchangeSource::abortResults() {
+void TrinoExchangeSource::abortResults() {
   VLOG(1) << "Sending abort results " << basePath_;
   auto queue = queue_;
   auto self = getSelfPtr();
@@ -247,12 +255,14 @@ void PrestoExchangeSource::abortResults() {
       .send(httpClient_.get())
       .via(driverCPUExecutor())
       .thenValue([queue, self](std::unique_ptr<http::HttpResponse> response) {
-        auto statusCode = response->headers->getStatusCode();
+        auto statusCode = response->headers()->getStatusCode();
         if (statusCode != http::kHttpOk && statusCode != http::kHttpNoContent) {
           const std::string errMsg = fmt::format(
               "Abort results failed: {}, path {}", statusCode, self->basePath_);
           LOG(ERROR) << errMsg;
           onFinalFailure(errMsg, queue);
+        } else {
+          self->abortResultsSucceeded_.store(true);
         }
       })
       .thenError(
@@ -268,21 +278,30 @@ void PrestoExchangeSource::abortResults() {
           });
 }
 
-std::shared_ptr<PrestoExchangeSource> PrestoExchangeSource::getSelfPtr() {
-  return std::dynamic_pointer_cast<PrestoExchangeSource>(shared_from_this());
+void TrinoExchangeSource::close() {
+  closed_.store(true);
+  if (!abortResultsSucceeded_.load()) {
+      abortResults();
+  }
 }
+
+    std::shared_ptr<TrinoExchangeSource> TrinoExchangeSource::getSelfPtr() {
+        return std::dynamic_pointer_cast<TrinoExchangeSource>(shared_from_this());
+    }
 
 // static
-std::unique_ptr<exec::ExchangeSource>
-PrestoExchangeSource::createExchangeSource(
-    const std::string& url,
-    int destination,
-    std::shared_ptr<exec::ExchangeQueue> queue) {
-  if (strncmp(url.c_str(), "http://", 7) == 0) {
-    return std::make_unique<PrestoExchangeSource>(
-        folly::Uri(url), destination, queue);
-  }
-  return nullptr;
-}
+    std::unique_ptr<exec::ExchangeSource>
+    TrinoExchangeSource::createExchangeSource(
+        const std::string& url,
+        int destination,
+        std::shared_ptr<exec::ExchangeQueue> queue,
+        memory::MemoryPool* pool) {
+        if (strncmp(url.c_str(), "http://", 7) == 0) {
+            return std::make_unique<TrinoExchangeSource>(
+                folly::Uri(url), destination, queue, pool);
+        }
+        return nullptr;
+    }
 
-} // namespace datalight::trino
+
+}

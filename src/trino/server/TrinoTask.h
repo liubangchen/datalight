@@ -13,12 +13,13 @@
  */
 #pragma once
 
+
 #include <velox/exec/Task.h>
 #include <memory>
 
 #include "protocol/TrinoProtocol.h"
 #include "types/TrinoTaskId.h"
-
+#include <folly/io/IOBuf.h>
 using namespace facebook;
 
 namespace datalight::trino {
@@ -52,8 +53,8 @@ using PromiseHolderWeakPtr = std::weak_ptr<PromiseHolder<T>>;
 struct Result {
   int64_t sequence;
   int64_t nextSequence;
-  std::unique_ptr<folly::IOBuf> data;
-  bool complete;
+    std::unique_ptr<folly::IOBuf> data;
+    bool complete;
 };
 
 struct ResultRequest {
