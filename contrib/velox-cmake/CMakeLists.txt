@@ -239,6 +239,7 @@ include_directories(SYSTEM ${VELOX_SOURCE_DIR}/velox/external/duckdb/tpch/dbgen/
 set(FOLLY_WITH_DEPENDENCIES "folly")
 set(VELOX_BUILD_TESTING ON)
 
+#add_definitions(__int128_t)
 add_subdirectory(${VELOX_SOURCE_DIR}/third_party "${CMAKE_BINARY_DIR}/third_party/")
 add_subdirectory(${VELOX_SOURCE_DIR}/velox "${CMAKE_BINARY_DIR}/velox/")
 

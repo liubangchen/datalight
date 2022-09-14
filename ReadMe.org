@@ -47,3 +47,7 @@
   #+BEGIN_SRC shell
     bin/trino-server -etc_dir ./etc -logtostdout true
   #+END_SRC
+
+* 编译问题汇总
+** UnscaledLongDecimal.h:169:29: error: use of deleted function ‘std::hash<__int128>::hash()’
+return std::hash<uint64_t>{}((uint64_t)val.unscaledValue() ^ (uint64_t)(val.unscaledValue() >> 64)); [[https://stackoverflow.com/questions/66931123/stdhash-for-uint128-t][参考链接]]  
