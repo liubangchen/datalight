@@ -46,13 +46,13 @@ namespace datalight::trino {
     velox::core::SortOrder toVeloxSortOrder(const protocol::SortOrder& sortOrder) {
         switch (sortOrder) {
         case protocol::SortOrder::ASC_NULLS_FIRST:
-            return SortOrder(true, true);
+            return velox::core::SortOrder(true, true);
         case protocol::SortOrder::ASC_NULLS_LAST:
-            return SortOrder(true, false);
+            return velox::core::SortOrder(true, false);
         case protocol::SortOrder::DESC_NULLS_FIRST:
-            return SortOrder(false, true);
+            return velox::core::SortOrder(false, true);
         case protocol::SortOrder::DESC_NULLS_LAST:
-            return SortOrder(false, false);
+            return velox::core::SortOrder(false, false);
         default:
             throw std::invalid_argument("Unknown sort order");
         }
@@ -207,7 +207,7 @@ namespace datalight::trino {
         return ((json)value).dump();
     }
 
-    LocalPartitionNode::Type toLocalExchangeType(protocol::ExchangeNodeType type) {
+    velox::core::LocalPartitionNode::Type toLocalExchangeType(protocol::ExchangeNodeType type) {
         switch (type) {
         case protocol::ExchangeNodeType::GATHER:
             return velox::core::LocalPartitionNode::Type::kGather;
@@ -261,12 +261,8 @@ namespace datalight::trino {
         types.reserve(outputs.size());
 
         for (const auto& variable : outputs) {
-            names.emplace_back(variable);
-            auto trino_type = symbols.at(variable);
-            //if(!trino_type){
-            //    VELOX_USER_FAIL("unknow  symbol type [{}]", variable);
-            //}
-            types.emplace_back(stringToType(trino_type));
+            //names.emplace_back(variable);
+            //types.emplace_back(stringToType(std::make_shared<std::string>(symbols[variable])));
         }
 
         return ROW(std::move(names), std::move(types));
@@ -274,94 +270,96 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::PlanNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::PlanNode>& node,
         const protocol::TaskId& taskId) {
         if (auto exchange =
             std::dynamic_pointer_cast<const protocol::ExchangeNode>(node)) {
             LOG(INFO)<<"to velox node: ExchangeNode";
-            return toVeloxQueryPlan(exchange, taskId);
+            return toVeloxQueryPlan(fragment,exchange, taskId);
         }
         if (auto filter =
             std::dynamic_pointer_cast<const protocol::FilterNode>(node)) {
             LOG(INFO)<<"to velox node: FilterNode";
-            return toVeloxQueryPlan(filter, taskId);
+            return toVeloxQueryPlan(fragment,filter, taskId);
         }
         if (auto project =
             std::dynamic_pointer_cast<const protocol::ProjectNode>(node)) {
             LOG(INFO)<<"to velox node: ProjectNode";
-            return toVeloxQueryPlan(project, taskId);
+            return toVeloxQueryPlan(fragment,project, taskId);
         }
         if (auto values =
             std::dynamic_pointer_cast<const protocol::ValuesNode>(node)) {
             LOG(INFO)<<"to velox node: ValuesNode";
-            return toVeloxQueryPlan(values, taskId);
+            return toVeloxQueryPlan(fragment,values, taskId);
         }
         if (auto tableScan =
             std::dynamic_pointer_cast<const protocol::TableScanNode>(node)) {
             LOG(INFO)<<"to velox node: TableScanNode";
-            return toVeloxQueryPlan(tableScan, taskId);
+            return toVeloxQueryPlan(fragment,tableScan, taskId);
         }
         if (auto aggregation =
             std::dynamic_pointer_cast<const protocol::AggregationNode>(node)) {
             LOG(INFO)<<"to velox node: AggregationNode";
-            return toVeloxQueryPlan(aggregation, taskId);
+            return toVeloxQueryPlan(fragment,aggregation, taskId);
         }
         if (auto groupId =
             std::dynamic_pointer_cast<const protocol::GroupIdNode>(node)) {
             LOG(INFO)<<"to velox node: GroupIdNode";
-            return toVeloxQueryPlan(groupId, taskId);
+            return toVeloxQueryPlan(fragment,groupId, taskId);
         }
         if (auto distinctLimit =
             std::dynamic_pointer_cast<const protocol::DistinctLimitNode>(node)) {
             LOG(INFO)<<"to velox node: DistinctLimitNode";
-            return toVeloxQueryPlan(distinctLimit, taskId);
+            return toVeloxQueryPlan(fragment,distinctLimit, taskId);
         }
         if (auto join = std::dynamic_pointer_cast<const protocol::JoinNode>(node)) {
             LOG(INFO)<<"to velox node: JoinNode";
-            return toVeloxQueryPlan(join, taskId);
+            return toVeloxQueryPlan(fragment,join, taskId);
         }
         if (auto remoteSource =
             std::dynamic_pointer_cast<const protocol::RemoteSourceNode>(node)) {
             LOG(INFO)<<"to velox node: RemoteSourceNode";
-            return toVeloxQueryPlan(remoteSource, taskId);
+            return toVeloxQueryPlan(fragment,remoteSource, taskId);
         }
         if (auto topN = std::dynamic_pointer_cast<const protocol::TopNNode>(node)) {
             LOG(INFO)<<"to velox node: TopNNode";
-            return toVeloxQueryPlan(topN, taskId);
+            return toVeloxQueryPlan(fragment,topN, taskId);
         }
         if (auto limit = std::dynamic_pointer_cast<const protocol::LimitNode>(node)) {
             LOG(INFO)<<"to velox node: LimitNode";
-            return toVeloxQueryPlan(limit, taskId);
+            return toVeloxQueryPlan(fragment,limit, taskId);
         }
         if (auto sort = std::dynamic_pointer_cast<const protocol::SortNode>(node)) {
             LOG(INFO)<<"to velox node: SortNode";
-            return toVeloxQueryPlan(sort, taskId);
+            return toVeloxQueryPlan(fragment,sort, taskId);
         }
         if (auto tableWriter =
             std::dynamic_pointer_cast<const protocol::TableWriterNode>(node)) {
             LOG(INFO)<<"to velox node: TableWriterNode";
-            return toVeloxQueryPlan(tableWriter, taskId);
+            return toVeloxQueryPlan(fragment,tableWriter, taskId);
         }
         VELOX_UNSUPPORTED("Unknown plan node type {}", node->_type);
     }
 
     std::shared_ptr<const velox::core::PlanNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::ExchangeNode>& node,
         const protocol::TaskId& taskId) {
         VELOX_USER_CHECK(
             node->scope == protocol::ExchangeNodeScope::LOCAL,
             "Unsupported ExchangeNode scope");
-        std::vector<std::shared_ptr<const PlanNode>> sourceNodes;
+        std::vector<std::shared_ptr<const velox::core::PlanNode>> sourceNodes;
         sourceNodes.reserve(node->sources.size());
 
         for (const auto& source : node->sources) {
-            sourceNodes.emplace_back(toVeloxQueryPlan(source, taskId));
+            sourceNodes.emplace_back(toVeloxQueryPlan(fragment,source, taskId));
         }
 
         if (node->orderingScheme) {
-            std::vector<std::shared_ptr<const FieldAccessTypedExpr>> sortingKeys;
-            std::vector<SortOrder> sortingOrders;
+            std::vector<std::shared_ptr<const velox::core::FieldAccessTypedExpr>> sortingKeys;
+            std::vector<velox::core::SortOrder> sortingOrders;
             sortingKeys.reserve(node->orderingScheme->orderBy.size());
             sortingOrders.reserve(node->orderingScheme->orderBy.size());
             auto orderings=node->orderingScheme->orderings;
@@ -431,30 +429,31 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::ExchangeNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::RemoteSourceNode>& node,
         const protocol::TaskId& taskId) {
-        /**
-           auto rowType = toRowType(node->outputVariables);
-           if (node->orderingScheme) {
-           std::vector<std::shared_ptr<const FieldAccessTypedExpr>> sortingKeys;
-           std::vector<SortOrder> sortingOrders;
-           sortingKeys.reserve(node->orderingScheme->orderBy.size());
-           sortingOrders.reserve(node->orderingScheme->orderBy.size());
 
-           for (const auto& orderBy : node->orderingScheme->orderBy) {
-           sortingKeys.emplace_back(exprConverter_.toVeloxExpr(orderBy.variable));
-           sortingOrders.emplace_back(toVeloxSortOrder(orderBy.sortOrder));
-           }
-           return std::make_shared<velox::core::MergeExchangeNode>(
-           node->id, rowType, sortingKeys, sortingOrders);
-           }
-        **/
-        //return std::make_shared<velox::core::ExchangeNode>(node->id, rowType);
-        return nullptr;
+        auto rowType = nullptr;//toRowType(node->outputs);
+        if (node->orderingScheme) {
+            std::vector<std::shared_ptr<const velox::core::FieldAccessTypedExpr>> sortingKeys;
+            std::vector<velox::core::SortOrder> sortingOrders;
+            sortingKeys.reserve(node->orderingScheme->orderBy.size());
+            sortingOrders.reserve(node->orderingScheme->orderBy.size());
+
+            for (const auto& orderBy : node->orderingScheme->orderBy) {
+                //sortingKeys.emplace_back(exprConverter_.toVeloxExpr(orderBy.variable));
+                //sortingOrders.emplace_back(toVeloxSortOrder(orderBy.sortOrder));
+            }
+            return std::make_shared<velox::core::MergeExchangeNode>(
+                node->id, rowType, sortingKeys, sortingOrders);
+        }
+        return std::make_shared<velox::core::ExchangeNode>(node->id, rowType);
+
     }
 
     std::shared_ptr<const velox::core::PlanNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::FilterNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -465,14 +464,15 @@ namespace datalight::trino {
         const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::OutputNode>& node,
         const protocol::TaskId& taskId) {
-        return PartitionedOutputNode::single(
+        return velox::core::PartitionedOutputNode::single(
             node->id,
             toRowType(fragment.symbols, node->columns, node->outputs),
-            toVeloxQueryPlan(node->source, taskId));
+            toVeloxQueryPlan(fragment,node->source, taskId));
     }
 
     std::shared_ptr<const velox::core::ProjectNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::ProjectNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -480,6 +480,7 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::ValuesNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::ValuesNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -487,6 +488,7 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::TableScanNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::TableScanNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -494,6 +496,7 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::AggregationNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::AggregationNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -501,6 +504,7 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::GroupIdNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::GroupIdNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -508,6 +512,7 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::PlanNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::DistinctLimitNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -515,6 +520,7 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::PlanNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::JoinNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -522,6 +528,7 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::TopNNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::TopNNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -529,6 +536,7 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::LimitNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::LimitNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -536,14 +544,18 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::OrderByNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::SortNode>& node,
         const protocol::TaskId& taskId) {
 
-        std::vector<std::shared_ptr<const FieldAccessTypedExpr>> sortingKeys;
-        std::vector<SortOrder> sortingOrders;
+        std::vector<std::shared_ptr<const velox::core::FieldAccessTypedExpr>> sortingKeys;
+        std::vector<velox::core::SortOrder> sortingOrders;
         auto orderings=node->orderingScheme.orderings;
+        auto symbols=fragment.symbols;
         for (const auto& orderBy : node->orderingScheme.orderBy) {
-            //sortingKeys.emplace_back(exprConverter_.toVeloxExpr(orderBy.variable));
+            //sortingKeys.emplace_back(exprConverter_.toVeloxExpr(symbols[orderBy]));
+            sortingKeys.emplace_back(std::make_shared<velox::core::FieldAccessTypedExpr>(stringToType(symbols[orderBy]),orderBy));
+            LOG(INFO)<<"toVeloxQueryPlan sort :"<<orderBy;
             sortingOrders.emplace_back(toVeloxSortOrder(orderings[orderBy]));
         }
 
@@ -552,11 +564,12 @@ namespace datalight::trino {
             sortingKeys,
             sortingOrders,
             node->partial,
-            toVeloxQueryPlan(node->source,  taskId));
+            toVeloxQueryPlan(fragment,node->source,  taskId));
     }
 
     std::shared_ptr<const velox::core::TableWriteNode>
     VeloxQueryPlanConverter::toVeloxQueryPlan(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::TableWriterNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -564,6 +577,7 @@ namespace datalight::trino {
 
     std::shared_ptr<const velox::core::ProjectNode>
     VeloxQueryPlanConverter::tryConvertOffsetLimit(
+        const protocol::PlanFragment& fragment,
         const std::shared_ptr<const protocol::ProjectNode>& node,
         const protocol::TaskId& taskId) {
         return nullptr;
@@ -572,6 +586,7 @@ namespace datalight::trino {
     velox::core::PlanFragment VeloxQueryPlanConverter::toVeloxQueryPlan(
         const protocol::PlanFragment& fragment,
         const protocol::TaskId& taskId) {
+
         velox::core::PlanFragment planFragment;
 
         // Convert the fragment info first.
@@ -592,7 +607,7 @@ namespace datalight::trino {
         std::vector<std::shared_ptr<const core::FieldAccessTypedExpr>> fields;
         auto partitioningKeys = fields;
         //    toTypedExprs(partitioningScheme.partitioning.arguments, exprConverter_);
-        auto sourceNode = toVeloxQueryPlan(fragment.root, taskId);
+        auto sourceNode = toVeloxQueryPlan(fragment,fragment.root, taskId);
         auto inputType = sourceNode->outputType();
 
         //PartitionedOutputChannels keyChannels =
@@ -610,7 +625,7 @@ namespace datalight::trino {
                     "Unsupported partitioning function: {}",
                     toJsonString(systemPartitioningHandle->function));
                 planFragment.planNode =
-                          PartitionedOutputNode::single("root", outputType, sourceNode);
+                    velox::core::PartitionedOutputNode::single("root", outputType, sourceNode);
                 LOG(INFO) << "SINGLE....";
                 return planFragment;
             case protocol::SystemPartitioning::FIXED: {

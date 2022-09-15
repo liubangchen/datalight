@@ -27,7 +27,7 @@ add_library(
   trino_types
   STATIC
   TrinoToVeloxQueryPlan.cpp
-  #  TrinoToVeloxExpr.cpp
+  TrinoToVeloxExpr.cpp
   #  TrinoToVeloxSplit.cpp
 )
 
