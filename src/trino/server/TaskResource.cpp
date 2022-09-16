@@ -60,6 +60,7 @@ void sendErrorResponse(
 
   proxygen::ResponseBuilder(downstream)
       .status(status, error.substr(0, kMaxStatusSize))
+      .header(protocol::TRINO_TASK_FAILED,"true")
       .body(error)
       .sendWithEOM();
 }
@@ -356,6 +357,9 @@ proxygen::RequestHandler* TaskResource::getResults(
                   .header(
                       protocol::TRINO_BUFFER_COMPLETE_HEADER,
                       result->complete ? "true" : "false")
+                  .header(
+                      protocol::TRINO_TASK_FAILED,
+                      "false")
                   .body(std::move(result->data))
                   .sendWithEOM();
             })

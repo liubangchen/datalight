@@ -40,21 +40,22 @@ using nlohmann::json;
 
 namespace datalight::trino::protocol {
 
-extern const char* const PRESTO_PAGES_MIME_TYPE;
+extern const char* const TRINO_PAGES_MIME_TYPE;
 
-extern const char* const PRESTO_CURRENT_STATE_HTTP_HEADER;
-extern const char* const PRESTO_MAX_WAIT_HTTP_HEADER;
-extern const char* const PRESTO_MAX_SIZE_HTTP_HEADER;
-extern const char* const PRESTO_TASK_INSTANCE_ID_HEADER;
-extern const char* const PRESTO_PAGE_TOKEN_HEADER;
-extern const char* const PRESTO_PAGE_NEXT_TOKEN_HEADER;
-extern const char* const PRESTO_BUFFER_COMPLETE_HEADER;
+extern const char* const TRINO_CURRENT_STATE_HTTP_HEADER;
+extern const char* const TRINO_MAX_WAIT_HTTP_HEADER;
+extern const char* const TRINO_MAX_SIZE_HTTP_HEADER;
+extern const char* const TRINO_TASK_INSTANCE_ID_HEADER;
+extern const char* const TRINO_PAGE_TOKEN_HEADER;
+extern const char* const TRINO_PAGE_NEXT_TOKEN_HEADER;
+extern const char* const TRINO_BUFFER_COMPLETE_HEADER;
+extern const char* const TRINO_TASK_FAILED;
 
-extern const char* const PRESTO_MAX_WAIT_DEFAULT;
-extern const char* const PRESTO_MAX_SIZE_DEFAULT;
+extern const char* const TRINO_MAX_WAIT_DEFAULT;
+extern const char* const TRINO_MAX_SIZE_DEFAULT;
 
 
-extern const char* const PRESTO_ABORT_TASK_URL_PARAM;
+extern const char* const TRINO_ABORT_TASK_URL_PARAM;
 
 class Exception : public std::runtime_error {
  public:
