@@ -389,12 +389,10 @@ namespace datalight::trino {
         RowTypePtr inputTypeFromSource = toRowType(fragment, node->inputs[0]);
 
         if (isHashPartition(node)) {
-            std::vector<std::shared_ptr<const core::FieldAccessTypedExpr>> partitionKeys; // toFieldExprs(
-            // node->partitioningScheme.partitioning.arguments, exprConverter_);
-
-            auto inputType = sourceNodes[0]->outputType();
-            auto keyChannels = toChannels(inputType, partitionKeys);
-            auto partitionFunctionFactory = [inputType,
+            std::vector<std::shared_ptr<const core::FieldAccessTypedExpr>> partitionKeys;
+            const auto inputType = sourceNodes[0]->outputType();
+            const auto keyChannels = toChannels(inputType, partitionKeys);
+            const auto partitionFunctionFactory = [inputType,
                                              keyChannels](auto numPartitions) {
                 return std::make_unique<velox::exec::HashPartitionFunction>(
                     numPartitions, inputType, keyChannels);

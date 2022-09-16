@@ -33,6 +33,7 @@ add_library(
 
 target_link_libraries(
   trino_types
+  velox_exec
   velox_type
   trino_type_converter
   trino_protocol
