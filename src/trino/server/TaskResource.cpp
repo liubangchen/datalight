@@ -76,11 +76,11 @@ void sendTaskNotFound(
 std::optional<protocol::TaskState> getCurrentState(
     proxygen::HTTPMessage* message) {
   auto& headers = message->getHeaders();
-  if (!headers.exists(protocol::PRESTO_CURRENT_STATE_HTTP_HEADER)) {
-    return std::optional<protocol::TaskState>();
+  if (!headers.exists(protocol::TRINO_CURRENT_STATE_HTTP_HEADER)) {
+      return std::optional<protocol::TaskState>();
   }
   json taskStateJson =
-      headers.getSingleOrEmpty(protocol::PRESTO_CURRENT_STATE_HTTP_HEADER);
+      headers.getSingleOrEmpty(protocol::TRINO_CURRENT_STATE_HTTP_HEADER);
   protocol::TaskState currentState;
   from_json(taskStateJson, currentState);
   return currentState;
@@ -88,11 +88,11 @@ std::optional<protocol::TaskState> getCurrentState(
 
 std::optional<protocol::Duration> getMaxWait(proxygen::HTTPMessage* message) {
   auto& headers = message->getHeaders();
-  if (!headers.exists(protocol::PRESTO_MAX_WAIT_HTTP_HEADER)) {
-    return std::optional<protocol::Duration>();
+  if (!headers.exists(protocol::TRINO_MAX_WAIT_HTTP_HEADER)) {
+      return std::optional<protocol::Duration>();
   }
   return protocol::Duration(
-      headers.getSingleOrEmpty(protocol::PRESTO_MAX_WAIT_HTTP_HEADER));
+      headers.getSingleOrEmpty(protocol::TRINO_MAX_WAIT_HTTP_HEADER));
 }
 } // namespace
 
@@ -281,9 +281,9 @@ proxygen::RequestHandler* TaskResource::deleteTask(
     const std::vector<std::string>& pathMatch) {
   protocol::TaskId taskId = pathMatch[1];
   bool abort = false;
-  if (message->hasQueryParam(protocol::PRESTO_ABORT_TASK_URL_PARAM)) {
-    abort =
-        message->getQueryParam(protocol::PRESTO_ABORT_TASK_URL_PARAM) == "true";
+  if (message->hasQueryParam(protocol::TRINO_ABORT_TASK_URL_PARAM)) {
+      abort =
+        message->getQueryParam(protocol::TRINO_ABORT_TASK_URL_PARAM) == "true";
   }
 
   return new http::CallbackRequestHandler(
@@ -318,11 +318,11 @@ proxygen::RequestHandler* TaskResource::getResults(
 
   auto& headers = message->getHeaders();
   auto maxSize = protocol::DataSize(
-      headers.exists(protocol::PRESTO_MAX_SIZE_HTTP_HEADER)
-          ? headers.getSingleOrEmpty(protocol::PRESTO_MAX_SIZE_HTTP_HEADER)
-          : protocol::PRESTO_MAX_SIZE_DEFAULT);
+      headers.exists(protocol::TRINO_MAX_SIZE_HTTP_HEADER)
+      ? headers.getSingleOrEmpty(protocol::TRINO_MAX_SIZE_HTTP_HEADER)
+      : protocol::TRINO_MAX_SIZE_DEFAULT);
   auto maxWait = getMaxWait(message).value_or(
-      protocol::Duration(protocol::PRESTO_MAX_WAIT_DEFAULT));
+      protocol::Duration(protocol::TRINO_MAX_WAIT_DEFAULT));
 
   return new http::CallbackRequestHandler(
       [this, taskId, bufferId, token, maxSize, maxWait](
@@ -345,16 +345,16 @@ proxygen::RequestHandler* TaskResource::getResults(
                   .status(status, "")
                   .header(
                       proxygen::HTTP_HEADER_CONTENT_TYPE,
-                      protocol::PRESTO_PAGES_MIME_TYPE)
-                  .header(protocol::PRESTO_TASK_INSTANCE_ID_HEADER, taskId)
+                      protocol::TRINO_PAGES_MIME_TYPE)
+                  .header(protocol::TRINO_TASK_INSTANCE_ID_HEADER, taskId)
                   .header(
-                      protocol::PRESTO_PAGE_TOKEN_HEADER,
+                      protocol::TRINO_PAGE_TOKEN_HEADER,
                       std::to_string(result->sequence))
                   .header(
-                      protocol::PRESTO_PAGE_NEXT_TOKEN_HEADER,
+                      protocol::TRINO_PAGE_NEXT_TOKEN_HEADER,
                       std::to_string(result->nextSequence))
                   .header(
-                      protocol::PRESTO_BUFFER_COMPLETE_HEADER,
+                      protocol::TRINO_BUFFER_COMPLETE_HEADER,
                       result->complete ? "true" : "false")
                   .body(std::move(result->data))
                   .sendWithEOM();

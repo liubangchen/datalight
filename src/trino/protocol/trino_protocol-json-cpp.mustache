@@ -37,20 +37,20 @@ std::string json_map_key(std::string p) {
 
 namespace datalight::trino::protocol {
 
-const char* const PRESTO_PAGES_MIME_TYPE = "application/x-presto-pages";
+const char* const TRINO_PAGES_MIME_TYPE = "application/x-trino-pages";
 
-const char* const PRESTO_CURRENT_STATE_HTTP_HEADER = "X-Presto-Current-State";
-const char* const PRESTO_MAX_WAIT_HTTP_HEADER = "X-Presto-Max-Wait";
-const char* const PRESTO_MAX_SIZE_HTTP_HEADER = "X-Presto-Max-Size";
-const char* const PRESTO_TASK_INSTANCE_ID_HEADER = "X-Presto-Task-Instance-Id";
-const char* const PRESTO_PAGE_TOKEN_HEADER = "X-Presto-Page-Sequence-Id";
-const char* const PRESTO_PAGE_NEXT_TOKEN_HEADER = "X-Presto-Page-End-Sequence-Id";
-const char* const PRESTO_BUFFER_COMPLETE_HEADER = "X-Presto-Buffer-Complete";
+const char* const TRINO_CURRENT_STATE_HTTP_HEADER = "X-Trino-Current-State";
+const char* const TRINO_MAX_WAIT_HTTP_HEADER = "X-Trino-Max-Wait";
+const char* const TRINO_MAX_SIZE_HTTP_HEADER = "X-Trino-Max-Size";
+const char* const TRINO_TASK_INSTANCE_ID_HEADER = "X-Trino-Task-Instance-Id";
+const char* const TRINO_PAGE_TOKEN_HEADER = "X-Trino-Page-Sequence-Id";
+const char* const TRINO_PAGE_NEXT_TOKEN_HEADER = "X-Trino-Page-End-Sequence-Id";
+const char* const TRINO_BUFFER_COMPLETE_HEADER = "X-Trino-Buffer-Complete";
 
-const char* const PRESTO_MAX_WAIT_DEFAULT = "2s";
-const char* const PRESTO_MAX_SIZE_DEFAULT = "4096 B";
+const char* const TRINO_MAX_WAIT_DEFAULT = "2s";
+const char* const TRINO_MAX_SIZE_DEFAULT = "4096 B";
 
-const char* const PRESTO_ABORT_TASK_URL_PARAM = "abort";
+const char* const TRINO_ABORT_TASK_URL_PARAM = "abort";
 
 } 
 

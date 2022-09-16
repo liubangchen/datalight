@@ -93,7 +93,7 @@ void TrinoExchangeSource::doRequest() {
   http::RequestBuilder()
       .method(proxygen::HTTPMethod::GET)
       .url(path)
-      .header(protocol::PRESTO_MAX_SIZE_HTTP_HEADER, "32MB")
+      .header(protocol::TRINO_MAX_SIZE_HTTP_HEADER, "32MB")
       .send(httpClient_.get())
       .via(driverCPUExecutor())
       .thenValue([path, self](std::unique_ptr<http::HttpResponse> response) {
@@ -131,7 +131,7 @@ void TrinoExchangeSource::processDataResponse(
           << contentLength << " bytes";
 
   auto complete = headers->getHeaders()
-                      .getSingleOrEmpty(protocol::PRESTO_BUFFER_COMPLETE_HEADER)
+                      .getSingleOrEmpty(protocol::TRINO_BUFFER_COMPLETE_HEADER)
                       .compare("true") == 0;
   if (complete) {
     VLOG(1) << "Received buffer-complete header for " << basePath_ << "/"
@@ -140,7 +140,7 @@ void TrinoExchangeSource::processDataResponse(
 
   int64_t ackSequence =
       atol(headers->getHeaders()
-               .getSingleOrEmpty(protocol::PRESTO_PAGE_NEXT_TOKEN_HEADER)
+               .getSingleOrEmpty(protocol::TRINO_PAGE_NEXT_TOKEN_HEADER)
                .c_str());
 
   std::unique_ptr<exec::SerializedPage> page;

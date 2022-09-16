@@ -393,7 +393,7 @@ namespace datalight::trino {
             const auto inputType = sourceNodes[0]->outputType();
             const auto keyChannels = toChannels(inputType, partitionKeys);
             const auto partitionFunctionFactory = [inputType,
-                                             keyChannels](auto numPartitions) {
+                                                   keyChannels](auto numPartitions) {
                 return std::make_unique<velox::exec::HashPartitionFunction>(
                     numPartitions, inputType, keyChannels);
             };
@@ -616,14 +616,12 @@ namespace datalight::trino {
             partitioningScheme.partitioning.handle.connectorHandle;
 
         std::vector<std::shared_ptr<const core::FieldAccessTypedExpr>> fields;
-        auto partitioningKeys = fields;
-        //    toTypedExprs(partitioningScheme.partitioning.arguments, exprConverter_);
+        //auto partitioningKeys =  toTypedExprs(partitioningScheme.partitioning.arguments, exprConverter_);
         auto sourceNode = toVeloxQueryPlan(fragment, fragment.root, taskId);
         auto inputType = sourceNode->outputType();
 
-        // PartitionedOutputChannels keyChannels =
-        //     toChannels(inputType, partitioningKeys, pool_);
-        auto outputType = nullptr; // toRowType(partitioningScheme.outputLayout);
+        //PartitionedOutputChannels keyChannels = toChannels(inputType, partitioningKeys, pool_);
+        auto outputType = toRowType(fragment, partitioningScheme.outputLayout);
 
         if (auto systemPartitioningHandle =
             std::dynamic_pointer_cast<protocol::SystemPartitioningHandle>(
@@ -715,7 +713,7 @@ namespace datalight::trino {
                 VELOX_FAIL("Unsupported kind of SystemPartitioning");
             }
         }
-        LOG(INFO) << "test......";
+         LOG(INFO) << "test......";
         VELOX_UNSUPPORTED("Unsupported partitioning handle: {}", "test");
         return planFragment;
     }
