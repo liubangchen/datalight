@@ -55,6 +55,7 @@ namespace datalight::trino {
 
         void abortResults();
 
+        std::string getJwtToken();
         // Returns a shared ptr owning the current object.
         std::shared_ptr<TrinoExchangeSource> getSelfPtr();
 

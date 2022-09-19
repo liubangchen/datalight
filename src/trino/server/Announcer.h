@@ -46,10 +46,10 @@ class Announcer {
   std::function<folly::SocketAddress()> discoveryAddressLookup_;
   const int frequencyMs_;
   const std::string announcementBody_;
-  const proxygen::HTTPMessage announcementRequest_;
-  folly::SocketAddress address_;
-  std::unique_ptr<http::HttpClient> client_;
-  std::atomic_bool stopped_{true};
+  proxygen::HTTPMessage announcementRequest_;
+    folly::SocketAddress address_;
+    std::unique_ptr<http::HttpClient> client_;
+    std::atomic_bool stopped_{true};
   folly::EventBaseThread eventBaseThread_;
 };
 

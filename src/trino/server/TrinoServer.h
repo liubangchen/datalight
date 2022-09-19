@@ -60,6 +60,7 @@ namespace datalight::trino {
     class TaskResource;
 
     class TrinoServer {
+
     public:
         explicit TrinoServer(const std::string& configDirectoryPath);
         virtual ~TrinoServer();
@@ -80,59 +81,59 @@ namespace datalight::trino {
     protected:
         virtual std::function<folly::SocketAddress()> discoveryAddressLookup();
 
-        virtual std::shared_ptr<velox::exec::TaskListener> getTaskListiner();
+  virtual std::shared_ptr<velox::exec::TaskListener> getTaskListiner();
 
-        void initializeAsyncCache();
+  void initializeAsyncCache();
 
-        virtual std::vector<std::string> registerConnectors(
-            const fs::path& configDirectoryPath);
+  virtual std::vector<std::string> registerConnectors(
+      const fs::path& configDirectoryPath);
 
-    protected:
-        virtual std::shared_ptr<velox::connector::Connector> connectorWithCache(
-            const std::string& connectorName,
-            const std::string& connectorId,
-            std::shared_ptr<const velox::Config> properties);
+ protected:
+  virtual std::shared_ptr<velox::connector::Connector> connectorWithCache(
+      const std::string& connectorName,
+      const std::string& connectorId,
+      std::shared_ptr<const velox::Config> properties);
 
-        void reportMemoryInfo(proxygen::ResponseHandler* downstream);
+  void reportMemoryInfo(proxygen::ResponseHandler* downstream);
 
-        void reportServerInfo(proxygen::ResponseHandler* downstream);
+  void reportServerInfo(proxygen::ResponseHandler* downstream);
 
-        void reportNodeStatus(proxygen::ResponseHandler* downstream);
+  void reportNodeStatus(proxygen::ResponseHandler* downstream);
 
-        void populateMemAndCPUInfo();
+  void populateMemAndCPUInfo();
 
-        const std::string configDirectoryPath_;
+  const std::string configDirectoryPath_;
 
-        // Executor for background writing into SSD cache.
-        std::unique_ptr<folly::IOThreadPoolExecutor> cacheExecutor_;
+  // Executor for background writing into SSD cache.
+  std::unique_ptr<folly::IOThreadPoolExecutor> cacheExecutor_;
 
-        // Executor for async IO for connectors.
-        std::unique_ptr<folly::IOThreadPoolExecutor> connectorIoExecutor_;
+  // Executor for async IO for connectors.
+  std::unique_ptr<folly::IOThreadPoolExecutor> connectorIoExecutor_;
 
-        // Instance of AsyncDataCache used for all large allocations.
-        std::shared_ptr<velox::memory::MappedMemory> mappedMemory_;
+  // Instance of AsyncDataCache used for all large allocations.
+  std::shared_ptr<velox::memory::MappedMemory> mappedMemory_;
 
-        std::unique_ptr<http::HttpServer> httpServer_;
-        std::unique_ptr<SignalHandler> signalHandler_;
-        std::unique_ptr<TaskManager> taskManager_;
-        std::unique_ptr<TaskResource> taskResource_;
-        std::atomic<NodeState> nodeState_{NodeState::ACTIVE};
-        std::atomic_bool shuttingDown_{false};
-        std::chrono::steady_clock::time_point start_;
+  std::unique_ptr<http::HttpServer> httpServer_;
+  std::unique_ptr<SignalHandler> signalHandler_;
+  std::unique_ptr<TaskManager> taskManager_;
+  std::unique_ptr<TaskResource> taskResource_;
+  std::atomic<NodeState> nodeState_{NodeState::ACTIVE};
+  std::atomic_bool shuttingDown_{false};
+  std::chrono::steady_clock::time_point start_;
 
-        // We update these members asynchronously and return in http requests w/o
-        // delay.
-        folly::Synchronized<std::unique_ptr<protocol::MemoryInfo>> memoryInfo_;
-        CPUMon cpuMon_;
+  // We update these members asynchronously and return in http requests w/o
+  // delay.
+  folly::Synchronized<std::unique_ptr<protocol::MemoryInfo>> memoryInfo_;
+  CPUMon cpuMon_;
 
-        std::string environment_;
-        std::string nodeVersion_;
-        std::string nodeId_;
-        std::string address_;
-        std::string nodeLocation_;
+  std::string environment_;
+  std::string nodeVersion_;
+  std::string nodeId_;
+  std::string address_;
+  std::string nodeLocation_;
 
-        /// Total capacity of all caches in the connectors
-        size_t cacheRamCapacityGb_{0};
-    };
+  /// Total capacity of all caches in the connectors
+  size_t cacheRamCapacityGb_{0};
+};
 
 } // namespace datalight::trino

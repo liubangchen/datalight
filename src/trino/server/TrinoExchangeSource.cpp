@@ -19,44 +19,49 @@
 #include <velox/common/base/Exceptions.h>
 #include <velox/exec/Operator.h>
 #include <sstream>
+#include "common/Configs.h"
+#include <hash-library/sha256.h>
+#include <jwt/jwt.h>
 
 #include "protocol/TrinoProtocol.h"
 #include "server/QueryContextManager.h"
 
 using namespace facebook::velox;
 
+using min = std::chrono::minutes;
+
 namespace datalight::trino {
 
-namespace {
+    namespace {
 
-std::string extractTaskId(const std::string& path) {
-  static const RE2 kPattern("/v1/task/([^/]*)/.*");
-  std::string taskId;
-  if (RE2::PartialMatch(path, kPattern, &taskId)) {
-    return taskId;
-  }
+        std::string extractTaskId(const std::string& path) {
+            static const RE2 kPattern("/v1/task/([^/]*)/.*");
+            std::string taskId;
+            if (RE2::PartialMatch(path, kPattern, &taskId)) {
+                return taskId;
+            }
 
-  VLOG(1) << "Failed to extract task ID from remote split: " << path;
+            VLOG(1) << "Failed to extract task ID from remote split: " << path;
 
-  throw std::invalid_argument(
-      fmt::format("Cannot extract task ID from remote split URL: {}", path));
-}
+            throw std::invalid_argument(
+                fmt::format("Cannot extract task ID from remote split URL: {}", path));
+        }
 
-void onFinalFailure(
-    const std::string& errorMessage,
-    std::shared_ptr<exec::ExchangeQueue> queue) {
-  VLOG(1) << errorMessage;
+        void onFinalFailure(
+            const std::string& errorMessage,
+            std::shared_ptr<exec::ExchangeQueue> queue) {
+            VLOG(1) << errorMessage;
 
-  std::lock_guard<std::mutex> l(queue->mutex());
-  queue->setErrorLocked(errorMessage);
-}
-} // namespace
+            std::lock_guard<std::mutex> l(queue->mutex());
+            queue->setErrorLocked(errorMessage);
+        }
+    } // namespace
 
-TrinoExchangeSource::TrinoExchangeSource(
-    const folly::Uri& baseUri,
-    int destination,
-    std::shared_ptr<exec::ExchangeQueue> queue,
-    memory::MemoryPool* pool)
+    TrinoExchangeSource::TrinoExchangeSource(
+        const folly::Uri& baseUri,
+        int destination,
+        std::shared_ptr<exec::ExchangeQueue> queue,
+        memory::MemoryPool* pool)
     : ExchangeSource(extractTaskId(baseUri.path()), destination, queue, pool),
       basePath_(baseUri.path()),
       host_(baseUri.host()),
@@ -94,6 +99,7 @@ void TrinoExchangeSource::doRequest() {
       .method(proxygen::HTTPMethod::GET)
       .url(path)
       .header(protocol::TRINO_MAX_SIZE_HTTP_HEADER, "32MB")
+      .header("X-Trino-Internal-Bearer", getJwtToken())
       .send(httpClient_.get())
       .via(driverCPUExecutor())
       .thenValue([path, self](std::unique_ptr<http::HttpResponse> response) {
@@ -233,6 +239,7 @@ void TrinoExchangeSource::acknowledgeResults(int64_t ackSequence) {
   http::RequestBuilder()
       .method(proxygen::HTTPMethod::GET)
       .url(ackPath)
+      .header("X-Trino-Internal-Bearer", getJwtToken())
       .send(httpClient_.get())
       .via(driverCPUExecutor())
       .thenValue([self](std::unique_ptr<http::HttpResponse> response) {
@@ -245,45 +252,65 @@ void TrinoExchangeSource::acknowledgeResults(int64_t ackSequence) {
           });
 }
 
-void TrinoExchangeSource::abortResults() {
-  VLOG(1) << "Sending abort results " << basePath_;
-  auto queue = queue_;
-  auto self = getSelfPtr();
-  http::RequestBuilder()
-      .method(proxygen::HTTPMethod::DELETE)
-      .url(basePath_)
-      .send(httpClient_.get())
-      .via(driverCPUExecutor())
-      .thenValue([queue, self](std::unique_ptr<http::HttpResponse> response) {
-        auto statusCode = response->headers()->getStatusCode();
-        if (statusCode != http::kHttpOk && statusCode != http::kHttpNoContent) {
-          const std::string errMsg = fmt::format(
-              "Abort results failed: {}, path {}", statusCode, self->basePath_);
-          LOG(ERROR) << errMsg;
-          onFinalFailure(errMsg, queue);
-        } else {
-          self->abortResultsSucceeded_.store(true);
-        }
-      })
-      .thenError(
-          folly::tag_t<std::exception>{},
-          [queue, self](const std::exception& e) {
-            const std::string errMsg = fmt::format(
-                "Abort results failed: {}, path {}", e.what(), self->basePath_);
-            LOG(ERROR) << errMsg;
-            // Captures 'queue' by value to ensure lifetime. Error
-            // detection can be arbitrarily late, for example after cancellation
-            // due to other errors.
-            onFinalFailure(errMsg, queue);
-          });
-}
+    std::string TrinoExchangeSource::getJwtToken(){
+        auto nodeConfig = NodeConfig::instance();
+        auto environment_ = nodeConfig->nodeEnvironment();
+        auto nodeId_ = nodeConfig->nodeId();
 
-void TrinoExchangeSource::close() {
-  closed_.store(true);
-  if (!abortResultsSucceeded_.load()) {
-      abortResults();
-  }
-}
+        hashlibrary::SHA256 sha256;
+        sha256.add(environment_.c_str(), environment_.size());
+        unsigned char sbuf[hashlibrary::SHA256::HashBytes];
+        sha256.getHash(sbuf);
+        std::string hash_key(sbuf, sbuf + sizeof sbuf / sizeof sbuf[0]);
+        const auto time = jwt::date::clock::now();
+        auto token = jwt::create()
+            .set_subject(nodeId_)
+            .set_expires_at(time + min{5})
+            .sign(jwt::algorithm::hs256(hash_key));
+        return token;
+    }
+
+    void TrinoExchangeSource::abortResults() {
+        VLOG(1) << "Sending abort results " << basePath_;
+        auto queue = queue_;
+        auto self = getSelfPtr();
+
+        http::RequestBuilder()
+            .method(proxygen::HTTPMethod::DELETE)
+            .url(basePath_)
+            .header("X-Trino-Internal-Bearer", getJwtToken())
+            .send(httpClient_.get())
+            .via(driverCPUExecutor())
+            .thenValue([queue, self](std::unique_ptr<http::HttpResponse> response) {
+                auto statusCode = response->headers()->getStatusCode();
+                if (statusCode != http::kHttpOk && statusCode != http::kHttpNoContent) {
+                    const std::string errMsg = fmt::format(
+                        "Abort results failed: {}, path {}", statusCode, self->basePath_);
+                    LOG(ERROR) << errMsg;
+                    onFinalFailure(errMsg, queue);
+                } else {
+                    self->abortResultsSucceeded_.store(true);
+                }
+            })
+            .thenError(
+                folly::tag_t<std::exception>{},
+                [queue, self](const std::exception& e) {
+                    const std::string errMsg = fmt::format(
+                        "Abort results failed: {}, path {}", e.what(), self->basePath_);
+                    LOG(ERROR) << errMsg;
+                    // Captures 'queue' by value to ensure lifetime. Error
+                    // detection can be arbitrarily late, for example after cancellation
+                    // due to other errors.
+                    onFinalFailure(errMsg, queue);
+                });
+    }
+
+    void TrinoExchangeSource::close() {
+        closed_.store(true);
+        if (!abortResultsSucceeded_.load()) {
+            abortResults();
+        }
+    }
 
     std::shared_ptr<TrinoExchangeSource> TrinoExchangeSource::getSelfPtr() {
         return std::dynamic_pointer_cast<TrinoExchangeSource>(shared_from_this());

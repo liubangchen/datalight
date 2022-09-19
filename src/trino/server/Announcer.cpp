@@ -19,6 +19,7 @@
 #include <hash-library/sha256.h>
 #include <jwt/jwt.h>
 #include <nlohmann/json.hpp>
+#include "common/Configs.h"
 #include "http/HttpClient.h"
 
 namespace datalight::trino {
@@ -64,17 +65,6 @@ proxygen::HTTPMessage announcementRequest(
     const std::string& environment,
     const std::string& nodeId,
     const std::string& body) {
-  hashlibrary::SHA256 sha256;
-  sha256.add(environment.c_str(), environment.size());
-  unsigned char sbuf[hashlibrary::SHA256::HashBytes];
-  sha256.getHash(sbuf);
-  std::string hash_key(sbuf, sbuf + sizeof sbuf / sizeof sbuf[0]);
-  const auto time = jwt::date::clock::now();
-  auto token = jwt::create()
-                   .set_subject(nodeId)
-                   .set_expires_at(time + min{5})
-                   .sign(jwt::algorithm::hs256(hash_key));
-
   proxygen::HTTPMessage request;
   request.setMethod(proxygen::HTTPMethod::PUT);
   request.setURL(fmt::format("/v1/announcement/{}", nodeId));
@@ -82,7 +72,6 @@ proxygen::HTTPMessage announcementRequest(
       proxygen::HTTP_HEADER_HOST, fmt::format("{}:{}", address, port));
   request.getHeaders().set(
       proxygen::HTTP_HEADER_CONTENT_TYPE, "application/json");
-  request.getHeaders().rawSet("X-Trino-Internal-Bearer", token);
   request.getHeaders().set(
       proxygen::HTTP_HEADER_CONTENT_LENGTH, std::to_string(body.size()));
   return request;
@@ -157,17 +146,34 @@ void Announcer::makeAnnouncement() {
     return;
   }
 
+  auto nodeConfig = NodeConfig::instance();
+  auto environment_ = nodeConfig->nodeEnvironment();
+  auto nodeId_ = nodeConfig->nodeId();
+
+  hashlibrary::SHA256 sha256;
+  sha256.add(environment_.c_str(), environment_.size());
+  unsigned char sbuf[hashlibrary::SHA256::HashBytes];
+  sha256.getHash(sbuf);
+  std::string hash_key(sbuf, sbuf + sizeof sbuf / sizeof sbuf[0]);
+  const auto time = jwt::date::clock::now();
+  auto token = jwt::create()
+                   .set_subject(nodeId_)
+                   .set_expires_at(time + min{5})
+                   .sign(jwt::algorithm::hs256(hash_key));
+
+  announcementRequest_.getHeaders().set("X-Trino-Internal-Bearer", token);
+
   client_->sendRequest(announcementRequest_, announcementBody_)
       .via(eventBaseThread_.getEventBase())
       .thenValue([](auto response) {
-          auto message = response->headers();
-          if (message->getStatusCode() != http::kHttpAccepted) {
-              LOG(WARNING) << "Announcement failed: HTTP "
-                           << message->getStatusCode() << " - "
-                           << response->dumpBodyChain();
-          } else {
-              LOG(INFO) << "Announcement succeeded: " << message->getStatusCode();
-          }
+        auto message = response->headers();
+        if (message->getStatusCode() != http::kHttpAccepted) {
+          LOG(WARNING) << "Announcement failed: HTTP "
+                       << message->getStatusCode() << " - "
+                       << response->dumpBodyChain();
+        } else {
+          LOG(INFO) << "Announcement succeeded: " << message->getStatusCode();
+        }
       })
       .thenError(
           folly::tag_t<std::exception>{},
