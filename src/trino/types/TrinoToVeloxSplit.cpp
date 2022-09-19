@@ -24,16 +24,16 @@ namespace datalight::trino {
 namespace {
 
 dwio::common::FileFormat toVeloxFileFormat(
-    const datalight::protocol::String& format) {
-  if (format == "com.facebook.hive.orc.OrcInputFormat") {
-    return dwio::common::FileFormat::DWRF;
-  } else if (
-      format ==
-      "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat") {
-    return dwio::common::FileFormat::PARQUET;
-  } else {
-    VELOX_FAIL("Unknown file format {}", format);
-  }
+    const protocol::String& format) {
+    if (format == "com.facebook.hive.orc.OrcInputFormat") {
+        return dwio::common::FileFormat::DWRF;
+    } else if (
+        format ==
+        "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat") {
+        return dwio::common::FileFormat::PARQUET;
+    } else {
+        VELOX_FAIL("Unknown file format {}", format);
+    }
 }
 
 } // anonymous namespace
@@ -41,24 +41,23 @@ dwio::common::FileFormat toVeloxFileFormat(
 facebook::velox::exec::Split toVeloxSplit(
     const protocol::ScheduledSplit& scheduledSplit) {
   const auto& connectorSplit = scheduledSplit.split.connectorSplit;
-  const auto splitGroupId = scheduledSplit.split.lifespan.isgroup
-      ? scheduledSplit.split.lifespan.groupid
-      : -1;
+  const auto splitGroupId =  -1;
   if (auto hiveSplit = std::dynamic_pointer_cast<const protocol::HiveSplit>(
           connectorSplit)) {
     std::unordered_map<std::string, std::optional<std::string>> partitionKeys;
     for (const auto& entry : hiveSplit->partitionKeys) {
       partitionKeys.emplace(
           entry.name,
-          entry.value == nullptr ? std::nullopt
-                                 : std::optional<std::string>{*entry.value});
+          entry.value.size() == 0 ? std::nullopt
+          : std::optional<std::string>{entry.value});
     }
 
     return facebook::velox::exec::Split(
         std::make_shared<connector::hive::HiveConnectorSplit>(
-            scheduledSplit.split.connectorId,
+            //scheduledSplit.split.connectorId,
+            "hive",
             hiveSplit->path,
-            toVeloxFileFormat(hiveSplit->storage.storageFormat.inputFormat),
+            toVeloxFileFormat("com.facebook.hive.orc.OrcInputFormat"),
             hiveSplit->start,
             hiveSplit->length,
             partitionKeys,
@@ -69,14 +68,24 @@ facebook::velox::exec::Split toVeloxSplit(
   }
   if (auto remoteSplit = std::dynamic_pointer_cast<const protocol::RemoteSplit>(
           connectorSplit)) {
-    return facebook::velox::exec::Split(
-        std::make_shared<exec::RemoteConnectorSplit>(
-            remoteSplit->location.location),
-        splitGroupId);
+
+      if(auto exInput = std::dynamic_pointer_cast<const protocol::DirectExchangeInput>(remoteSplit->exchangeInput)){
+
+          return  facebook::velox::exec::Split(
+              std::make_shared<exec::RemoteConnectorSplit>(
+                  exInput->location),
+              splitGroupId);
+
+      }else if(auto exInput = std::dynamic_pointer_cast<const protocol::SpoolingExchangeInput>(remoteSplit->exchangeInput)){
+          VELOX_CHECK(false, "Unknown ExchangeInput type SpoolingExchangeInput");
+      }else{
+          VELOX_CHECK(false, "Unknown split type unknow");
+      }
   }
+
   if (std::dynamic_pointer_cast<const protocol::EmptySplit>(connectorSplit)) {
-    // We return NULL for empty splits to signal to do nothing.
-    return facebook::velox::exec::Split(nullptr, splitGroupId);
+      // We return NULL for empty splits to signal to do nothing.
+      return facebook::velox::exec::Split(nullptr, splitGroupId);
   }
 
   VELOX_CHECK(false, "Unknown split type {}", connectorSplit->_type);

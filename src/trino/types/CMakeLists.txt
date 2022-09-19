@@ -28,7 +28,7 @@ add_library(
   STATIC
   TrinoToVeloxQueryPlan.cpp
   TrinoToVeloxExpr.cpp
-  #  TrinoToVeloxSplit.cpp
+  TrinoToVeloxSplit.cpp
 )
 
 target_link_libraries(

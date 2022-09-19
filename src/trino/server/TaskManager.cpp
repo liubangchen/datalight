@@ -180,7 +180,7 @@ std::unique_ptr<TaskInfo> TaskManager::createOrUpdateErrorTask(
 std::unique_ptr<TaskInfo> TaskManager::createOrUpdateTask(
     const TaskId& taskId,
     core::PlanFragment planFragment,
-    //const std::vector<protocol::TaskSource>& sources,
+    protocol::List<protocol::SplitAssignment> splitAssignments,
     const protocol::OutputBuffers& outputBuffers,
     std::unordered_map<std::string, std::string>&& configStrings,
     std::unordered_map<
@@ -273,10 +273,10 @@ std::unique_ptr<TaskInfo> TaskManager::createOrUpdateTask(
     execTask->updateBroadcastOutputBuffers(
         outputBuffers.buffers.size(), outputBuffers.noMoreBufferIds);
   }
-  /**
-  for (const auto& source : sources) {
-    // Add all splits from the source to the task.
-    LOG(INFO) << "Adding " << source.splits.size() << " splits to " << taskId
+
+  for (const auto& source : splitAssignments) {
+      // Add all splits from the source to the task.
+      LOG(INFO) << "Adding " << source.splits.size() << " splits to " << taskId
               << " for " << source.planNodeId;
     // Keep track of the max sequence for this batch of splits.
     long maxSplitSequenceId{-1};
@@ -292,18 +292,20 @@ std::unique_ptr<TaskInfo> TaskManager::createOrUpdateTask(
     // Update task's max split sequence id after all splits have been added.
     execTask->setMaxSplitSequenceId(source.planNodeId, maxSplitSequenceId);
 
+    /**
     for (const auto& lifespan : source.noMoreSplitsForLifespan) {
       if (lifespan.isgroup) {
         execTask->noMoreSplitsForGroup(source.planNodeId, lifespan.groupid);
       }
     }
+    **/
 
     if (source.noMoreSplits) {
       LOG(INFO) << "No more splits for " << taskId;
       execTask->noMoreSplits(source.planNodeId);
     }
   }
-  **/
+
   // 'prestoTask' will exist by virtue of shared_ptr but may for example have
   // been aborted.
   auto info = prestoTask->updateInfoLocked(); // Presto task is locked above.

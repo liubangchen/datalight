@@ -227,7 +227,6 @@ proxygen::RequestHandler* TaskResource::createOrUpdateTask(
               json::parse(updateJson);
           velox::core::PlanFragment planFragment;
           if (taskUpdateRequest.fragment) {
-              LOG(INFO) <<"............";
               auto trinoPlan = taskUpdateRequest.fragment;
               VeloxQueryPlanConverter converter(pool_.get());
             planFragment = converter.toVeloxQueryPlan(
@@ -258,7 +257,7 @@ proxygen::RequestHandler* TaskResource::createOrUpdateTask(
           taskInfo = taskManager_.createOrUpdateTask(
               taskId,
               std::move(planFragment),
-              //taskUpdateRequest.sources,
+              taskUpdateRequest.splitAssignments,
               taskUpdateRequest.outputIds,
               std::move(configs),
               std::move(connectorConfigs));
