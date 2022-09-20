@@ -177,7 +177,7 @@ void TrinoServer::run() {
   httpServer_ =
       std::make_unique<http::HttpServer>(socketAddress, httpExecThreads);
 
-  httpServer_->registerPost(
+  httpServer_->registerGet(
       "/v1/memory",
       [server = this](
           proxygen::HTTPMessage* /*message*/,

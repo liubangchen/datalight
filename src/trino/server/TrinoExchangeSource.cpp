@@ -41,7 +41,7 @@ namespace datalight::trino {
                 return taskId;
             }
 
-            VLOG(1) << "Failed to extract task ID from remote split: " << path;
+            LOG(INFO) << "Failed to extract task ID from remote split: " << path;
 
             throw std::invalid_argument(
                 fmt::format("Cannot extract task ID from remote split URL: {}", path));
@@ -50,7 +50,7 @@ namespace datalight::trino {
         void onFinalFailure(
             const std::string& errorMessage,
             std::shared_ptr<exec::ExchangeQueue> queue) {
-            VLOG(1) << errorMessage;
+            LOG(INFO) << errorMessage;
 
             std::lock_guard<std::mutex> l(queue->mutex());
             queue->setErrorLocked(errorMessage);
@@ -92,8 +92,9 @@ void TrinoExchangeSource::doRequest() {
     queue_->setErrorLocked("TrinoExchangeSource closed");
     return;
   }
+  const auto time = std::chrono::system_clock::now();
   auto path = fmt::format("{}/{}", basePath_, sequence_);
-  VLOG(1) << "Fetching data from " << host_ << ":" << port_ << " " << path;
+  LOG(INFO) << "Fetching data from " << host_ << ":" << port_ << " " << path;
   auto self = getSelfPtr();
   http::RequestBuilder()
       .method(proxygen::HTTPMethod::GET)
@@ -106,12 +107,12 @@ void TrinoExchangeSource::doRequest() {
           auto* headers = response->headers();
           if (headers->getStatusCode() != http::kHttpOk &&
               headers->getStatusCode() != http::kHttpNoContent) {
-              self->processDataError(
-                  path,
-                  fmt::format(
-                      "Received HTTP {} {}",
-                      headers->getStatusCode(),
-                      headers->getStatusMessage()));
+              auto errmsg=fmt::format(
+                  "Received ERROR HTTP {} {}",
+                  headers->getStatusCode(),
+                  headers->getStatusMessage());
+              LOG(INFO)<<errmsg;
+              self->processDataError(path, errmsg);
           } else {
               self->processDataResponse(std::move(response));
           }
@@ -119,138 +120,143 @@ void TrinoExchangeSource::doRequest() {
       .thenError(
           folly::tag_t<std::exception>{},
           [path, self](const std::exception& e) {
+              LOG(INFO)<<"doRequest error "<<e.what();
               self->processDataError(path, e.what());
           });
 };
 
-void TrinoExchangeSource::processDataResponse(
-    std::unique_ptr<http::HttpResponse> response) {
-    auto* headers = response->headers();
-    VELOX_CHECK(
-        !headers->getIsChunked(),
-        "Chunked http transferring encoding is not supported.")
-        uint64_t contentLength =
-        atol(headers->getHeaders()
-             .getSingleOrEmpty(proxygen::HTTP_HEADER_CONTENT_LENGTH)
-             .c_str());
-    VLOG(1) << "Fetched data for " << basePath_ << "/" << sequence_ << ": "
-          << contentLength << " bytes";
-
-  auto complete = headers->getHeaders()
-                      .getSingleOrEmpty(protocol::TRINO_BUFFER_COMPLETE_HEADER)
-                      .compare("true") == 0;
-  if (complete) {
-    VLOG(1) << "Received buffer-complete header for " << basePath_ << "/"
-            << sequence_;
-  }
-
-  int64_t ackSequence =
-      atol(headers->getHeaders()
-               .getSingleOrEmpty(protocol::TRINO_PAGE_NEXT_TOKEN_HEADER)
-               .c_str());
-
-  std::unique_ptr<exec::SerializedPage> page;
-  std::unique_ptr<folly::IOBuf> singleChain;
-  bool empty = response->empty();
-  if (!empty) {
-    auto iobufs = response->consumeBody();
-    for (auto& buf : iobufs) {
-      if (!singleChain) {
-        singleChain = std::move(buf);
-      } else {
-        singleChain->prev()->appendChain(std::move(buf));
-      }
-    }
-    page = std::make_unique<exec::SerializedPage>(
-        std::move(singleChain),
-        pool_,
-        [mappedMemory = response->mappedMemory()](folly::IOBuf& iobuf) {
-          // Free the backed memory from MappedMemory on page dtor
-          folly::IOBuf* start = &iobuf;
-          auto curr = start;
-          do {
-            mappedMemory->freeBytes(curr->writableData(), curr->length());
-            curr = curr->next();
-          } while (curr != start);
+    void TrinoExchangeSource::processDataResponse(
+        std::unique_ptr<http::HttpResponse> response) {
+        auto* headers = response->headers();
+        headers->getHeaders().forEach([](std::string& name,std::string& value){
+            LOG(INFO)<<"header info "<<name<<"    "<<value;
         });
-  }
+        VELOX_CHECK(
+            !headers->getIsChunked(),
+            "Chunked http transferring encoding is not supported.")
+            uint64_t contentLength =
+            atol(headers->getHeaders()
+                 .getSingleOrEmpty(proxygen::HTTP_HEADER_CONTENT_LENGTH)
+                 .c_str());
 
-  {
-    std::lock_guard<std::mutex> l(queue_->mutex());
-    if (page) {
-      VLOG(1) << "Enqueuing page for " << basePath_ << "/" << sequence_ << ": "
-              << page->size() << " bytes";
-      queue_->enqueue(std::move(page));
+        LOG(INFO) << "Fetched data for " << basePath_ << "/" << sequence_ << ": "
+                  << contentLength << " bytes";
+
+        auto complete = headers->getHeaders()
+            .getSingleOrEmpty(protocol::TRINO_BUFFER_COMPLETE_HEADER)
+            .compare("true") == 0;
+        if (complete) {
+            LOG(INFO) << "Received buffer-complete header for " << basePath_ << "/"
+                      << sequence_;
+        }
+
+        int64_t ackSequence =
+            atol(headers->getHeaders()
+                 .getSingleOrEmpty(protocol::TRINO_PAGE_NEXT_TOKEN_HEADER)
+                 .c_str());
+
+        std::unique_ptr<exec::SerializedPage> page;
+        std::unique_ptr<folly::IOBuf> singleChain;
+        bool empty = response->empty();
+        if (!empty) {
+            auto iobufs = response->consumeBody();
+            for (auto& buf : iobufs) {
+                if (!singleChain) {
+                    singleChain = std::move(buf);
+                } else {
+                    singleChain->prev()->appendChain(std::move(buf));
+                }
+            }
+            page = std::make_unique<exec::SerializedPage>(
+                std::move(singleChain),
+                pool_,
+                [mappedMemory = response->mappedMemory()](folly::IOBuf& iobuf) {
+                    // Free the backed memory from MappedMemory on page dtor
+                    folly::IOBuf* start = &iobuf;
+                    auto curr = start;
+                    do {
+                        mappedMemory->freeBytes(curr->writableData(), curr->length());
+                        curr = curr->next();
+                    } while (curr != start);
+                });
+        }
+
+        {
+            std::lock_guard<std::mutex> l(queue_->mutex());
+            if (page) {
+                LOG(INFO) << "Enqueuing page for " << basePath_ << "/" << sequence_ << ": "
+                          << page->size() << " bytes";
+                queue_->enqueue(std::move(page));
+            }
+            if (complete) {
+                LOG(INFO) << "Enqueuing empty page for " << basePath_ << "/" << sequence_;
+                atEnd_ = true;
+                queue_->enqueue(nullptr);
+            }
+
+            sequence_ = ackSequence;
+
+            // Reset requestPending_ if the response is complete or have pages.
+            if (complete || !empty) {
+                requestPending_ = false;
+            }
+        }
+
+        if (complete) {
+            abortResults();
+        } else {
+            if (!empty) {
+                // Acknowledge results for non-empty content.
+                acknowledgeResults(ackSequence);
+            } else {
+                // Rerequest results for incomplete results with no pages.
+                request();
+            }
+        }
     }
-    if (complete) {
-      VLOG(1) << "Enqueuing empty page for " << basePath_ << "/" << sequence_;
-      atEnd_ = true;
-      queue_->enqueue(nullptr);
+
+    void TrinoExchangeSource::processDataError(
+        const std::string& path,
+        const std::string& error) {
+        failedAttempts_++;
+        if (failedAttempts_ < 3) {
+            LOG(INFO) << "Failed to fetch data from " << host_ << ":" << port_ << " "
+                      << path << " - Retrying: " << error;
+
+            doRequest();
+            return;
+        }
+
+        onFinalFailure(
+            fmt::format(
+                "Failed to fetched data from {}:{} {} - Exhausted retries: {}",
+                host_,
+                port_,
+                path,
+                error),
+            queue_);
     }
 
-    sequence_ = ackSequence;
+    void TrinoExchangeSource::acknowledgeResults(int64_t ackSequence) {
+        auto ackPath = fmt::format("{}/{}/acknowledge", basePath_, ackSequence);
+        LOG(INFO) << "Sending ack " << ackPath;
+        auto self = getSelfPtr();
 
-    // Reset requestPending_ if the response is complete or have pages.
-    if (complete || !empty) {
-      requestPending_ = false;
+        http::RequestBuilder()
+            .method(proxygen::HTTPMethod::GET)
+            .url(ackPath)
+            .header("X-Trino-Internal-Bearer", getJwtToken())
+            .send(httpClient_.get())
+            .via(driverCPUExecutor())
+            .thenValue([self](std::unique_ptr<http::HttpResponse> response) {
+                LOG(INFO) << "Ack " << response->headers()->getStatusCode();
+            })
+            .thenError(
+                folly::tag_t<std::exception>{}, [self](const std::exception& e) {
+                    // Acks are optional. No need to fail the query.
+                    LOG(INFO) << "Ack failed: " << e.what();
+                });
     }
-  }
-
-  if (complete) {
-    abortResults();
-  } else {
-    if (!empty) {
-      // Acknowledge results for non-empty content.
-      acknowledgeResults(ackSequence);
-    } else {
-        // Rerequest results for incomplete results with no pages.
-      request();
-    }
-  }
-}
-
-void TrinoExchangeSource::processDataError(
-    const std::string& path,
-    const std::string& error) {
-  failedAttempts_++;
-  if (failedAttempts_ < 3) {
-    VLOG(1) << "Failed to fetch data from " << host_ << ":" << port_ << " "
-            << path << " - Retrying: " << error;
-
-    doRequest();
-    return;
-  }
-
-  onFinalFailure(
-      fmt::format(
-          "Failed to fetched data from {}:{} {} - Exhausted retries: {}",
-          host_,
-          port_,
-          path,
-          error),
-      queue_);
-}
-
-void TrinoExchangeSource::acknowledgeResults(int64_t ackSequence) {
-  auto ackPath = fmt::format("{}/{}/acknowledge", basePath_, ackSequence);
-  VLOG(1) << "Sending ack " << ackPath;
-  auto self = getSelfPtr();
-
-  http::RequestBuilder()
-      .method(proxygen::HTTPMethod::GET)
-      .url(ackPath)
-      .header("X-Trino-Internal-Bearer", getJwtToken())
-      .send(httpClient_.get())
-      .via(driverCPUExecutor())
-      .thenValue([self](std::unique_ptr<http::HttpResponse> response) {
-        VLOG(1) << "Ack " << response->headers()->getStatusCode();
-      })
-      .thenError(
-          folly::tag_t<std::exception>{}, [self](const std::exception& e) {
-            // Acks are optional. No need to fail the query.
-              VLOG(1) << "Ack failed: " << e.what();
-          });
-}
 
     std::string TrinoExchangeSource::getJwtToken(){
         auto nodeConfig = NodeConfig::instance();
@@ -271,7 +277,7 @@ void TrinoExchangeSource::acknowledgeResults(int64_t ackSequence) {
     }
 
     void TrinoExchangeSource::abortResults() {
-        VLOG(1) << "Sending abort results " << basePath_;
+        LOG(INFO) << "Sending abort results " << basePath_;
         auto queue = queue_;
         auto self = getSelfPtr();
 
@@ -286,7 +292,7 @@ void TrinoExchangeSource::acknowledgeResults(int64_t ackSequence) {
                 if (statusCode != http::kHttpOk && statusCode != http::kHttpNoContent) {
                     const std::string errMsg = fmt::format(
                         "Abort results failed: {}, path {}", statusCode, self->basePath_);
-                    LOG(ERROR) << errMsg;
+                    LOG(INFO) << errMsg;
                     onFinalFailure(errMsg, queue);
                 } else {
                     self->abortResultsSucceeded_.store(true);
@@ -297,7 +303,7 @@ void TrinoExchangeSource::acknowledgeResults(int64_t ackSequence) {
                 [queue, self](const std::exception& e) {
                     const std::string errMsg = fmt::format(
                         "Abort results failed: {}, path {}", e.what(), self->basePath_);
-                    LOG(ERROR) << errMsg;
+                    LOG(INFO) << errMsg;
                     // Captures 'queue' by value to ensure lifetime. Error
                     // detection can be arbitrarily late, for example after cancellation
                     // due to other errors.
