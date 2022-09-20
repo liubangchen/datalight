@@ -15,7 +15,6 @@ if(NOT lzo_POPULATED)
   set(LZO_SOURCE_DIR ${PROJECT_SOURCE_DIR}/contrib/lzo)
 endif()
 
-set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 
 file(GLOB lzo_SOURCES "${LZO_SOURCE_DIR}/src/*.c")
 list(SORT lzo_SOURCES)
