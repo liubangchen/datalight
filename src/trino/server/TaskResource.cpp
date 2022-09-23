@@ -14,8 +14,8 @@
 #include "server/TaskResource.h"
 
 #include <nlohmann/json.hpp>
-#include <velox/common/time/Timer.h>
 #include <velox/common/encode/Base64.h>
+#include <velox/common/time/Timer.h>
 #include <velox/type/tz/TimeZoneMap.h>
 
 #include "common/Exception.h"
@@ -32,13 +32,19 @@ void sendOkResponse(proxygen::ResponseHandler* downstream) {
       .sendWithEOM();
 }
 
-void sendOkResponse(proxygen::ResponseHandler* downstream, const json& body) {
+void sendNoCoententResponse(proxygen::ResponseHandler* downstream) {
   proxygen::ResponseBuilder(downstream)
-      .status(http::kHttpOk, "OK")
-      .header(
-          proxygen::HTTP_HEADER_CONTENT_TYPE, http::kMimeTypeApplicationJson)
-      .body(body.dump())
+      .status(http::kHttpNoContent, "OK")
       .sendWithEOM();
+}
+
+void sendOkResponse(proxygen::ResponseHandler* downstream, const json& body) {
+    proxygen::ResponseBuilder(downstream)
+            .status(http::kHttpOk, "OK")
+            .header(
+                proxygen::HTTP_HEADER_CONTENT_TYPE, http::kMimeTypeApplicationJson)
+            .body(body.dump())
+            .sendWithEOM();
 }
 
 void sendOkThriftResponse(
@@ -60,7 +66,7 @@ void sendErrorResponse(
 
   proxygen::ResponseBuilder(downstream)
       .status(status, error.substr(0, kMaxStatusSize))
-      .header(protocol::TRINO_TASK_FAILED,"true")
+      .header(protocol::TRINO_TASK_FAILED, "true")
       .body(error)
       .sendWithEOM();
 }
@@ -78,7 +84,7 @@ std::optional<protocol::TaskState> getCurrentState(
     proxygen::HTTPMessage* message) {
   auto& headers = message->getHeaders();
   if (!headers.exists(protocol::TRINO_CURRENT_STATE_HTTP_HEADER)) {
-      return std::optional<protocol::TaskState>();
+    return std::optional<protocol::TaskState>();
   }
   json taskStateJson =
       headers.getSingleOrEmpty(protocol::TRINO_CURRENT_STATE_HTTP_HEADER);
@@ -90,7 +96,7 @@ std::optional<protocol::TaskState> getCurrentState(
 std::optional<protocol::Duration> getMaxWait(proxygen::HTTPMessage* message) {
   auto& headers = message->getHeaders();
   if (!headers.exists(protocol::TRINO_MAX_WAIT_HTTP_HEADER)) {
-      return std::optional<protocol::Duration>();
+    return std::optional<protocol::Duration>();
   }
   return protocol::Duration(
       headers.getSingleOrEmpty(protocol::TRINO_MAX_WAIT_HTTP_HEADER));
@@ -102,63 +108,63 @@ void TaskResource::registerUris(http::HttpServer& server) {
       R"(/v1/task/(.+)/results/(.+))",
       [&](proxygen::HTTPMessage* message,
           const std::vector<std::string>& pathMatch) {
-          return abortResults(message, pathMatch);
+        return abortResults(message, pathMatch);
       });
 
   server.registerGet(
       R"(/v1/task/(.+)/results/([0-9]+)/([0-9]+)/acknowledge)",
       [&](proxygen::HTTPMessage* message,
           const std::vector<std::string>& pathMatch) {
-          return acknowledgeResults(message, pathMatch);
+        return acknowledgeResults(message, pathMatch);
       });
 
   server.registerPost(
       R"(/v1/task/(.+))",
       [&](proxygen::HTTPMessage* message,
           const std::vector<std::string>& pathMatch) {
-          return createOrUpdateTask(message, pathMatch);
+        return createOrUpdateTask(message, pathMatch);
       });
 
   server.registerDelete(
       R"(/v1/task/(.+))",
       [&](proxygen::HTTPMessage* message,
           const std::vector<std::string>& pathMatch) {
-          return deleteTask(message, pathMatch);
+        return deleteTask(message, pathMatch);
       });
 
   server.registerGet(
       R"(/v1/task/(.+)/status)",
       [&](proxygen::HTTPMessage* message,
           const std::vector<std::string>& pathMatch) {
-          return getTaskStatus(message, pathMatch);
+        return getTaskStatus(message, pathMatch);
       });
 
   server.registerGet(
       R"(/v1/task/async/(.+)/results/([0-9]+)/([0-9]+))",
       [&](proxygen::HTTPMessage* message,
           const std::vector<std::string>& pathMatch) {
-          return getResults(message, pathMatch);
+        return getResults(message, pathMatch);
       });
 
   server.registerGet(
       R"(/v1/task/(.+)/results/([0-9]+)/([0-9]+))",
       [&](proxygen::HTTPMessage* message,
           const std::vector<std::string>& pathMatch) {
-          return getResults(message, pathMatch);
+        return getResults(message, pathMatch);
       });
 
   server.registerGet(
       R"(/v1/task/(.+))",
       [&](proxygen::HTTPMessage* message,
           const std::vector<std::string>& pathMatch) {
-          return getTaskInfo(message, pathMatch);
+        return getTaskInfo(message, pathMatch);
       });
 
   server.registerGet(
       R"(/v1/task/(.+)/remote-source/(.+))",
       [&](proxygen::HTTPMessage* message,
           const std::vector<std::string>& pathMatch) {
-          return removeRemoteSource(message, pathMatch);
+        return removeRemoteSource(message, pathMatch);
       });
 }
 
@@ -178,7 +184,8 @@ proxygen::RequestHandler* TaskResource::abortResults(
           sendErrorResponse(downstream, e.what());
           return;
         }
-        sendOkResponse(downstream);
+        //sendOkResponse(downstream);
+        sendNoCoententResponse(downstream);
       });
 }
 
@@ -220,17 +227,16 @@ proxygen::RequestHandler* TaskResource::createOrUpdateTask(
           oss << std::string((const char*)buf->data(), buf->length());
         }
         std::string updateJson = oss.str();
-        //LOG(INFO) <<updateJson;
+        // LOG(INFO) <<updateJson;
         std::unique_ptr<protocol::TaskInfo> taskInfo;
         try {
           protocol::TaskUpdateRequest taskUpdateRequest =
               json::parse(updateJson);
           velox::core::PlanFragment planFragment;
           if (taskUpdateRequest.fragment) {
-              auto trinoPlan = taskUpdateRequest.fragment;
-              VeloxQueryPlanConverter converter(pool_.get());
-            planFragment = converter.toVeloxQueryPlan(
-                *trinoPlan,  taskId);
+            auto trinoPlan = taskUpdateRequest.fragment;
+            VeloxQueryPlanConverter converter(pool_.get());
+            planFragment = converter.toVeloxQueryPlan(*trinoPlan, taskId);
           }
           const auto& session = taskUpdateRequest.session;
           auto configs = std::unordered_map<std::string, std::string>(
@@ -262,13 +268,13 @@ proxygen::RequestHandler* TaskResource::createOrUpdateTask(
               std::move(configs),
               std::move(connectorConfigs));
         } catch (const velox::VeloxException& e) {
-            LOG(ERROR)<<"get velox::VeloxException "<<e.message();
-            taskInfo = taskManager_.createOrUpdateErrorTask(
-                taskId, std::current_exception());
+          LOG(ERROR) << "get velox::VeloxException " << e.message();
+          taskInfo = taskManager_.createOrUpdateErrorTask(
+              taskId, std::current_exception());
         } catch (const std::exception& e) {
-            LOG(ERROR)<<"get std::exception "<<e.what();
-            sendErrorResponse(downstream, e.what());
-            return;
+          LOG(ERROR) << "get std::exception " << e.what();
+          sendErrorResponse(downstream, e.what());
+          return;
         }
 
         json taskInfoJson = *taskInfo;
@@ -282,7 +288,7 @@ proxygen::RequestHandler* TaskResource::deleteTask(
   protocol::TaskId taskId = pathMatch[1];
   bool abort = false;
   if (message->hasQueryParam(protocol::TRINO_ABORT_TASK_URL_PARAM)) {
-      abort =
+    abort =
         message->getQueryParam(protocol::TRINO_ABORT_TASK_URL_PARAM) == "true";
   }
 
@@ -319,8 +325,8 @@ proxygen::RequestHandler* TaskResource::getResults(
   auto& headers = message->getHeaders();
   auto maxSize = protocol::DataSize(
       headers.exists(protocol::TRINO_MAX_SIZE_HTTP_HEADER)
-      ? headers.getSingleOrEmpty(protocol::TRINO_MAX_SIZE_HTTP_HEADER)
-      : protocol::TRINO_MAX_SIZE_DEFAULT);
+          ? headers.getSingleOrEmpty(protocol::TRINO_MAX_SIZE_HTTP_HEADER)
+          : protocol::TRINO_MAX_SIZE_DEFAULT);
   auto maxWait = getMaxWait(message).value_or(
       protocol::Duration(protocol::TRINO_MAX_WAIT_DEFAULT));
 
@@ -356,9 +362,7 @@ proxygen::RequestHandler* TaskResource::getResults(
                   .header(
                       protocol::TRINO_BUFFER_COMPLETE_HEADER,
                       result->complete ? "true" : "false")
-                  .header(
-                      protocol::TRINO_TASK_FAILED,
-                      "false")
+                  .header(protocol::TRINO_TASK_FAILED, "false")
                   .body(std::move(result->data))
                   .sendWithEOM();
             })
@@ -398,10 +402,10 @@ proxygen::RequestHandler* TaskResource::getTaskStatus(
                              std::unique_ptr<protocol::TaskStatus> taskStatus) {
                 if (!handlerState->requestExpired()) {
                   if (useThrift) {
-                      //thrift::TaskStatus thriftTaskStatus;
-                      //toThrift(*taskStatus, thriftTaskStatus);
-                      //sendOkThriftResponse(
-                      // downstream, thriftWrite(thriftTaskStatus));
+                    // thrift::TaskStatus thriftTaskStatus;
+                    // toThrift(*taskStatus, thriftTaskStatus);
+                    // sendOkThriftResponse(
+                    //  downstream, thriftWrite(thriftTaskStatus));
                   } else {
                     json taskStatusJson = *taskStatus;
                     sendOkResponse(downstream, taskStatusJson);

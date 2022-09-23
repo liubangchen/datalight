@@ -128,9 +128,11 @@ void TrinoExchangeSource::doRequest() {
     void TrinoExchangeSource::processDataResponse(
         std::unique_ptr<http::HttpResponse> response) {
         auto* headers = response->headers();
+        /**
         headers->getHeaders().forEach([](std::string& name,std::string& value){
             LOG(INFO)<<"header info "<<name<<"    "<<value;
         });
+        **/
         VELOX_CHECK(
             !headers->getIsChunked(),
             "Chunked http transferring encoding is not supported.")

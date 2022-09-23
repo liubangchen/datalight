@@ -1589,21 +1589,21 @@ void estimateSerializedSizeInt(
   }
 }
 
-    class TrinoVectorSerializer : public VectorSerializer {
-    public:
-        TrinoVectorSerializer(
-            std::shared_ptr<const RowType> rowType,
-            int32_t numRows,
-            StreamArena* streamArena,
-            bool useLosslessTimestamp) {
-            auto types = rowType->children();
-            auto numTypes = types.size();
-            streams_.resize(numTypes);
-            for (int i = 0; i < numTypes; i++) {
-                streams_[i] = std::make_unique<VectorStream>(
-                    types[i], streamArena, numRows, useLosslessTimestamp);
-            }
+class TrinoVectorSerializer : public VectorSerializer {
+public:
+    TrinoVectorSerializer(
+        std::shared_ptr<const RowType> rowType,
+        int32_t numRows,
+        StreamArena* streamArena,
+        bool useLosslessTimestamp) {
+        auto types = rowType->children();
+        auto numTypes = types.size();
+        streams_.resize(numTypes);
+        for (int i = 0; i < numTypes; i++) {
+            streams_[i] = std::make_unique<VectorStream>(
+                types[i], streamArena, numRows, useLosslessTimestamp);
         }
+    }
 
   void append(
       RowVectorPtr vector,
@@ -1668,7 +1668,7 @@ void estimateSerializedSizeInt(
       }
 
       out->seekp(offset + kSizeInBytesOffset);
-    writeInt32(out, uncompressedSize);
+      writeInt32(out, uncompressedSize);
     writeInt32(out, uncompressedSize);
     writeInt64(out, crc);
     out->seekp(offset + size);
@@ -1683,15 +1683,15 @@ void estimateSerializedSizeInt(
 };
 } // namespace
 
-    void TrinoVectorSerde::estimateSerializedSize(
-        VectorPtr vector,
+void TrinoVectorSerde::estimateSerializedSize(
+    VectorPtr vector,
         const folly::Range<const IndexRange*>& ranges,
         vector_size_t** sizes) {
         estimateSerializedSizeInt(vector->loadedVector(), ranges, sizes);
-    }
+}
 
-    std::unique_ptr<VectorSerializer> TrinoVectorSerde::createSerializer(
-        std::shared_ptr<const RowType> type,
+std::unique_ptr<VectorSerializer> TrinoVectorSerde::createSerializer(
+    std::shared_ptr<const RowType> type,
         int32_t numRows,
         StreamArena* streamArena,
         const Options* options) {
@@ -1700,10 +1700,10 @@ void estimateSerializedSizeInt(
             : false;
         return std::make_unique<TrinoVectorSerializer>(
             type, numRows, streamArena, useLosslessTimestamp);
-    }
+}
 
-    void TrinoVectorSerde::deserialize(
-        ByteStream* source,
+void TrinoVectorSerde::deserialize(
+    ByteStream* source,
         velox::memory::MemoryPool* pool,
         std::shared_ptr<const RowType> type,
         std::shared_ptr<RowVector>* result,
@@ -1742,7 +1742,7 @@ void estimateSerializedSizeInt(
         auto children = &(*result)->children();
         auto childTypes = type->as<TypeKind::ROW>().children();
         readColumns(source, pool, childTypes, children, useLosslessTimestamp);
-    }
+}
 
 // static
     void TrinoVectorSerde::registerVectorSerde() {
