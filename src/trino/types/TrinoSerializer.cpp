@@ -1710,6 +1710,8 @@ void estimateSerializedSizeInt(
         bool useLosslessTimestamp = options != nullptr
             ? static_cast<const PrestoOptions*>(options)->useLosslessTimestamp
             : false;
+        source->skip(16);
+        //1 PositionCount
         auto numRows = source->read<int32_t>();
         if (!(*result) || !result->unique() || (*result)->type() != type) {
             *result = std::dynamic_pointer_cast<RowVector>(
@@ -1717,24 +1719,24 @@ void estimateSerializedSizeInt(
         } else {
             (*result)->resize(numRows);
         }
-
+        // 2 markers
         auto pageCodecMarker = source->read<int8_t>();
+        // 3 uncompressedSize
         auto uncompressedSize = source->read<int32_t>();
-        // skip size in bytes
+        // 4 slice len
         source->skip(4);
+        /**
         auto checksum = source->read<int64_t>();
-
         int64_t actualCheckSum = 0;
         if (isChecksumBitSet(pageCodecMarker)) {
             actualCheckSum =
                 computeChecksum(source, pageCodecMarker, numRows, uncompressedSize);
         }
-
         VELOX_CHECK_EQ(
             checksum, actualCheckSum, "Received corrupted serialized page.");
-
         // skip number of columns
         source->skip(4);
+        **/
 
         auto children = &(*result)->children();
         auto childTypes = type->as<TypeKind::ROW>().children();
