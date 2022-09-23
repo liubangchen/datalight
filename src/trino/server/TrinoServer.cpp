@@ -42,6 +42,7 @@
 #include "server/SignalHandler.h"
 #include "server/TaskResource.h"
 #include "server/TrinoExchangeSource.h"
+#include "types/TrinoSerializer.h"
 
 #ifdef PRESTO_ENABLE_PARQUET
 #include "velox/dwio/parquet/RegisterParquetReader.h" // @manual
@@ -226,7 +227,7 @@ void TrinoServer::run() {
 
   velox::functions::prestosql::registerAllScalarFunctions();
   if (!velox::isRegisteredVectorSerde()) {
-    velox::serializer::presto::PrestoVectorSerde::registerVectorSerde();
+      TrinoVectorSerde::registerVectorSerde();
   }
 
   facebook::velox::exec::ExchangeSource::registerFactory(

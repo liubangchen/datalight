@@ -29,6 +29,7 @@ add_library(
   TrinoToVeloxQueryPlan.cpp
   TrinoToVeloxExpr.cpp
   TrinoToVeloxSplit.cpp
+  TrinoSerializer.cpp
 )
 
 target_link_libraries(
