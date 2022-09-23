@@ -670,6 +670,7 @@ namespace {
     }
 
     std::string readLengthPrefixedString(ByteStream* source) {
+        source->skip(4);
         int32_t size = source->read<int32_t>();
         std::string value;
         value.resize(size);
